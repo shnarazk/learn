@@ -34,6 +34,9 @@ def add (m: MyNat) (n : MyNat) : MyNat :=
     | zero => n
     | succ m' => succ (add m' n)
 
+instance : Add MyNat where
+  add := add
+
 #eval add (succ (succ zero)) (succ zero)
 #eval add (nat_to_mynat 7) (nat_to_mynat 3)
 
@@ -48,3 +51,34 @@ def mul (m n : MyNat) : MyNat :=
 example : mul 5 3 = 15 := rfl
 example : mul 5 0 = 0 := rfl
 example : mul 0 5 = 0 := rfl
+
+instance : Mul MyNat where
+  mul := mul
+
+-- lemma addIsCommutive : forall (x y : MyNat), add x y = add y x := sorry
+--   induction
+
+lemma example1 (x y z : MyNat) : x * y + z = x * y + z := by
+  rfl
+
+lemma example2 (x y : MyNat) (h : y = x + 7) : 2 * y = 2 * (x + 7) := by
+  rewrite [h]
+  rfl
+  
+lemma example3 (a b : MyNat) (h : succ a = b) : succ (succ a) = succ b := by
+  rewrite [h]
+  rfl
+
+lemma add_zero_left (a : MyNat) : 0 + a = a := by
+  rfl
+  
+lemma add_succ (a b : MyNat) : (succ a) + b  = succ (a + b) := by
+  rfl
+
+lemma add_succ_zero (a : MyNat) : (succ 0) + a = succ a := by
+  rewrite [add_succ, add_zero_left]
+  rfl
+
+-- lemma add_zero_right (a : MyNat) : a + 0 = a := by
+--   induction [add]
+
