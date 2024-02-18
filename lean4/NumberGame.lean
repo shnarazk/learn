@@ -69,16 +69,26 @@ lemma example3 (a b : MyNat) (h : succ a = b) : succ (succ a) = succ b := by
   rewrite [h]
   rfl
 
-lemma add_zero_left (a : MyNat) : 0 + a = a := by
+lemma my_add_zero (a : MyNat) : 0 + a = a := by
   rfl
   
 lemma add_succ (a b : MyNat) : (succ a) + b  = succ (a + b) := by
   rfl
 
 lemma add_succ_zero (a : MyNat) : (succ 0) + a = succ a := by
-  rewrite [add_succ, add_zero_left]
+  rewrite [add_succ, my_add_zero]
   rfl
 
--- lemma add_zero_right (a : MyNat) : a + 0 = a := by
---   induction [add]
+lemma add_zero_right (a : MyNat) : a + 0 = a := by
+  induction a with
+  | zero => rfl
+  | succ a' ih =>
+      rewrite [add_succ, ih]
+      rfl
 
+example : 4 + 0 = 0 + 4 := rfl
+
+-- lemma my_add_assoc (a b c : MyNat) : (a + b) + c = a + (b + c) := by
+--   induction c with
+--     | zero => sorry
+--     | succ c' ih => sorry
