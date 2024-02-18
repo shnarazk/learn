@@ -2,7 +2,7 @@ import Mathlib.Data.Nat.Basic
 #eval "Hello, World!"
 #eval Lean.versionString
 
--- Natural Number Game in Len 4 -- i
+-- Natural Number Game in Lean 4 -- ep0
 
 inductive MyNat where
   | zero : MyNat
