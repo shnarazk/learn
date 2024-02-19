@@ -69,7 +69,7 @@ lemma example3 (a b : MyNat) (h : succ a = b) : succ (succ a) = succ b := by
 lemma my_add_zero_left (a : MyNat) : zero + a = a := by
   rfl
 
-lemma my_add_succ_left (a b : MyNat) : succ a + b  = succ (a + b) := by
+lemma my_add_succ_left (a b : MyNat) : succ a + b = succ (a + b) := by
   rfl
 
 lemma my_add_zero_right (a : MyNat) : a + zero = a := by
@@ -77,7 +77,7 @@ lemma my_add_zero_right (a : MyNat) : a + zero = a := by
   | zero => rfl
   | succ a' ih => rewrite [my_add_succ_left, ih]; rfl
 
-lemma my_add_succ_right (a b : MyNat) : a + succ b  = succ (a + b) := by
+lemma my_add_succ_right (a b : MyNat) : a + succ b = succ (a + b) := by
   induction a with
     | zero => rewrite [my_add_zero_left, my_add_zero_left]; rfl
     | succ a' ih => rewrite [my_add_succ_left, ih]; rfl
@@ -91,7 +91,7 @@ lemma my_add_is_commutive (x y : MyNat) : x + y = y + x := by
   | zero => rewrite [my_add_zero_left, my_add_zero_right]; rfl
   | succ x' ih => rewrite [my_add_succ_right, my_add_succ_left, ih]; rfl
 
-lemma my_add_assoc_nqwddg (a b c : MyNat) : (a + b) + c = a + (b + c) := by
+lemma my_add_assoc (a b c : MyNat) : (a + b) + c = a + (b + c) := by
   induction c with
     | zero => rewrite [my_add_zero_right, my_add_zero_right]; rfl
     | succ c' ih => rewrite [my_add_succ_right, my_add_succ_right, my_add_succ_right, ih]; rfl
