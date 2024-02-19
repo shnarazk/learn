@@ -10,10 +10,10 @@ theorem add : 1 + 1 = 2 := by
 theorem append : "Str".append "ing" = "String" := by
   rfl
 
-theorem andImpliesOr : A ∧ B → A ∨ B :=
-  fun andEvidence =>
-    match andEvidence with
-    | And.intro a _ => Or.inl a
+-- theorem andImpliesOr : A ∧ B → A ∨ B :=
+--   fun andEvidence =>
+--     match andEvidence with
+--     | And.intro a _ => Or.inl a
 
 def main : IO Unit :=
   IO.println s!"Hello, {hello}!"
