@@ -55,20 +55,15 @@ example : mul 0 5 = 0 := rfl
 instance : Mul MyNat where
   mul := mul
 
-lemma example1 (x y z : MyNat) : x * y + z = x * y + z := by
-  rfl
+lemma example1 (x y z : MyNat) : x * y + z = x * y + z := by rfl
 
-lemma example2 (x y : MyNat) (h : y = x + 7) : 2 * y = 2 * (x + 7) := by
-  rw [h]
+lemma example2 (x y : MyNat) (h : y = x + 7) : 2 * y = 2 * (x + 7) := by rw [h]
 
-lemma example3 (a b : MyNat) (h : succ a = b) : succ (succ a) = succ b := by
-  rw [h]
+lemma example3 (a b : MyNat) (h : succ a = b) : succ (succ a) = succ b := by rw [h]
 
-lemma my_add_zero_left (a : MyNat) : zero + a = a := by
-  rfl
+lemma my_add_zero_left (a : MyNat) : zero + a = a := by rfl
 
-lemma my_add_succ_left (a b : MyNat) : succ a + b = succ (a + b) := by
-  rfl
+lemma my_add_succ_left (a b : MyNat) : succ a + b = succ (a + b) := by rfl
 
 lemma my_add_zero_right (a : MyNat) : a + zero = a := by
   induction a with
@@ -93,4 +88,14 @@ lemma my_add_assoc (a b c : MyNat) : (a + b) + c = a + (b + c) := by
     | zero => rw [my_add_zero_right, my_add_zero_right]
     | succ c' ih => rw [my_add_succ_right, my_add_succ_right, my_add_succ_right, ih]
 
-example : 2 + (5 + 8) = (2 + 5) + 8 := rfl
+-- ep.3
+
+lemma my_succ_eq_add_one (n : MyNat) : succ n = n + 1 := by
+  induction n with
+  | zero => rfl
+  | succ n' ih => rw [my_add_succ_left, ih]
+
+lemma add_right_comm (a b c : MyNat) : (a + b) + c = (a + c) + b := by
+  rw [my_add_assoc, my_add_assoc, my_add_is_commutive c b]
+
+-- ep.4
