@@ -16,13 +16,13 @@ open MyNat
 
 def nat_to_mynat (n: Nat): MyNat :=
   match n with
-  | Nat.zero => MyNat.zero
-  | Nat.succ n' => MyNat.succ (nat_to_mynat n')
+    | Nat.zero => MyNat.zero
+    | Nat.succ n' => MyNat.succ (nat_to_mynat n')
 
 def mynat_to_nat (n: MyNat): Nat :=
   match n with
-  | MyNat.zero => Nat.zero
-  | MyNat.succ n' => Nat.succ (mynat_to_nat n')
+    | MyNat.zero => Nat.zero
+    | MyNat.succ n' => Nat.succ (mynat_to_nat n')
 
 instance : OfNat MyNat n where
  ofNat := nat_to_mynat n
@@ -45,8 +45,8 @@ example : mynat_to_nat (add 7 3) = 10 := rfl
 
 def mul (m n : MyNat) : MyNat :=
   match m with
-  | zero => zero
-  | succ m' => add n (mul m' n)
+    | zero => zero
+    | succ m' => add n (mul m' n)
 
 example : mul 5 3 = 15 := rfl
 example : mul 5 0 = 0 := rfl
@@ -67,8 +67,8 @@ lemma my_add_succ_left (a b : MyNat) : succ a + b = succ (a + b) := by rfl
 
 lemma my_add_zero_right (a : MyNat) : a + zero = a := by
   induction a with
-  | zero => rfl
-  | succ a' ih => rw [my_add_succ_left, ih]
+    | zero => rfl
+    | succ a' ih => rw [my_add_succ_left, ih]
 
 lemma my_add_succ_right (a b : MyNat) : a + succ b = succ (a + b) := by
   induction a with
@@ -80,8 +80,8 @@ lemma my_add_succ_zero (a : MyNat) : (succ zero) + a = succ a := by
 
 lemma my_add_is_commutive (x y : MyNat) : x + y = y + x := by
   induction x with
-  | zero => rw [my_add_zero_left, my_add_zero_right]
-  | succ x' ih => rw [my_add_succ_right, my_add_succ_left, ih]
+    | zero => rw [my_add_zero_left, my_add_zero_right]
+    | succ x' ih => rw [my_add_succ_right, my_add_succ_left, ih]
 
 lemma my_add_assoc (a b c : MyNat) : (a + b) + c = a + (b + c) := by
   induction c with
@@ -95,7 +95,7 @@ lemma my_succ_eq_add_one (n : MyNat) : succ n = n + 1 := by
   | zero => rfl
   | succ n' ih => rw [my_add_succ_left, ih]
 
-lemma add_right_comm (a b c : MyNat) : (a + b) + c = (a + c) + b := by
+lemma my_add_right_comm (a b c : MyNat) : (a + b) + c = (a + c) + b := by
   rw [my_add_assoc, my_add_assoc, my_add_is_commutive c b]
 
 -- ep.4
