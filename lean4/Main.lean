@@ -15,5 +15,8 @@ theorem append : "Str".append "ing" = "String" := by
 --     match andEvidence with
 --     | And.intro a _ => Or.inl a
 
-def main : IO Unit :=
-  IO.println s!"Hello, {hello}!"
+def main : IO Unit := do
+  -- IO.println s!"Hello, {hello}!"
+  -- let n := fib 40
+  -- IO.println s!"fib 40 = {n}!"
+  IO.println s!"pi = {leibniz 10000000 0.0}!"
