@@ -1,13 +1,12 @@
 import Mathlib.Data.Nat.Basic
-#eval Lean.versionString
 
 open Nat
 
-def fib (n: Nat): Nat :=
+def fib (n : ℕ) : ℕ :=
   match n with
   | zero => 0
   | succ zero => 1
-  | succ (succ n'') => fib n'' + fib (n'' + 1)
+  | succ (succ n₂) => fib (n₂ + 1) + fib n₂
 
 #eval fib 0
 #eval fib 1
@@ -16,4 +15,5 @@ def fib (n: Nat): Nat :=
 #eval fib 4
 #eval fib 5
 
-lemma fib_is_the_Fibonacchi(n : Nat) : fib (succ (succ n)) = fib (succ n) + fib n := sorry
+lemma fib_is_fib (n : ℕ) : fib (succ (succ n)) = fib (succ n) + fib n := by
+  rw [fib]
