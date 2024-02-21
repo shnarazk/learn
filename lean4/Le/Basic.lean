@@ -1,12 +1,11 @@
--- import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Nat.Basic
 import Lean
 
-def hello := "world"
-
 open Nat
+open USize
 
-def fib (n : Nat) : Nat :=
-  match n with
+-- Fibonacchi
+def fib : Nat → Nat
   | zero => 0
   | succ zero => 1
   | succ (succ n₂) => fib (n₂ + 1) + fib n₂
@@ -18,10 +17,23 @@ def fib (n : Nat) : Nat :=
 -- #eval fib 4
 -- #eval fib 5
 
--- lemma fib_is_fib (n : Nat) : fib (succ (succ n)) = fib (succ n) + fib n := by rw [fib]
+lemma fib_is_fib2 (n : Nat) : fib (n + 2) = fib (n + 1) + fib n := by
+  induction n with
+  | zero => repeat rw [fib]
+  | succ n' _ => rw [fib]
 
 -- compute pi
-def leibniz (n : Nat) (sum : Float) : Float :=
+def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
   match n with
-  | 0 => sum + 8.0 / 3.0
-  | succ n' => let k := (n * 4).toFloat; leibniz n' (sum + 8.0 / ((k + 1.0) * (k + 3.0)))
+  | zero => sum + 8.0 / 3.0
+  | succ n' => leibniz₁ n' (k - 4.0) (sum + 8.0 / ((k + 1.0) * (k + 3.0)))
+
+def leibniz₂ (n : Nat) (sum : Float) : Float :=
+  match n with
+  | zero => sum + 8.0 / 3.0
+  | succ n' =>
+      let k := n.toFloat * 4.0
+      leibniz₂ n' (sum + 8.0 / ((k + 1.0) * (k + 3.0)))
+
+def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4.0) 0.0
+-- def leibniz (n : Nat) : Float := leibniz₂ n 0.0
