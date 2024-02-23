@@ -37,3 +37,35 @@ def leibniz₂ (n : Nat) (sum : Float) : Float :=
 
 def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4.0) 0.0
 -- def leibniz (n : Nat) : Float := leibniz₂ n 0.0
+
+def bufsize : USize := 20 * 1024
+
+partial def dump (stream : IO.FS.Stream) : IO Unit := do
+  let buf ← stream.read bufsize
+  if buf.isEmpty then
+    pure ()
+  else
+    let stdout ← IO.getStdout
+    stdout.write buf
+    dump stream
+
+def fileStream (filename : System.FilePath) : IO (Option IO.FS.Stream) := do
+  let fileExists ← filename.pathExists
+  if not fileExists then
+    let stderr ← IO.getStderr
+    stderr.putStrLn s!"File not found: {filename}"
+    pure none
+  else
+    let handle ← IO.FS.Handle.mk filename IO.FS.Mode.read
+    pure (some (IO.FS.Stream.ofHandle handle))
+
+def process (datafilename : String) : IO Unit := do
+  let stream ← fileStream ⟨datafilename⟩
+  match stream with
+    | none => pure ()
+    | some stream => dump stream
+
+def readData (datafilename : String) : IO (Array String) := do
+     IO.FS.lines datafilename
+
+#eval readData "lakefile.lean"
