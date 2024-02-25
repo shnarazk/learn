@@ -72,17 +72,18 @@ theorem zero_mul (a : R) : 0 * a = 0 := by
   rw [add_assoc, ← add_mul, add_zero, add_left_neg]
 
 theorem neg_eq_of_add_eq_zero {a b : R} (h : a + b = 0) : -a = b := by
-  sorry
+  rw [← add_zero (-a), ← h, ← add_assoc, add_left_neg, zero_add]
 
 theorem eq_neg_of_add_eq_zero {a b : R} (h : a + b = 0) : a = -b := by
-  sorry
+  rw [← add_neg_cancel_right a b, h, zero_add]
 
 theorem neg_zero : (-0 : R) = 0 := by
   apply neg_eq_of_add_eq_zero
   rw [add_zero]
 
 theorem neg_neg (a : R) : - -a = a := by
-  sorry
+  nth_rewrite 2 [← add_neg_cancel_right a (-a)]
+  rw [add_right_neg, zero_add]
 
 end MyRing
 
