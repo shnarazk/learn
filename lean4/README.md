@@ -6,3 +6,4 @@
 - [mathlib4](https://github.com/leanprover-community/mathlib4)
 - [library doc](https://leanprover-community.github.io/mathlib4_docs)
 - [Lean Game Server](https://adam.math.hhu.de/)
+- [chat room](https://leanprover.zulipchat.com/)
