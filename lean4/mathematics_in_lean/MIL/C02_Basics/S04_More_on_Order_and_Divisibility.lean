@@ -49,14 +49,24 @@ example : max a b = max b a := by
     apply h
 
 example : min (min a b) c = min a (min b c) := by
-  have O: a ≤ b → min a b = a := by
-    intro x
+  have MinEq (x y : ℝ) : x ≤ y → min x y = x := by
+    intro AB
     apply le_antisymm
-    apply min_le_left
-    apply le_min
-
+    . exact min_le_left x y
+    . exact le_min (le_refl x) AB
+  -- have MinA : a ≤ b → min a b = a := by
+  --   intro AB
+  --   apply le_antisymm
+  --   . exact min_le_left a b
+  --   . exact le_min (le_refl a) AB
+  -- have MinB : b ≤ a → min a b = b := by
+  --   intro BA
+  --   apply le_antisymm
+  --   . exact min_le_right a b
+  --   . exact le_min BA (le_refl b)
+  have Cases (x y : ℝ ) : (x ≤ y) → min x y = x ∨ (y ≤ x) → min x y = y :=
+    sorry
   apply le_antisymm
-  . apply le_min
   sorry
 
 theorem aux : min a b + c ≤ min (a + c) (b + c) := by
