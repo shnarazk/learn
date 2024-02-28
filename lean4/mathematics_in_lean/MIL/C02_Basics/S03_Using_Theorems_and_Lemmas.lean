@@ -115,7 +115,9 @@ example : 0 ≤ a ^ 2 := by
   exact sq_nonneg a
 
 example (h : a ≤ b) : c - exp b ≤ c - exp a := by
-  sorry
+  -- apply?
+  rw [sub_le_sub_iff_left c]
+  exact exp_le_exp.mpr h
 
 example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
   have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2
@@ -136,6 +138,27 @@ example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
   linarith
 
 example : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
-  sorry
+  have Sm : 0 ≤ (a - b) ^ 2 := by
+    let z := a - b
+    exact sq_nonneg z
+  have Sp : 0 ≤ (a + b) ^ 2 := by
+    let z := a + b
+    exact sq_nonneg z
+  rw [abs_le']
+  have NotZero : (0 : ℝ) < 2 := by linarith
+  have A : a ≤ a := by
+    exact le_refl a
+  constructor
+  . have Sq : (a - b) ^ 2 = a ^ 2 + b ^ 2 - a * b * 2 := by linarith
+    rw [le_div_iff NotZero]
+    apply sub_nonneg.mp
+    rw [← Sq]
+    exact Sm
+  . have Sq : (a + b) ^ 2 = a ^ 2 + b ^ 2 + a * b * 2 := by linarith
+    rw [le_div_iff NotZero]
+    apply sub_nonneg.mp
+    simp
+    rw [← Sq]
+    exact Sp
 
 #check abs_le'.mpr
