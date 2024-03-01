@@ -72,10 +72,34 @@ example : min (min a b) c = min a (min b c) := by
       . apply min_le_right
 
 theorem aux : min a b + c ≤ min (a + c) (b + c) := by
-  sorry
+  have cancel : ∀ x y z : ℝ, x ≤ y → x + z ≤ y + z := by
+    simp
+  apply le_min
+  . apply cancel
+    apply min_le_left
+  . apply cancel
+    apply min_le_right
 
 example : min a b + c = min (a + c) (b + c) := by
-  sorry
+  have cancel : ∀ x y z : ℝ, x ≤ y → x + z ≤ y + z := by
+    simp
+  have cancel' : ∀ x y z : ℝ, x + z ≤ y + z → x ≤ y := by
+    simp
+  apply le_antisymm
+  . apply le_min
+    apply cancel
+    exact min_le_left a b
+    apply cancel (min a b)
+    exact min_le_right a b
+  . apply cancel' (min (a + c) (b + c)) (min a b + c) (-c)
+    rw [add_assoc, add_right_neg, add_zero]
+    apply le_min
+    . apply cancel' (min (a + c) (b + c) + -c) a c
+      rw [add_assoc, add_left_neg, add_zero]
+      apply min_le_left
+    . apply cancel' (min (a + c) (b + c) + -c) b c
+      rw [add_assoc, add_left_neg, add_zero]
+      apply min_le_right
 
 #check (abs_add : ∀ a b : ℝ, |a + b| ≤ |a| + |b|)
 
