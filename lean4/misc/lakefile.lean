@@ -11,6 +11,9 @@ package «Le» where
 lean_lib «Le» where
   -- add library configuration options here
 
+lean_lib «Combinator» where
+  -- add library configuration options here
+
 @[default_target]
 lean_exe «le» where
   root := `Main
