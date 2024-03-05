@@ -71,7 +71,13 @@ example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
       exact le_trans L1 L2
 
 example : x ⊔ y = y ⊔ x := by
-  sorry
+  apply le_antisymm
+  . have L1 : x ≤ y ⊔ x := le_sup_right
+    have L2 : y ≤ y ⊔ x := le_sup_left
+    exact sup_le L1 L2
+  . have L1 : y ≤ x ⊔ y := le_sup_right
+    have L2 : x ≤ x ⊔ y := le_sup_left
+    exact sup_le L1 L2
 
 example : x ⊔ y ⊔ z = x ⊔ (y ⊔ z) := by
   sorry
