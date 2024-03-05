@@ -80,7 +80,31 @@ example : x ⊔ y = y ⊔ x := by
     exact sup_le L1 L2
 
 example : x ⊔ y ⊔ z = x ⊔ (y ⊔ z) := by
-  sorry
+  apply le_antisymm
+  . have L1 : x ⊔ y ≤ x ⊔ (y ⊔ z) := by
+      have L11 : x ≤ x ⊔ (y ⊔ z) := le_sup_left
+      have L12 : y ≤ x ⊔ (y ⊔ z) := by
+        have L121 : y ≤ y ⊔ z := le_sup_left
+        have L122 : y ⊔ z ≤ x ⊔ (y ⊔ z) := le_sup_right
+        exact le_trans L121 L122
+      exact sup_le L11 L12
+    have L2 : z ≤ x ⊔ (y ⊔ z) := by
+      have L21 : z ≤ y ⊔ z := le_sup_right
+      have L22 : y ⊔ z ≤ x ⊔ (y ⊔ z) := le_sup_right
+      exact le_trans L21 L22
+    apply sup_le L1 L2
+  . have L1 : x ≤ x ⊔ y ⊔ z := by
+      have L11 : x ≤ x ⊔ y := le_sup_left
+      have L12 : x ⊔ y ≤ x ⊔ y ⊔ z := le_sup_left
+      apply le_trans L11 L12
+    have L2 : y ⊔ z ≤ x ⊔ y ⊔ z := by
+      have L21 : y ≤ x ⊔ y ⊔ z := by
+        have L211 : y ≤ x ⊔ y := le_sup_right
+        have L212 : x ⊔ y ≤ x ⊔ y ⊔ z := le_sup_left
+        apply le_trans L211 L212
+      have L22 : z ≤ x ⊔ y ⊔ z := le_sup_right
+      apply sup_le L21 L22
+    apply sup_le L1 L2
 
 theorem absorb1 : x ⊓ (x ⊔ y) = x := by
   sorry
