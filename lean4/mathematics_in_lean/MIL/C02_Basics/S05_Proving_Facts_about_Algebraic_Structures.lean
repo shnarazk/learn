@@ -44,8 +44,31 @@ example : x ⊓ y = y ⊓ x := by
     . exact inf_le_right
     . exact inf_le_left
 
+#check le_trans
+
 example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
-  sorry
+  apply le_antisymm
+  . apply le_inf
+    . have L1 : (x ⊓ y) ⊓ z ≤ x ⊓ y := inf_le_left
+      have L2 : x ⊓ y ≤ x := inf_le_left
+      exact le_trans L1 L2
+    . -- this branch requires le_inf
+      have L1 : (x ⊓ y) ⊓ z ≤ y := by
+        have L11 : (x ⊓ y) ⊓ z ≤ x ⊓ y := inf_le_left
+        have L12 : x ⊓ y ≤ y := inf_le_right
+        exact le_trans L11 L12
+      have L2 : (x ⊓ y) ⊓ z ≤ z := inf_le_right
+      exact le_inf L1 L2
+  . apply le_inf
+    . have L1 : x ⊓ (y ⊓ z) ≤ x := inf_le_left
+      have L2 : x ⊓ (y ⊓ z) ≤ y := by
+        have L21 : x ⊓ (y ⊓ z) ≤ y ⊓ z := inf_le_right
+        have L22 : y ⊓ z ≤ y := inf_le_left
+        exact le_trans L21 L22
+      exact le_inf L1 L2
+    . have L1 : x ⊓ (y ⊓ z) ≤ y ⊓ z := inf_le_right
+      have L2 : y ⊓ z ≤ z := inf_le_right
+      exact le_trans L1 L2
 
 example : x ⊔ y = y ⊔ x := by
   sorry
