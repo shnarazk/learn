@@ -137,7 +137,11 @@ variable {α : Type*} [Lattice α]
 variable (a b c : α)
 
 example (h : ∀ x y z : α, x ⊓ (y ⊔ z) = x ⊓ y ⊔ x ⊓ z) : a ⊔ b ⊓ c = (a ⊔ b) ⊓ (a ⊔ c) := by
-  sorry
+  rw [h]
+  rw [@inf_comm _ _ (a ⊔ b) a, absorb1]
+  rw [@inf_comm _ _ (a ⊔ b), h, ← sup_assoc]
+  rw [@inf_comm _ _ c a, sup_inf_self]
+  rw [@inf_comm _ _ c b]
 
 example (h : ∀ x y z : α, x ⊔ y ⊓ z = (x ⊔ y) ⊓ (x ⊔ z)) : a ⊓ (b ⊔ c) = a ⊓ b ⊔ a ⊓ c := by
   sorry
