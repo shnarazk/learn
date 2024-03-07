@@ -11,4 +11,4 @@ package mil where
 lean_lib MIL where
 
 require mathlib from git "https://github.com/leanprover-community/mathlib4"@"master"
-require std from git "https://github.com/leanprover/std4" @ "main"
+
