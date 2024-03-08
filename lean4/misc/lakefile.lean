@@ -19,4 +19,4 @@ lean_exe «le» where
   root := `Main
 
 require mathlib from git "https://github.com/leanprover-community/mathlib4"
-require std from git "https://github.com/leanprover/std4" @ "main"
+-- require std from git "https://github.com/leanprover/std4" @ "main"
