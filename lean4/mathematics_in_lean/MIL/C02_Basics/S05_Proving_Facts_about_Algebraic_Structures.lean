@@ -163,7 +163,10 @@ variable (a b c : R)
 #check (mul_nonneg : 0 ≤ a → 0 ≤ b → 0 ≤ a * b)
 
 example (h : a ≤ b) : 0 ≤ b - a := by
-  sorry
+  rw [← add_right_neg a]
+  rw [sub_eq_add_neg]
+  apply add_le_add_right
+  exact h
 
 example (h: 0 ≤ b - a) : a ≤ b := by
   sorry
