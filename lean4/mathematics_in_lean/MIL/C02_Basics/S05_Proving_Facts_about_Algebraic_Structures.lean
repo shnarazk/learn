@@ -144,7 +144,12 @@ example (h : ∀ x y z : α, x ⊓ (y ⊔ z) = x ⊓ y ⊔ x ⊓ z) : a ⊔ b �
   rw [@inf_comm _ _ c b]
 
 example (h : ∀ x y z : α, x ⊔ y ⊓ z = (x ⊔ y) ⊓ (x ⊔ z)) : a ⊓ (b ⊔ c) = a ⊓ b ⊔ a ⊓ c := by
-  sorry
+  rw [h]
+  rw [@sup_comm _ _ (a ⊓ b) a, sup_inf_self]
+  rw [@sup_comm _ _ (a ⊓ b) c, h]
+  rw [← inf_assoc]
+  rw [@sup_comm _ _ c a, inf_sup_self]
+  rw [@sup_comm _ _ c b]
 
 end
 
