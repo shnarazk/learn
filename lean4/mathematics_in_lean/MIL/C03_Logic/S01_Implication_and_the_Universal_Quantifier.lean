@@ -40,21 +40,33 @@ theorem my_lemma3 :
 
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
+  have R : (x y : ℝ) → x < y → x ≤ y := by
+    intro
+    intro
+    intro X
+    exact le_of_lt X
   intro x y ε epos ele1 xlt ylt
   calc
     |x * y| = |x| * |y| := abs_mul x y
     _ ≤ |x| * ε := by
+      have Y1 : |y| ≤ 1 := by
+        have Y11 : |y| < 1 := lt_of_lt_of_le ylt ele1
+        apply R |y| 1
+        exact Y11
+      apply mul_le_mul
+      . exact le_refl |x|
+      . apply R |y| ε
+        exact ylt
+      . apply abs_nonneg
+      . apply abs_nonneg
+    _ < 1 * ε := by
+      rw [mul_comm]
       have X1 : |x| < 1 := lt_of_lt_of_le xlt ele1
-      have Y1 : |y| < 1 := lt_of_lt_of_le ylt ele1
-      --sorry
-      -- sorry
-      -- apply mul_le_mul
-      -- exact le_refl |x|
-       ylt
+      nth_rewrite 1 [mul_comm]
+      apply (mul_lt_mul_right epos).mpr
+      exact X1
+    _ = ε := one_mul ε
 
-
-   _ < 1 * ε := sorry -- mul_lt_mul _ (le_refl ε) epos _
-    _ = ε := sorry --  one_mul _
 
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
   ∀ x, f x ≤ a
