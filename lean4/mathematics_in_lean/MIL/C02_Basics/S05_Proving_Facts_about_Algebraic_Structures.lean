@@ -206,6 +206,9 @@ variable (x y z : X)
 #check (dist_triangle x y z : dist x z ≤ dist x y + dist y z)
 
 example (x y : X) : 0 ≤ dist x y := by
-  sorry
+  have Z : dist x x ≤ dist x y + dist y x := dist_triangle x y x
+  rw [dist_self x, dist_comm y x, ← two_mul, mul_comm] at Z
+  apply nonneg_of_mul_nonneg_left Z
+  simp
 
 end
