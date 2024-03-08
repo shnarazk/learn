@@ -169,10 +169,31 @@ example (h : a ≤ b) : 0 ≤ b - a := by
   exact h
 
 example (h: 0 ≤ b - a) : a ≤ b := by
-  sorry
+   rw [← zero_add a, ← zero_add b]
+   rw [← add_left_neg a]
+   nth_rewrite 2 [add_assoc]
+   rw [add_comm a b]
+   rw [← add_assoc, add_comm (-a) b, ← sub_eq_add_neg]
+   apply add_le_add_right
+   rw [add_left_neg]
+   exact h
 
 example (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
-  sorry
+  have h'' : 0 ≤ b - a := by
+    rw [← add_right_neg a]
+    rw [sub_eq_add_neg]
+    apply add_le_add_right
+    exact h
+  rw [← zero_add (a * c), ← zero_add (b * c)]
+  rw [← add_left_neg (a * c)]
+  nth_rewrite 2 [add_assoc]
+  rw [add_comm (a * c)]
+  rw [← add_assoc]
+  apply add_le_add_right
+  rw [add_left_neg, add_comm]
+  have M : -(a * c) = -a * c := by simp
+  rw [M, ← add_mul, ← sub_eq_add_neg]
+  exact mul_nonneg h'' h'
 
 end
 
