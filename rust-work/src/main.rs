@@ -2,13 +2,14 @@
 use {
     std::sync::Arc,
     tokio::{
-        sync::mpsc::{self, Receiver, Sender},
+        sync::mpsc::{self, Sender},
         time::Instant,
     }, // tokio_stream::{self as stream, StreamExt},
 };
 
-const LIMIT: usize = 10_000_000;
+const LIMIT: usize = 30_000_000;
 const BUFF_SIZE: usize = 10;
+const NUM_WORKERS: usize = 3;
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -30,30 +31,33 @@ async fn main2() -> Result<(), ()> {
     let (mut result_in, mut result_out) = mpsc::channel::<isize>(BUFF_SIZE);
 
     // receiver
-    let dict1 = dict.clone();
-    let result_in1 = result_in.clone();
-    let values1 = values.clone();
-    let t1 = tokio::spawn(async move {
-        let _ = evaluator(0, values1, result_in1, dict1).await;
-    });
-    let dict2 = dict.clone();
-    let result_in2 = result_in.clone();
-    let values2 = values.clone();
-    let t2 = tokio::spawn(async move {
-        let _ = evaluator(1, values2, result_in2, dict2).await;
-    });
-    let dict3 = dict.clone();
-    let result_in3 = result_in.clone();
-    let values3 = values.clone();
-    let t3 = tokio::spawn(async move {
-        let _ = evaluator(1, values3, result_in3, dict3).await;
-    });
-    let dict4 = dict.clone();
-    let result_in4 = result_in.clone();
-    let values4 = values.clone();
-    let t4 = tokio::spawn(async move {
-        let _ = evaluator(1, values4, result_in4, dict4).await;
-    });
+    let mut pool = Vec::new();
+    for i in 0..NUM_WORKERS {
+        let dict1 = dict.clone();
+        let result_in1 = result_in.clone();
+        let values1 = values.clone();
+        pool.push(tokio::spawn(async move {
+            let _ = evaluator(i, values1, result_in1, dict1).await;
+        }));
+    }
+    // let dict2 = dict.clone();
+    // let result_in2 = result_in.clone();
+    // let values2 = values.clone();
+    // let t2 = tokio::spawn(async move {
+    //     let _ = evaluator(1, values2, result_in2, dict2).await;
+    // });
+    // let dict3 = dict.clone();
+    // let result_in3 = result_in.clone();
+    // let values3 = values.clone();
+    // let t3 = tokio::spawn(async move {
+    //     let _ = evaluator(2, values3, result_in3, dict3).await;
+    // });
+    // let dict4 = dict.clone();
+    // let result_in4 = result_in.clone();
+    // let values4 = values.clone();
+    // let t4 = tokio::spawn(async move {
+    //     let _ = evaluator(3, values4, result_in4, dict4).await;
+    // });
 
     let mut total = 0;
     for (_, _) in values.iter().enumerate() {
@@ -62,10 +66,12 @@ async fn main2() -> Result<(), ()> {
     }
     println!(" - {total}");
     // future.await;
-    let _ = t1.await.unwrap();
-    let _ = t2.await.unwrap();
-    let _ = t3.await.unwrap();
-    let _ = t4.await.unwrap();
+    for w in pool.iter_mut() {
+        let _ = w.await.unwrap();
+    }
+    // let _ = t2.await.unwrap();
+    // let _ = t3.await.unwrap();
+    // let _ = t4.await.unwrap();
     Ok(())
 }
 
@@ -76,6 +82,7 @@ async fn evaluator(
     dict: Arc<Box<Vec<usize>>>,
 ) -> Result<(), ()> {
     let mut i = nth;
+    println!("process{nth}: start");
     while i < input.len() {
         let val = input[i];
         let r = if let Some((i, _)) = dict.iter().enumerate().find(|entry| *(entry.1) == val) {
@@ -84,9 +91,12 @@ async fn evaluator(
             -1_isize
         };
         output.send(r).await.unwrap();
-        i += 4;
+        if i == input.len() / 2 + nth {
+            println!("process{nth}: half");
+        }
+        i += NUM_WORKERS;
     }
-    // println!("process{nth}: {i}");
+    println!("process{nth}: done");
     return Ok(());
 }
 
