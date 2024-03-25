@@ -7,7 +7,7 @@ use {
     }, // tokio_stream::{self as stream, StreamExt},
 };
 
-const LIMIT: usize = 1_000_000;
+const LIMIT: usize = 10_000_000;
 const BUFF_SIZE: usize = 10;
 
 #[tokio::main]
@@ -19,79 +19,60 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-fn main1() -> Result<(), ()> {
-    let dict = build_dict();
-    let values = build_sequence();
-    println!("Hello, world: {:?}!", &dict[6400..6580]);
-    println!("Hello, world: {:?}!", &values[6400..6580]);
-    let x: isize = values
-        .iter()
-        .map(|x| {
-            if let Some((i, _)) = dict.iter().enumerate().find(|entry| entry.1 == x) {
-                i as isize
-            } else {
-                -1_isize
-            }
-        })
-        .sum();
-    println!("{x}");
-    Ok(())
-}
-
 async fn main2() -> Result<(), ()> {
-    // let pool = ThreadPool::new().expect("failed");
-    let future = helloworld();
+    // let future = helloworld();
     let dict = Arc::new(Box::new(build_dict()));
     let values = Arc::new(Box::new(build_sequence()));
 
     // channels
     // let (mut data_in, mut data_out) = mpsc::channel::<usize>(BUFF_SIZE);
 
-    let (mut result_in, mut _result_out) = mpsc::channel::<usize>(BUFF_SIZE);
+    let (mut result_in, mut result_out) = mpsc::channel::<isize>(BUFF_SIZE);
 
     // receiver
     let dict1 = dict.clone();
     let result_in1 = result_in.clone();
     let values1 = values.clone();
     let t1 = tokio::spawn(async move {
-        let _ = evaluator(1, values1, result_in1, dict1).await;
+        let _ = evaluator(0, values1, result_in1, dict1).await;
     });
     let dict2 = dict.clone();
     let result_in2 = result_in.clone();
     let values2 = values.clone();
-    // let data_out2 = data_out.clone();
     let t2 = tokio::spawn(async move {
-        let _ = evaluator(2, values2, result_in2, dict2).await;
+        let _ = evaluator(1, values2, result_in2, dict2).await;
+    });
+    let dict3 = dict.clone();
+    let result_in3 = result_in.clone();
+    let values3 = values.clone();
+    let t3 = tokio::spawn(async move {
+        let _ = evaluator(1, values3, result_in3, dict3).await;
+    });
+    let dict4 = dict.clone();
+    let result_in4 = result_in.clone();
+    let values4 = values.clone();
+    let t4 = tokio::spawn(async move {
+        let _ = evaluator(1, values4, result_in4, dict4).await;
     });
 
-    // sender
-    // tokio::spawn(async move {
-    //     for (_i, d) in values.iter().enumerate() {
-    //         data_in.send(*d).await.unwrap();
-    //     }
-    // });
-    // let _ = main1();
-    // let x: isize = values
-    //     .iter()
-    //     .map(|x| {
-    //         if let Some((i, _)) = dict.iter().enumerate().find(|entry| entry.1 == x) {
-    //             i as isize
-    //         } else {
-    //             -1_isize
-    //         }
-    //     })
-    //     .sum();
-    // println!("{x}");
-    future.await;
+    let mut total = 0;
+    for (_, _) in values.iter().enumerate() {
+        let r = result_out.recv().await.unwrap();
+        total += r;
+    }
+    println!(" - {total}");
+    // future.await;
     let _ = t1.await.unwrap();
     let _ = t2.await.unwrap();
+    let _ = t3.await.unwrap();
+    let _ = t4.await.unwrap();
     Ok(())
 }
 
 async fn evaluator(
     nth: usize,
     input: Arc<Box<Vec<usize>>>,
-    _output: Sender<usize>,
+    output: Sender<isize>,
     dict: Arc<Box<Vec<usize>>>,
 ) -> Result<(), ()> {
     let mut i = nth;
@@ -102,9 +83,10 @@ async fn evaluator(
         } else {
             -1_isize
         };
-        println!("{r}");
-        i += 2;
+        output.send(r).await.unwrap();
+        i += 4;
     }
+    // println!("process{nth}: {i}");
     return Ok(());
 }
 
@@ -135,4 +117,23 @@ fn build_dict() -> Vec<usize> {
         pre = *p;
     }
     vec
+}
+
+fn main1() -> Result<(), ()> {
+    let dict = build_dict();
+    let values = build_sequence();
+    println!("Hello, world: {:?}!", &dict[6400..6580]);
+    println!("Hello, world: {:?}!", &values[6400..6580]);
+    let x: isize = values
+        .iter()
+        .map(|x| {
+            if let Some((i, _)) = dict.iter().enumerate().find(|entry| entry.1 == x) {
+                i as isize
+            } else {
+                -1_isize
+            }
+        })
+        .sum();
+    println!("{x}");
+    Ok(())
 }
