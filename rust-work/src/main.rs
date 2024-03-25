@@ -1,10 +1,10 @@
 #![allow(dead_code, unused_mut)]
 use {
+    std::sync::Arc,
     tokio::{
         sync::mpsc::{self, Receiver, Sender},
         time::Instant,
-    },
-    // tokio_stream::{self as stream, StreamExt},
+    }, // tokio_stream::{self as stream, StreamExt},
 };
 
 const LIMIT: usize = 1_000_000;
@@ -41,17 +41,35 @@ fn main1() -> Result<(), ()> {
 async fn main2() -> Result<(), ()> {
     // let pool = ThreadPool::new().expect("failed");
     let future = helloworld();
-    let dict = build_dict();
-    let values = build_sequence();
-    let (mut data_in, mut data_out) = mpsc::channel::<usize>(BUFF_SIZE);
+    let dict = Arc::new(Box::new(build_dict()));
+    let values = Arc::new(Box::new(build_sequence()));
+
+    // channels
+    // let (mut data_in, mut data_out) = mpsc::channel::<usize>(BUFF_SIZE);
+
     let (mut result_in, mut _result_out) = mpsc::channel::<usize>(BUFF_SIZE);
+
+    // receiver
+    let dict1 = dict.clone();
     let result_in1 = result_in.clone();
-    let t = tokio::spawn(async move { evaluator(1, data_out, result_in1, &dict).await });
-    tokio::spawn(async move {
-        for (_i, d) in values.iter().enumerate() {
-            data_in.send(*d).await.unwrap();
-        }
+    let values1 = values.clone();
+    let t1 = tokio::spawn(async move {
+        let _ = evaluator(1, values1, result_in1, dict1).await;
     });
+    let dict2 = dict.clone();
+    let result_in2 = result_in.clone();
+    let values2 = values.clone();
+    // let data_out2 = data_out.clone();
+    let t2 = tokio::spawn(async move {
+        let _ = evaluator(2, values2, result_in2, dict2).await;
+    });
+
+    // sender
+    // tokio::spawn(async move {
+    //     for (_i, d) in values.iter().enumerate() {
+    //         data_in.send(*d).await.unwrap();
+    //     }
+    // });
     // let _ = main1();
     // let x: isize = values
     //     .iter()
@@ -65,20 +83,29 @@ async fn main2() -> Result<(), ()> {
     //     .sum();
     // println!("{x}");
     future.await;
-    let _ = t.await.unwrap();
+    let _ = t1.await.unwrap();
+    let _ = t2.await.unwrap();
     Ok(())
 }
 
 async fn evaluator(
-    _i: usize,
-    mut input: Receiver<usize>,
+    nth: usize,
+    input: Arc<Box<Vec<usize>>>,
     _output: Sender<usize>,
-    _dist: &[usize],
+    dict: Arc<Box<Vec<usize>>>,
 ) -> Result<(), ()> {
-    if let Some(val) = input.recv().await {
-        println!("{val}");
+    let mut i = nth;
+    while i < input.len() {
+        let val = input[i];
+        let r = if let Some((i, _)) = dict.iter().enumerate().find(|entry| *(entry.1) == val) {
+            i as isize
+        } else {
+            -1_isize
+        };
+        println!("{r}");
+        i += 2;
     }
-    Ok(())
+    return Ok(());
 }
 
 async fn helloworld() {
