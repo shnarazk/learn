@@ -11,6 +11,7 @@ use {
     },
     std::io::{self, stdout, Result},
 };
+mod errors;
 mod tui;
 
 #[derive(Debug, Default)]
@@ -93,6 +94,7 @@ impl Widget for &App {
 }
 
 fn main() -> Result<()> {
+    errors::install_hooks()?;
     let mut terminal = tui::init()?;
     let app_result = App::default().run(&mut terminal);
     let _ = tui::restore();
