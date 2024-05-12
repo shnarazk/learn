@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Default, Debug)]
 pub enum CurrentScreen {
     #[default]
@@ -6,7 +8,20 @@ pub enum CurrentScreen {
     Exiting,
 }
 
+impl PartialEq for CurrentScreen {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (CurrentScreen::Main, CurrentScreen::Main)
+            | (CurrentScreen::Editing, CurrentScreen::Editing)
+            | (CurrentScreen::Exiting, CurrentScreen::Exiting) => true,
+            _ => false,
+        }
+    }
+}
+
+#[derive(Default, Debug)]
 pub enum CurrentlyEditing {
+    #[default]
     Key,
     Value,
 }
@@ -15,17 +30,17 @@ pub enum CurrentlyEditing {
 pub struct App {
     pub key_input: String,
     pub value_input: String,
-    pub pairs: HashMap<Sring, Strig>,
+    pub pairs: HashMap<String, String>,
     pub current_screen: CurrentScreen,
-    pub currently_edting: Option<CurrentlyEditing>,
+    pub currently_editing: Option<CurrentlyEditing>,
 }
 
 impl App {
     pub fn new() -> App {
         App {
             key_input: String::new(),
-            value_input: Sring::new(),
-            pairs: HAshMap::new(),
+            value_input: String::new(),
+            pairs: HashMap::new(),
             current_screen: CurrentScreen::Main,
             currently_editing: None,
         }
@@ -35,7 +50,21 @@ impl App {
             .insert(self.key_input.clone(), self.value_input.clone());
         self.key_input = String::new();
         self.value_input = String::new();
-        self.current_edting = None;
+        self.currently_editing = None;
+    }
+    pub fn toggle_editing(&mut self) {
+        if let Some(edit_mode) = &self.currently_editing {
+            match edit_mode {
+                CurrentlyEditing::Key => {
+                    self.currently_editing = Some(CurrentlyEditing::Value);
+                }
+                CurrentlyEditing::Value => {
+                    self.currently_editing = Some(CurrentlyEditing::Key);
+                }
+            };
+        } else {
+            self.currently_editing = Some(CurrentlyEditing::Key);
+        }
     }
     pub fn print_json(&self) -> serde_json::Result<()> {
         let output = serde_json::to_string(&self.pairs)?;
