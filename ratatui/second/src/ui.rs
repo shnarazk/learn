@@ -26,24 +26,21 @@ pub fn ui(f: &mut Frame, app: &App) {
         Style::default().fg(Color::Green),
     ))
     .block(title_block);
-
     f.render_widget(title, chunks[0]);
-    let mut list_items = Vec::<ListItem>::new();
 
+    let mut list_items = Vec::<ListItem>::new();
     for key in app.pairs.keys() {
         list_items.push(ListItem::new(Line::from(Span::styled(
             format!("{: <25} : {}", key, app.pairs.get(key).unwrap()),
             Style::default().fg(Color::Yellow),
         ))));
     }
-
     let list = List::new(list_items);
     f.render_widget(list, chunks[1]);
 
     let current_navigation_text = vec![
         match app.current_screen {
             CurrentScreen::Main => Span::styled("通常モード", Style::default().fg(Color::Green)),
-            // CurrentScreen::Main => Span::styled("Normal Mode", Style::default().fg(Color::Green)),
             CurrentScreen::Editing => {
                 Span::styled("Editing Mode", Style::default().fg(Color::Yellow))
             }
@@ -68,9 +65,9 @@ pub fn ui(f: &mut Frame, app: &App) {
             }
         },
     ];
+
     let mode_footer = Paragraph::new(Line::from(current_navigation_text))
         .block(Block::default().borders(Borders::ALL));
-
     let current_keys_hint = {
         match app.current_screen {
             CurrentScreen::Main => Span::styled(
@@ -87,6 +84,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             ),
         }
     };
+
     let key_notes_footer =
         Paragraph::new(Line::from(current_keys_hint)).block(Block::default().borders(Borders::ALL));
 
