@@ -122,7 +122,7 @@ pub fn ui(f: &mut Frame, app: &App) {
         f.render_widget(key_text, popup_chunks[0]);
 
         let value_text = Paragraph::new(app.value_input.clone()).block(value_block);
-        f.render_widget(value_text, popup_chunks[0]);
+        f.render_widget(value_text, popup_chunks[1]);
     }
     if CurrentScreen::Exiting == app.current_screen {
         f.render_widget(Clear, f.size());
