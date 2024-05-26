@@ -1,4 +1,4 @@
-import Mathlib.Data.Nat.Basic
+-- import Mathlib.Data.Nat.Basic
 import Lean
 
 open Nat
@@ -17,10 +17,10 @@ def fib : Nat → Nat
 -- #eval fib 4
 -- #eval fib 5
 
-lemma fib_is_fib2 (n : Nat) : fib (n + 2) = fib (n + 1) + fib n := by
-  induction n with
-  | zero => repeat rw [fib]
-  | succ n' _ => rw [fib]
+-- lemma fib_is_fib2 (n : Nat) : fib (n + 2) = fib (n + 1) + fib n := by
+--   induction n with
+--   | zero => repeat rw [fib]
+--   | succ n' _ => rw [fib]
 
 -- compute pi
 def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
@@ -68,4 +68,4 @@ def process (datafilename : String) : IO Unit := do
 def readData (datafilename : String) : IO (Array String) := do
      IO.FS.lines datafilename
 
-#eval readData "lakefile.lean"
+-- #eval readData "lakefile.lean"
