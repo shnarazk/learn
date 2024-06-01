@@ -36,22 +36,87 @@ variable (x y z : α)
 #check (sup_le : x ≤ z → y ≤ z → x ⊔ y ≤ z)
 
 example : x ⊓ y = y ⊓ x := by
-  sorry
+  apply le_antisymm
+  . apply le_inf
+    . exact inf_le_right
+    . exact inf_le_left
+  . apply le_inf
+    . exact inf_le_right
+    . exact inf_le_left
 
 example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
-  sorry
+  apply le_antisymm
+  . apply le_inf
+    . have L1 : (x ⊓ y) ⊓ z ≤ x ⊓ y := inf_le_left
+      have L2 : x ⊓ y ≤ x := inf_le_left
+      exact le_trans L1 L2
+    . -- this branch requires le_inf
+      have L1 : (x ⊓ y) ⊓ z ≤ y := by
+        have L11 : (x ⊓ y) ⊓ z ≤ x ⊓ y := inf_le_left
+        have L12 : x ⊓ y ≤ y := inf_le_right
+        exact le_trans L11 L12
+      have L2 : (x ⊓ y) ⊓ z ≤ z := inf_le_right
+      exact le_inf L1 L2
+  . apply le_inf
+    . have L1 : x ⊓ (y ⊓ z) ≤ x := inf_le_left
+      have L2 : x ⊓ (y ⊓ z) ≤ y := by
+        have L21 : x ⊓ (y ⊓ z) ≤ y ⊓ z := inf_le_right
+        have L22 : y ⊓ z ≤ y := inf_le_left
+        exact le_trans L21 L22
+      exact le_inf L1 L2
+    . have L1 : x ⊓ (y ⊓ z) ≤ y ⊓ z := inf_le_right
+      have L2 : y ⊓ z ≤ z := inf_le_right
+      exact le_trans L1 L2
 
 example : x ⊔ y = y ⊔ x := by
-  sorry
+  apply le_antisymm
+  . have L1 : x ≤ y ⊔ x := le_sup_right
+    have L2 : y ≤ y ⊔ x := le_sup_left
+    exact sup_le L1 L2
+  . have L1 : y ≤ x ⊔ y := le_sup_right
+    have L2 : x ≤ x ⊔ y := le_sup_left
+    exact sup_le L1 L2
 
 example : x ⊔ y ⊔ z = x ⊔ (y ⊔ z) := by
-  sorry
+  apply le_antisymm
+  . have L1 : x ⊔ y ≤ x ⊔ (y ⊔ z) := by
+      have L11 : x ≤ x ⊔ (y ⊔ z) := le_sup_left
+      have L12 : y ≤ x ⊔ (y ⊔ z) := by
+        have L121 : y ≤ y ⊔ z := le_sup_left
+        have L122 : y ⊔ z ≤ x ⊔ (y ⊔ z) := le_sup_right
+        exact le_trans L121 L122
+      exact sup_le L11 L12
+    have L2 : z ≤ x ⊔ (y ⊔ z) := by
+      have L21 : z ≤ y ⊔ z := le_sup_right
+      have L22 : y ⊔ z ≤ x ⊔ (y ⊔ z) := le_sup_right
+      exact le_trans L21 L22
+    apply sup_le L1 L2
+  . have L1 : x ≤ x ⊔ y ⊔ z := by
+      have L11 : x ≤ x ⊔ y := le_sup_left
+      have L12 : x ⊔ y ≤ x ⊔ y ⊔ z := le_sup_left
+      apply le_trans L11 L12
+    have L2 : y ⊔ z ≤ x ⊔ y ⊔ z := by
+      have L21 : y ≤ x ⊔ y ⊔ z := by
+        have L211 : y ≤ x ⊔ y := le_sup_right
+        have L212 : x ⊔ y ≤ x ⊔ y ⊔ z := le_sup_left
+        apply le_trans L211 L212
+      have L22 : z ≤ x ⊔ y ⊔ z := le_sup_right
+      apply sup_le L21 L22
+    apply sup_le L1 L2
 
 theorem absorb1 : x ⊓ (x ⊔ y) = x := by
-  sorry
+  apply le_antisymm
+  . apply inf_le_left
+  . apply le_inf
+    . apply le_refl
+    . apply le_sup_left
 
 theorem absorb2 : x ⊔ x ⊓ y = x := by
-  sorry
+  apply le_antisymm
+  . apply sup_le
+    . apply le_refl
+    . apply inf_le_left
+  . apply le_sup_left
 
 end
 
@@ -70,10 +135,19 @@ variable {α : Type*} [Lattice α]
 variable (a b c : α)
 
 example (h : ∀ x y z : α, x ⊓ (y ⊔ z) = x ⊓ y ⊔ x ⊓ z) : a ⊔ b ⊓ c = (a ⊔ b) ⊓ (a ⊔ c) := by
-  sorry
+  rw [h]
+  rw [@inf_comm _ _ (a ⊔ b) a, absorb1]
+  rw [@inf_comm _ _ (a ⊔ b), h, ← sup_assoc]
+  rw [@inf_comm _ _ c a, sup_inf_self]
+  rw [@inf_comm _ _ c b]
 
 example (h : ∀ x y z : α, x ⊔ y ⊓ z = (x ⊔ y) ⊓ (x ⊔ z)) : a ⊓ (b ⊔ c) = a ⊓ b ⊔ a ⊓ c := by
-  sorry
+  rw [h]
+  rw [@sup_comm _ _ (a ⊓ b) a, sup_inf_self]
+  rw [@sup_comm _ _ (a ⊓ b) c, h]
+  rw [← inf_assoc]
+  rw [@sup_comm _ _ c a, inf_sup_self]
+  rw [@sup_comm _ _ c b]
 
 end
 
@@ -87,13 +161,37 @@ variable (a b c : R)
 #check (mul_nonneg : 0 ≤ a → 0 ≤ b → 0 ≤ a * b)
 
 example (h : a ≤ b) : 0 ≤ b - a := by
-  sorry
+  rw [← add_right_neg a]
+  rw [sub_eq_add_neg]
+  apply add_le_add_right
+  exact h
 
 example (h: 0 ≤ b - a) : a ≤ b := by
-  sorry
+   rw [← zero_add a, ← zero_add b]
+   rw [← add_left_neg a]
+   nth_rewrite 2 [add_assoc]
+   rw [add_comm a b]
+   rw [← add_assoc, add_comm (-a) b, ← sub_eq_add_neg]
+   apply add_le_add_right
+   rw [add_left_neg]
+   exact h
 
 example (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
-  sorry
+  have h'' : 0 ≤ b - a := by
+    rw [← add_right_neg a]
+    rw [sub_eq_add_neg]
+    apply add_le_add_right
+    exact h
+  rw [← zero_add (a * c), ← zero_add (b * c)]
+  rw [← add_left_neg (a * c)]
+  nth_rewrite 2 [add_assoc]
+  rw [add_comm (a * c)]
+  rw [← add_assoc]
+  apply add_le_add_right
+  rw [add_left_neg, add_comm]
+  have M : -(a * c) = -a * c := by simp
+  rw [M, ← add_mul, ← sub_eq_add_neg]
+  exact mul_nonneg h'' h'
 
 end
 
@@ -106,7 +204,9 @@ variable (x y z : X)
 #check (dist_triangle x y z : dist x z ≤ dist x y + dist y z)
 
 example (x y : X) : 0 ≤ dist x y := by
-  sorry
+  have Z : dist x x ≤ dist x y + dist y x := dist_triangle x y x
+  rw [dist_self x, dist_comm y x, ← two_mul, mul_comm] at Z
+  apply nonneg_of_mul_nonneg_left Z
+  simp
 
 end
-
