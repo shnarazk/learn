@@ -38,33 +38,25 @@ theorem my_lemma3 :
   intro x y ε epos ele1 xlt ylt
   use my_lemma x y ε epos ele1 xlt ylt
 
+-- by using abs_mul, mul_le_mul, abs_nonneg, mul_lt_mul_right, and one_mul,
+-- prove the below
+#check abs_mul
+#check mul_le_mul
+#check abs_nonneg
+#check mul_lt_mul_right
+#check one_mul
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
-  have R : (x y : ℝ) → x < y → x ≤ y := by
-    intro
-    intro
-    intro X
-    exact le_of_lt X
   intro x y ε epos ele1 xlt ylt
   calc
     |x * y| = |x| * |y| := abs_mul x y
     _ ≤ |x| * ε := by
-      have Y1 : |y| ≤ 1 := by
-        have Y11 : |y| < 1 := lt_of_lt_of_le ylt ele1
-        apply R |y| 1
-        exact Y11
-      apply mul_le_mul
-      . exact le_refl |x|
-      . apply R |y| ε
-        exact ylt
-      . apply abs_nonneg
-      . apply abs_nonneg
-    _ < 1 * ε := by
-      rw [mul_comm]
-      have X1 : |x| < 1 := lt_of_lt_of_le xlt ele1
-      nth_rewrite 1 [mul_comm]
-      apply (mul_lt_mul_right epos).mpr
-      exact X1
+      apply mul_le_mul;
+      linarith;
+      linarith;
+      apply abs_nonneg;
+      apply abs_nonneg
+    _ < 1 * ε := by rw [mul_lt_mul_right ]; linarith; exact epos
     _ = ε := one_mul ε
 
 
