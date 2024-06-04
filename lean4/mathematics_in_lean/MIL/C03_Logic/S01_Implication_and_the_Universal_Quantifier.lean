@@ -132,8 +132,12 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x := by
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
   fun a b aleb ↦ add_le_add (mf aleb) (mg aleb)
 
-example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
-  sorry
+example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x := by
+  intro a b aleb
+  apply mul_le_mul_of_nonneg_left
+  { apply  mf aleb }
+  { exact nnc }
+  done
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
   sorry
