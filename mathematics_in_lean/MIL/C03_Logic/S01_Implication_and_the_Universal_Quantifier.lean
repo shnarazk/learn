@@ -157,7 +157,13 @@ example (ef : FnEven f) (eg : FnEven g) : FnEven fun x ↦ f x + g x := by
 
 
 example (of : FnOdd f) (og : FnOdd g) : FnEven fun x ↦ f x * g x := by
-  sorry
+  intro x
+  calc
+    (fun x ↦ f x * g x) x = f x * g x := rfl
+    _ = -f (-x) * -g (-x) := by rw [of, og]
+    _ = f (-x) * g (-x) := by linarith
+    _ = (fun x ↦ f x * g x) (-x) := by simp
+  done
 
 example (ef : FnEven f) (og : FnOdd g) : FnOdd fun x ↦ f x * g x := by
   sorry
