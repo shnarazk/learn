@@ -204,11 +204,12 @@ example : s ⊆ s := by
   intro x xs
   exact xs
 
-theorem Subset.refl : s ⊆ s := fun x xs ↦ xs
+theorem Subset.refl : s ⊆ s := fun _ xs ↦ xs
 
 theorem Subset.trans : r ⊆ s → s ⊆ t → r ⊆ t := by
-  sorry
-
+  intro rs st
+  intro x X
+  exact st (rs X)
 end
 
 section
@@ -218,8 +219,11 @@ variable (s : Set α) (a b : α)
 def SetUb (s : Set α) (a : α) :=
   ∀ x, x ∈ s → x ≤ a
 
-example (h : SetUb s a) (h' : a ≤ b) : SetUb s b :=
-  sorry
+example (h : SetUb s a) (h' : a ≤ b) : SetUb s b := by
+  intro x xs
+  have xa : x ≤ a := by apply h x; exact xs
+  apply le_trans xa h'
+  done
 
 end
 
