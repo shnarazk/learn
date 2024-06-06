@@ -179,11 +179,21 @@ example (of : FnOdd f) (og : FnOdd g) : FnEven fun x ↦ f x * g x := by
   done
 
 example (ef : FnEven f) (og : FnOdd g) : FnOdd fun x ↦ f x * g x := by
-  sorry
+  intro x
+  calc
+    (fun x ↦ f x * g x) x = f x * g x := by rfl
+    _ = f (-x) * -g (-x) := by rw [ef, og]
+    _ = -f (-x) * g (-x) := by linarith
+    _ = -((fun (x) ↦ f x * g x) (-x)) := by simp
+  done
 
 example (ef : FnEven f) (og : FnOdd g) : FnEven fun x ↦ f (g x) := by
-  sorry
-
+  intro x
+  calc
+    (fun x ↦ f (g x)) x = f (g x) := by simp
+    _ = f (- g (-x)) := by rw [← og]
+    _ = f (g (-x)) := by rw [← ef]
+  done
 end
 
 section
