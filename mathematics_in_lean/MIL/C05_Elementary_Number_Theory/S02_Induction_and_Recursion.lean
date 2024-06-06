@@ -1,5 +1,5 @@
 import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Algebra.BigOperators.Basic
+-- import Mathlib.Algebra.BigOperators.Basic
 import MIL.Common
 
 example (n : Nat) : n.succ ≠ Nat.zero :=
