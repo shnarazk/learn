@@ -52,7 +52,12 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   apply fnUb_add ubfa ubgb
 
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
-  sorry
+  rcases lbf with ⟨a, lbfa⟩
+  rcases lbg with ⟨b, lbgb⟩
+  use a + b
+  intro x
+  apply add_le_add (lbfa x) (lbgb x)
+  done
 
 example {c : ℝ} (ubf : FnHasUb f) (h : c ≥ 0) : FnHasUb fun x ↦ c * f x := by
   sorry
