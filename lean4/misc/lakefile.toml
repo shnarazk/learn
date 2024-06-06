@@ -1,0 +1,21 @@
+name = "Le"
+defaultTargets = ["le"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+
+[[lean_lib]]
+name = "Le"
+
+[[lean_lib]]
+name = "Combinator"
+
+[[lean_exe]]
+name = "le"
+root = "Main"
