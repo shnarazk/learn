@@ -7,8 +7,15 @@ namespace C03S01
 
 #check ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε
 
-theorem my_lemma : ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε :=
-  sorry
+theorem my_lemma : ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
+  intro x y ze _ zo xz yz
+  rw [abs_mul]
+  have Y: |y| ≤ ze := by linarith
+  have X: 0 ≤ |x| := by apply abs_nonneg
+  calc
+    |x| * |y| ≤ |x| * ze := by apply mul_le_mul_of_nonneg_left Y X
+    _ < ze := by exact mul_lt_of_lt_of_le_one_of_nonneg xz zo X
+  done
 
 section
 variable (a b δ : ℝ)
@@ -21,8 +28,14 @@ variable (ha : |a| < δ) (hb : |b| < δ)
 
 end
 
-theorem my_lemma2 : ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε :=
-  sorry
+theorem my_lemma2 : ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
+  intro x y ε ze zo xe ye
+  apply my_lemma
+  { exact ze }
+  { exact zo }
+  { exact xe }
+  { exact ye }
+  done
 
 section
 variable (a b δ : ℝ)
@@ -130,7 +143,7 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x := by
   apply mg aleb
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
-  fun a b aleb ↦ add_le_add (mf aleb) (mg aleb)
+  fun _ _ aleb ↦ add_le_add (mf aleb) (mg aleb)
 
 example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x := by
   intro a b aleb
