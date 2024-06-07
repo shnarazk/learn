@@ -32,11 +32,22 @@ example (h : ∀ a, ∃ x, f x > a) : ¬FnHasUb f := by
   have : f x ≤ a := fnuba x
   linarith
 
-example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f :=
-  sorry
+example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f := by
+  intro fnhl
+  rcases fnhl with ⟨a, fnhl'⟩
+  rcases h a with ⟨x, hx⟩
+  have xh: a ≤ f x := by apply fnhl' x
+  linarith
 
-example : ¬FnHasUb fun x ↦ x :=
-  sorry
+/-
+  b > a について証明したかったのだが、具体例を挙げないといけない。
+-/
+example : ¬FnHasUb fun x ↦ x := by
+  intro fnhu
+  rcases fnhu with ⟨a, fnhu'⟩
+  have y : a + 1 ≤ a := by apply fnhu' (a + 1)
+  linarith
+  done
 
 #check (not_le_of_gt : a > b → ¬a ≤ b)
 #check (not_lt_of_ge : a ≥ b → ¬a < b)
@@ -136,4 +147,3 @@ example (h : 0 < 0) : a > 37 := by
   contradiction
 
 end
-
