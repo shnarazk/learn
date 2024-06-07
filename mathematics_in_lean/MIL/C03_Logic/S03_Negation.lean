@@ -55,7 +55,19 @@ example : ¬FnHasUb fun x ↦ x := by
 #check (le_of_not_gt : ¬a > b → a ≤ b)
 
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  sorry
+  apply lt_of_not_ge
+  intro AB
+  apply absurd h'   -- 矛盾を前提にとれるなら任意の命題をゴールとして残す？
+  apply not_lt_of_ge (h AB)
+
+/-
+  別解(absurdが必要かと思ったら、linarithで整理するうちに解けてしまった)
+-/
+example (h : Monotone f) (h' : f a < f b) : a < b := by
+  apply lt_of_not_ge
+  intro AB
+  have h'': f a ≥ f b := by apply h AB
+  linarith
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry
