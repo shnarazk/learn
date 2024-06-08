@@ -96,6 +96,20 @@ example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
   have x0: x ≤ 0 := by exact forall_lt_iff_le'.mp h
   exact x0
 
+/-
+  `h x xp`　とはなんなのか展開してみる
+-/
+example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
+  apply le_of_not_gt
+  intro xp
+  -- h に適切なパラメータを与えてinstantiateしていく
+  let ε3 := h (3 : ℝ) -- 3 > 0 → x < 3
+  let ε0 := h (0 : ℝ) -- 0 > 0 → x < 0
+  let εx := h x       -- x > 0 → x < x := h x xp
+  -- 従って2つのパラメータを与えることで矛盾命題を導出できる
+  let p := h x xp -- = x < x := h x xj u
+  linarith
+
 end
 
 section
