@@ -139,15 +139,26 @@ example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
   apply h
   intro x
-  show P x
   by_contra h''
-  exact h' ⟨x, h''⟩  -- rcasesの逆操作のようだ
+  -- 存在しないと主張する命題に存在する事実を食わせた
+  let _panic := h' ⟨x, h''⟩
+  exact h' ⟨x, h''⟩  -- `h'に対するrcases`の逆操作のようだ
 
 example (h : ¬¬Q) : Q := by
-  sorry
+  apply not_not.mp -- これは `by_contra` と同じこと
+  exact h
+
+example (h : ¬¬Q) : Q := by
+  by_contra h'
+  exact h h'
 
 example (h : Q) : ¬¬Q := by
-  sorry
+  by_contra h'
+  exact absurd h h'
+
+example (h : Q) : ¬¬Q := by
+  intro x
+  exact x h
 
 end
 
@@ -155,7 +166,15 @@ section
 variable (f : ℝ → ℝ)
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
-  sorry
+  intro x0
+  by_contra h'
+  apply h
+  use x0
+  intro x1
+  apply le_of_not_gt
+  intro h''
+  apply h'
+  use x1
 
 example (h : ¬∀ a, ∃ x, f x > a) : FnHasUb f := by
   push_neg at h
