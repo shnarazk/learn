@@ -186,7 +186,9 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   exact h
 
 example (h : ¬Monotone f) : ∃ x y, x ≤ y ∧ f y < f x := by
-  sorry
+  dsimp only [Monotone] at h
+  push_neg at h
+  exact h
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   contrapose! h
@@ -195,7 +197,7 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
 example (x : ℝ) (h : ∀ ε > 0, x ≤ ε) : x ≤ 0 := by
   contrapose! h
   use x / 2
-  constructor <;> linarith
+  constructor <;> linarith -- 次節にて説明
 
 end
 
