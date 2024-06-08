@@ -116,16 +116,22 @@ section
 variable {α : Type*} (P : α → Prop) (Q : Prop)
 
 example (h : ¬∃ x, P x) : ∀ x, ¬P x := by
-  sorry
+  intro x p0
+  apply h   -- これがわからん
+  use x
 
 example (h : ∀ x, ¬P x) : ¬∃ x, P x := by
-  sorry
+  intro x
+  rcases x with ⟨x0, p0⟩
+  exact absurd p0 (h x0)
 
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
-  sorry
+  exact not_forall.mp h
 
 example (h : ∃ x, ¬P x) : ¬∀ x, P x := by
-  sorry
+  intro pa
+  rcases h with ⟨x0, p0⟩
+  exact absurd (pa x0) p0
 
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
