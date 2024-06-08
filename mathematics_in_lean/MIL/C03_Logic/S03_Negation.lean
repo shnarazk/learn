@@ -70,17 +70,31 @@ example (h : Monotone f) (h' : f a < f b) : a < b := by
   linarith
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
-  sorry
+  intro h1
+  have : f a ≤ f b := h1 h
+  linarith
 
+-- use counterexample
 example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
   intro h
   let f := fun x : ℝ ↦ (0 : ℝ)
-  have monof : Monotone f := by sorry
+  have monof : Monotone f := monotone_const
   have h' : f 1 ≤ f 0 := le_refl _
-  sorry
+  -- have : 1 ≤ 0 := by apply h monof h' -- 型制約が解消できない!
+  have : (1 : ℝ) ≤ 0 := by apply h monof h'
+  linarith
+
+/- Use le_of_not_gt
+    > In addition to equations and inequalities in the context, linarith will use additional inequalities that you pass as arguments.
+-/
+example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
+  apply le_of_not_gt
+  intro xp
+  linarith [h x xp]
 
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
-  sorry
+  have x0: x ≤ 0 := by exact forall_lt_iff_le'.mp h
+  exact x0
 
 end
 
