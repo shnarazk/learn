@@ -128,18 +128,20 @@ example (h : ∀ x, ¬P x) : ¬∃ x, P x := by
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   exact not_forall.mp h
 
+
 example (h : ∃ x, ¬P x) : ¬∀ x, P x := by
   intro pa
   rcases h with ⟨x0, p0⟩
   exact absurd (pa x0) p0
 
+/- 別解作れず -/
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
   apply h
   intro x
   show P x
   by_contra h''
-  exact h' ⟨x, h''⟩
+  exact h' ⟨x, h''⟩  -- rcasesの逆操作のようだ
 
 example (h : ¬¬Q) : Q := by
   sorry
