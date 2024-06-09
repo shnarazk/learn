@@ -147,7 +147,18 @@ theorem mul_one (a : G) : a * 1 = a := by
   exact one_mul a
 
 theorem mul_inv_rev (a b : G) : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
-  sorry
+  calc
+   (a * b)⁻¹ = (a * b)⁻¹ * 1 := by rw [mul_one] ; done
+    _ = (a * b)⁻¹ * (a * a⁻¹) := by rw [← mul_right_inv] ; done
+    _ = (a * b)⁻¹ * a * a⁻¹ := by rw [mul_assoc] ; done
+    _ = (a * b)⁻¹ * a * (1 * a⁻¹) := by rw [one_mul] ; done
+    _ = (a * b)⁻¹ * a * ((b * b⁻¹) * a⁻¹) := by rw [← mul_right_inv] ; done
+    _ = (a * b)⁻¹ * a * (b * b⁻¹) * a⁻¹ := by rw [← mul_assoc] ; done
+    _ = (a * b)⁻¹ * a * b * b⁻¹ * a⁻¹ := by rw [← mul_assoc] ; done
+    _ = (a * b)⁻¹ * (a * b) * b⁻¹ * a⁻¹ := by rw [← mul_assoc] ; done
+    _ = 1 * b⁻¹ * a⁻¹ := by rw [mul_left_inv]
+    _ = b⁻¹ * a⁻¹ := by rw [one_mul]
+  done
 
 end MyGroup
 
