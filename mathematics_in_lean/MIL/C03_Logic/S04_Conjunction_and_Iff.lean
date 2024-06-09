@@ -135,12 +135,26 @@ example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
   done
 
 theorem aux {x y : ℝ} (h : x ^ 2 + y ^ 2 = 0) : x = 0 :=
-  have h' : x ^ 2 = 0 := by sorry
+  have h' : x ^ 2 = 0 := by
+    have p1 : 0 ≤ x ^ 2 := sq_nonneg x
+    have p2 : 0 ≤ y ^ 2 := sq_nonneg y
+    rw [add_eq_zero_iff' p1 p2] at h
+    exact h.left
   pow_eq_zero h'
 
-example (x y : ℝ) : x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 :=
-  sorry
-
+example (x y : ℝ) : x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
+  constructor
+  {
+    intro h1
+    constructor
+    { exact aux h1 }
+    { rw [add_comm] at h1; exact aux h1 }
+   }
+  {
+    intro h2
+    rw [h2.left, h2.right]
+    norm_num
+  }
 section
 
 example (x : ℝ) : |x + 3| < 5 → -8 < x ∧ x < 2 := by
