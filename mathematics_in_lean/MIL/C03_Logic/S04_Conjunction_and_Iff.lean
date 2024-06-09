@@ -110,8 +110,29 @@ example {x y : ℝ} (h : x ≤ y) : ¬y ≤ x ↔ x ≠ y := by
 example {x y : ℝ} (h : x ≤ y) : ¬y ≤ x ↔ x ≠ y :=
   ⟨fun h₀ h₁ ↦ h₀ (by rw [h₁]), fun h₀ h₁ ↦ h₀ (le_antisymm h h₁)⟩
 
-example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y :=
-  sorry
+example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
+  constructor
+  {
+    intro h1
+    constructor
+    { exact h1.left }
+    { rcases h1 with ⟨l, r⟩ ; linarith }
+  }
+  {
+    intro h2
+    constructor
+    { exact h2.left }
+    {
+      intro h3
+      rcases h2 with ⟨l, r⟩ ;
+      have r' : ¬ x = y := r
+      have xy : x = y := by
+        have h3' : ¬ x < y := by linarith
+        exact eq_iff_le_not_lt.mpr ⟨l, h3'⟩
+      exact absurd xy r'
+    }
+  }
+  done
 
 theorem aux {x y : ℝ} (h : x ^ 2 + y ^ 2 = 0) : x = 0 :=
   have h' : x ^ 2 = 0 := by sorry
