@@ -135,10 +135,16 @@ variable {G : Type*} [Group G]
 namespace MyGroup
 
 theorem mul_right_inv (a : G) : a * a⁻¹ = 1 := by
+  have a1 : 1 * 1 = 1 := one_mul 1
+  have a2 : (1 : G)⁻¹ * 1 = 1 := mul_left_inv 1
+  have a3 : 1 * (1 : G)⁻¹ = 1 := sorry
   sorry
 
 theorem mul_one (a : G) : a * 1 = a := by
-  sorry
+  rw [← mul_left_inv a]
+  rw [← mul_assoc]
+  rw [mul_right_inv]
+  exact one_mul a
 
 theorem mul_inv_rev (a b : G) : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
   sorry

@@ -77,7 +77,7 @@ example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
 -- use counterexample
 example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
   intro h
-  let f := fun x : ℝ ↦ (0 : ℝ)
+  let f := fun _ : ℝ ↦ (0 : ℝ)
   have monof : Monotone f := monotone_const
   have h' : f 1 ≤ f 0 := le_refl _
   -- have : 1 ≤ 0 := by apply h monof h' -- 型制約が解消できない!
@@ -103,9 +103,9 @@ example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
   apply le_of_not_gt
   intro xp
   -- h に適切なパラメータを与えてinstantiateしていく
-  let ε3 := h (3 : ℝ) -- 3 > 0 → x < 3
-  let ε0 := h (0 : ℝ) -- 0 > 0 → x < 0
-  let εx := h x       -- x > 0 → x < x := h x xp
+  let _ε3 := h (3 : ℝ) -- 3 > 0 → x < 3
+  let _ε0 := h (0 : ℝ) -- 0 > 0 → x < 0
+  let _εx := h x       -- x > 0 → x < x := h x xp
   -- 従って2つのパラメータを与えることで矛盾命題を導出できる
   let p := h x xp -- = x < x := h x xj u
   linarith
@@ -212,7 +212,7 @@ example (h : 0 < 0) : a > 37 :=
   absurd h (lt_irrefl 0)
 
 example (h : 0 < 0) : a > 37 := by
-  have h' : ¬0 < 0 := lt_irrefl 0
+  have _h' : ¬0 < 0 := lt_irrefl 0
   contradiction
 
 end

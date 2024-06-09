@@ -146,8 +146,6 @@ example : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
     exact sq_nonneg z
   rw [abs_le']
   have NotZero : (0 : ℝ) < 2 := by linarith
-  have A : a ≤ a := by
-    exact le_refl a
   constructor
   . have Sq : (a - b) ^ 2 = a ^ 2 + b ^ 2 - a * b * 2 := by linarith
     rw [le_div_iff NotZero]

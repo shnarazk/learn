@@ -83,7 +83,7 @@ example (x y : ℝ) : (∃ z : ℝ, x < z ∧ z < y) → x < y := by
   exact lt_trans xltz zlty
 
 example (x y : ℝ) : (∃ z : ℝ, x < z ∧ z < y) → x < y :=
-  fun ⟨z, xltz, zlty⟩ ↦ lt_trans xltz zlty
+  fun ⟨_z, xltz, zlty⟩ ↦ lt_trans xltz zlty
 
 example : ∃ x : ℝ, 2 < x ∧ x < 4 := by
   use 5 / 2
@@ -116,7 +116,7 @@ example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
     intro h1
     constructor
     { exact h1.left }
-    { rcases h1 with ⟨l, r⟩ ; linarith }
+    { rcases h1 with ⟨_, r⟩ ; linarith }
   }
   {
     intro h2
