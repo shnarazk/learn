@@ -134,14 +134,16 @@ variable {G : Type*} [Group G]
 
 namespace MyGroup
 
--- have a1 : 1 * 1 = 1 := one_mul 1
--- have a2 : (1 : G)⁻¹ * 1 = 1 := mul_left_inv 1
--- have a3 : 1 * (1 : G)⁻¹ = 1 := sorry
 theorem mul_right_inv (a : G) : a * a⁻¹ = 1 := by
   calc
-    a * a⁻¹ = 1 * (a * a⁻¹) := by sorry -- rw [one_mul (a * a⁻¹)]
-    /-  _ = a⁻¹ * a * a * a⁻¹ := by rw [← mul_left_inv] ; done -/
-  done o
+    a * a⁻¹ = 1 * (a * a⁻¹) := by rw [one_mul (a * a⁻¹)]
+    _ = 1 * a * a⁻¹ := by rw [mul_assoc]
+    _ = (a * a⁻¹)⁻¹ * (a * a⁻¹) * a * a⁻¹ := by rw[← mul_left_inv]
+    _ = (a * a⁻¹)⁻¹ * a * (a⁻¹ * a) * a⁻¹ := by simp
+    _ = (a * a⁻¹)⁻¹ * a * 1 * a⁻¹ := by rw[mul_left_inv a]
+    _ = (a * a⁻¹)⁻¹ * a * a⁻¹ := by simp
+    _ = 1 := by simp
+  done
 
 theorem mul_one (a : G) : a * 1 = a := by
   rw [← mul_left_inv a]
