@@ -216,10 +216,27 @@ variable (a b c : α)
 
 example : ¬a < a := by
   rw [lt_iff_le_not_le]
-  sorry
+  intro h
+  rcases h with ⟨a1, a2⟩
+  exact absurd a1 a2
 
 example : a < b → b < c → a < c := by
   simp only [lt_iff_le_not_le]
-  sorry
+  intro h1 h2
+  constructor
+  {
+    rcases h1 with ⟨h11, h12⟩
+    rcases h2 with ⟨h21, h22⟩
+    exact le_trans h11 h21
+  }
+  {
+    intro y0
+    rw [← lt_iff_le_not_le] at h1
+    rw [← lt_iff_le_not_le] at h2
+    have P : ¬ c ≤ a := by
+      have Q : a < c := lt_trans h1 h2
+      sorry
+    exact absurd y0 P
+  }
 
 end
