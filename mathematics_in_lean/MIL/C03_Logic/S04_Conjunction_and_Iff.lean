@@ -136,9 +136,7 @@ example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
 
 theorem aux {x y : ℝ} (h : x ^ 2 + y ^ 2 = 0) : x = 0 :=
   have h' : x ^ 2 = 0 := by
-    have p1 : 0 ≤ x ^ 2 := sq_nonneg x
-    have p2 : 0 ≤ y ^ 2 := sq_nonneg y
-    rw [add_eq_zero_iff' p1 p2] at h
+    rw [add_eq_zero_iff' (pow_two_nonneg x) (pow_two_nonneg y)] at h
     exact h.left
   pow_eq_zero h'
 
@@ -174,7 +172,11 @@ theorem not_monotone_iff {f : ℝ → ℝ} : ¬Monotone f ↔ ∃ x y, x ≤ y �
   rfl
 
 example : ¬Monotone fun x : ℝ ↦ -x := by
-  sorry
+  rw [Monotone]
+  push_neg
+  use 0, 1
+  constructor <;> norm_num
+
 
 section
 variable {α : Type*} [PartialOrder α]
