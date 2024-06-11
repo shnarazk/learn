@@ -224,19 +224,14 @@ example : a < b → b < c → a < c := by
   simp only [lt_iff_le_not_le]
   intro h1 h2
   constructor
+  { exact le_trans h1.left h2.left }
   {
-    rcases h1 with ⟨h11, h12⟩
-    rcases h2 with ⟨h21, h22⟩
-    exact le_trans h11 h21
-  }
-  {
-    intro y0
+    by_contra P
     rw [← lt_iff_le_not_le] at h1
     rw [← lt_iff_le_not_le] at h2
-    have P : ¬ c ≤ a := by
-      have Q : a < c := lt_trans h1 h2
-      sorry
-    exact absurd y0 P
+    have Q : a < c := lt_trans h1 h2
+    rw [lt_iff_le_not_le] at Q
+    exact absurd P Q.right
   }
 
 end
