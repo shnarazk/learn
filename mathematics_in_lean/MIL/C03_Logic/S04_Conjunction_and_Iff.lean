@@ -184,7 +184,29 @@ variable (a b : α)
 
 example : a < b ↔ a ≤ b ∧ a ≠ b := by
   rw [lt_iff_le_not_le]
-  sorry
+  constructor
+  { intro h
+    constructor
+    { exact h.left }
+    {
+      rw [← lt_iff_le_not_le] at h
+      norm_num
+      exact ne_of_lt h
+    }
+  }
+  {
+    intro h
+    constructor
+    { exact h.left }
+    {
+      intro C
+      {
+        rcases h with ⟨h1, h2⟩
+        norm_num at h2
+        exact absurd (le_antisymm h1 C) h2
+      }
+    }
+  }
 
 end
 
