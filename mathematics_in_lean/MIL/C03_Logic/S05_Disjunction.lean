@@ -59,7 +59,9 @@ example : x < |y| → x < y ∨ x < -y := by
 namespace MyAbs
 
 theorem le_abs_self (x : ℝ) : x ≤ |x| := by
-  sorry
+  rcases le_or_gt 0 x with h | h
+  { rw [abs_of_nonneg h] }
+  { rw [abs_of_neg h] ; linarith }
 
 theorem neg_le_abs_self (x : ℝ) : -x ≤ |x| := by
   sorry
@@ -126,4 +128,3 @@ example (P : Prop) : ¬¬P → P := by
 
 example (P Q : Prop) : P → Q ↔ ¬P ∨ Q := by
   sorry
-
