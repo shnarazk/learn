@@ -7,11 +7,11 @@ def ConvergesTo (s : ℕ → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
 example : (fun x y : ℝ ↦ (x + y) ^ 2) = fun x y : ℝ ↦ x ^ 2 + 2 * x * y + y ^ 2 := by
-  ext
+  ext  -- congrにはできない
   ring
 
 example (a b : ℝ) : |a| = |a - b + b| := by
-  congr
+  congr  -- extにはできない, extは関数を「展開」するもの
   ring
 
 example {a : ℝ} (h : 1 < a) : a < a * a := by
@@ -22,7 +22,7 @@ example {a : ℝ} (h : 1 < a) : a < a * a := by
 theorem convergesTo_const (a : ℝ) : ConvergesTo (fun x : ℕ ↦ a) a := by
   intro ε εpos
   use 0
-  intro n nge
+  intro n _nge
   rw [sub_self, abs_zero]
   apply εpos
 
@@ -100,4 +100,3 @@ def ConvergesTo' (s : α → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
 end
-
