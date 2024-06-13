@@ -64,16 +64,87 @@ theorem le_abs_self (x : ℝ) : x ≤ |x| := by
   { rw [abs_of_neg h] ; linarith }
 
 theorem neg_le_abs_self (x : ℝ) : -x ≤ |x| := by
-  sorry
+  rcases le_or_gt 0 x with h | h
+  { rw [abs_of_nonneg h] ; linarith }
+  { rw [abs_of_neg h]}
 
 theorem abs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
-  sorry
+  rcases le_or_gt 0 x with hx | hx
+  {
+    rcases le_or_gt 0 y with hy | hy
+    { rw [abs_of_nonneg hx, abs_of_nonneg hy, abs_of_nonneg] ; linarith }
+    {
+      rcases le_or_gt 0 (x+y) with hxy | hxy
+      { rw [abs_of_nonneg hx, abs_of_neg hy, abs_of_nonneg hxy]; linarith }
+      { rw [abs_of_nonneg hx, abs_of_neg hy, abs_of_neg hxy] ; linarith }
+    }
+  }
+  {
+    rcases le_or_gt 0 y with hy | hy
+    {
+      rcases le_or_gt 0 (x+y) with hxy | hxy
+      { rw [abs_of_neg hx, abs_of_nonneg hy, abs_of_nonneg hxy]; linarith }
+      { rw [abs_of_neg hx, abs_of_nonneg hy, abs_of_neg hxy] ; linarith }
+    }
+    { rw [abs_of_neg hx, abs_of_neg hy, abs_of_neg] ; linarith ; linarith }
+  }
 
 theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
-  sorry
+  constructor
+  {
+    rcases le_or_gt 0 y with hy | hy
+    { rw [abs_of_nonneg hy] ; intro xy ; left; exact xy }
+    { rw [abs_of_neg hy] ; intro xy ; right; exact xy }
+  }
+  {
+    rcases le_or_gt 0 y with hy | hy
+    { rw [abs_of_nonneg hy]
+      intro xy
+      rcases xy with h1 | h2
+      { exact h1 }
+      { linarith }
+    }
+    { rw [abs_of_neg hy]
+      intro xy
+      rcases xy with h1 | h2
+      { linarith }
+      { exact h2 }
+    }
+  }
 
 theorem abs_lt : |x| < y ↔ -y < x ∧ x < y := by
-  sorry
+  constructor
+  {
+    rcases le_or_gt 0 x with hx | hx
+    {
+      rw [abs_of_nonneg hx]
+      intro XY
+      constructor
+      { linarith }
+      { exact XY }
+      done
+    }
+    {
+      rw [abs_of_neg hx]
+      intro xy
+      constructor
+      { linarith }
+      { linarith }
+    }
+  }
+  {
+    rcases le_or_gt 0 x with hx | hx
+    {
+      rw [abs_of_nonneg hx]
+      intro XY
+      exact XY.right
+    }
+    {
+      rw [abs_of_neg hx]
+      rintro ⟨xy1, _⟩
+      linarith
+    }
+  }
 
 end MyAbs
 
