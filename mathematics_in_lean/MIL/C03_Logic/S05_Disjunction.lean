@@ -165,7 +165,8 @@ example {m n k : ℕ} (h : m ∣ n ∨ m ∣ k) : m ∣ n * k := by
     apply dvd_mul_right
 
 example {z : ℝ} (h : ∃ x y, z = x ^ 2 + y ^ 2 ∨ z = x ^ 2 + y ^ 2 + 1) : z ≥ 0 := by
-  sorry
+  rcases h with ⟨x,y,rfl | rfl⟩ <;> linarith [pow_two_nonneg x, pow_two_nonneg y]
+  -- rcases h with ⟨x, h1⟩; rcases h1 with ⟨y, h2⟩; rcases h2 with h3 | h3; rw h3]; linarith [pow_two_nonneg x, pow_two_nonneg y]; rw [h3]; linarith [pow_two_nonneg x, pow_two_nonneg y]
 
 example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
   sorry
