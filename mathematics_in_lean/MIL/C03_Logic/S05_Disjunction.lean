@@ -169,20 +169,34 @@ example {z : ℝ} (h : ∃ x y, z = x ^ 2 + y ^ 2 ∨ z = x ^ 2 + y ^ 2 + 1) : z
   -- rcases h with ⟨x, h1⟩; rcases h1 with ⟨y, h2⟩; rcases h2 with h3 | h3; rw h3]; linarith [pow_two_nonneg x, pow_two_nonneg y]; rw [h3]; linarith [pow_two_nonneg x, pow_two_nonneg y]
 
 example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
-  sorry
+  have h1 : (x - 1) * (x + 1) = 0 := by linarith
+  rcases eq_zero_or_eq_zero_of_mul_eq_zero h1 with h2 | h2
+  { left; linarith }
+  { right; linarith }
 
 example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
-  sorry
+  have h1 : (x - y) * (x + y) = 0 := by linarith
+  rcases eq_zero_or_eq_zero_of_mul_eq_zero h1 with h2 | h2
+  { left ; linarith }
+  { right ; linarith }
 
 section
 variable {R : Type*} [CommRing R] [IsDomain R]
 variable (x y : R)
 
 example (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
-  sorry
+  have h0 : (1 : R) = 1 ^ 2 := by ring
+  rw [h0] at h
+  apply eq_or_eq_neg_of_sq_eq_sq x 1 at h
+  rcases h with h1 | h1
+  { left; exact h1 }
+  { right; exact h1 }
 
 example (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
-  sorry
+  apply eq_or_eq_neg_of_sq_eq_sq x y at h
+  rcases h with h1 | h1
+  { left; exact h1 }
+  { right; exact h1 }
 
 end
 
@@ -199,4 +213,14 @@ example (P : Prop) : ¬¬P → P := by
   contradiction
 
 example (P Q : Prop) : P → Q ↔ ¬P ∨ Q := by
-  sorry
+  constructor
+  intro h
+  { by_cases h1 : P
+    { right ; exact h h1 }
+    { left ; assumption }
+  }
+  { intro PQ P0
+    rcases PQ with h1 | h2
+    . contradiction
+    . assumption
+  }
