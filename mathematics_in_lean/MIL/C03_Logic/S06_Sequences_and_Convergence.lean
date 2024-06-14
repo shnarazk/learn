@@ -19,7 +19,7 @@ example {a : ℝ} (h : 1 < a) : a < a * a := by
   · rw [one_mul]
   exact lt_trans zero_lt_one h
 
-theorem convergesTo_const (a : ℝ) : ConvergesTo (fun x : ℕ ↦ a) a := by
+theorem convergesTo_const (a : ℝ) : ConvergesTo (fun _x : ℕ ↦ a) a := by
   intro ε εpos
   use 0
   intro n _nge
@@ -67,7 +67,16 @@ theorem convergesTo_mul_const {s : ℕ → ℝ} {a : ℝ} (c : ℝ) (cs : Conver
     rw [h]
     ring
   have acpos : 0 < |c| := abs_pos.mpr h
-  sorry
+  intro ε P
+  dsimp
+  have E0 : ε / |c| > 0 := by exact div_pos P acpos
+  rcases cs (ε / |c|) E0 with ⟨N0, h1⟩
+  use N0
+  intro N NP
+  rw [← mul_sub c _ _, abs_mul]
+  apply (lt_div_iff' acpos).mp
+  exact h1 N NP
+
 
 theorem exists_abs_le_of_convergesTo {s : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) :
     ∃ N b, ∀ n, N ≤ n → |s n| < b := by
