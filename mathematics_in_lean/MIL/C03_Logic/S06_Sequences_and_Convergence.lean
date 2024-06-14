@@ -82,7 +82,18 @@ theorem exists_abs_le_of_convergesTo {s : ℕ → ℝ} {a : ℝ} (cs : Converges
     ∃ N b, ∀ n, N ≤ n → |s n| < b := by
   rcases cs 1 zero_lt_one with ⟨N, h⟩
   use N, |a| + 1
-  sorry
+  intro n Nn
+  have Q : |s n| ≤ |-a| + |- a + s n| := abs_add' (s n) (-a)
+  calc
+    |s n| ≤ |-a| + |-a + s n| := Q
+    _ = |-a + s n| + |-a| := by rw [add_comm]
+    _ = |s n + - a| + |-a| := by rw [add_comm (-a) (s n)]
+    _ = |s n - a| + |-a| := by rw [@Mathlib.Tactic.RingNF.add_neg]
+    _ = |s n - a| + |a| := by rw [abs_neg]
+    _ < 1 + |a| := by exact (add_lt_add_iff_right |a|).mpr (h n Nn)
+    _ = |a| + 1 := by rw [add_comm]
+  done
+
 
 theorem aux {s t : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) (ct : ConvergesTo t 0) :
     ConvergesTo (fun n ↦ s n * t n) 0 := by
