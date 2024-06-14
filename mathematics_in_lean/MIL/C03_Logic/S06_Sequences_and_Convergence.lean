@@ -103,7 +103,20 @@ theorem aux {s t : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) (ct : Converges
   have Bpos : 0 < B := lt_of_le_of_lt (abs_nonneg _) (h₀ N₀ (le_refl _))
   have pos₀ : ε / B > 0 := div_pos εpos Bpos
   rcases ct _ pos₀ with ⟨N₁, h₁⟩
-  sorry
+  use max N₀ N₁
+  intro N NN
+  have Nl : N₀ ≤ N := le_of_max_le_left NN
+  have Nr : N₁ ≤ N := le_of_max_le_right NN
+  have P : |s N| < B := h₀ N Nl
+  have Q : |t N - 0| < ε / B := h₁ N Nr
+  have Bnn : B ≠ 0 := by exact Ne.symm (ne_of_lt Bpos)
+  calc
+    |s N * t N - 0| = |s N * t N| := by rw [sub_zero (s N * t N)]
+    _ ≤ |s N| * |t N| := by rw [abs_mul]
+    _ = |s N| * |t N - 0| := by rw [sub_zero (t N)]
+    _ < B * (ε / B) := by refine mul_lt_mul'' P Q (abs_nonneg _) (abs_nonneg _)
+    _ = ε := mul_div_cancel₀ ε Bnn
+  done
 
 theorem convergesTo_mul {s t : ℕ → ℝ} {a b : ℝ}
       (cs : ConvergesTo s a) (ct : ConvergesTo t b) :
