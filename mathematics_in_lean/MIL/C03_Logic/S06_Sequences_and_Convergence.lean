@@ -26,6 +26,13 @@ theorem convergesTo_const (a : ℝ) : ConvergesTo (fun x : ℕ ↦ a) a := by
   rw [sub_self, abs_zero]
   apply εpos
 
+/-
+  use:
+   - le_of_max_le_left: max a b ≤ c → a ≤ c
+   - le_of_max_le_right: max a b ≤ c → b ≤ c
+   - norm_num to convert ε / 2 + ε / 2 = ε
+   - congr to convert |s n + t n - (a + b)|
+-/
 theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
       (cs : ConvergesTo s a) (ct : ConvergesTo t b) :
     ConvergesTo (fun n ↦ s n + t n) (a + b) := by
@@ -35,7 +42,21 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   rcases cs (ε / 2) ε2pos with ⟨Ns, hs⟩
   rcases ct (ε / 2) ε2pos with ⟨Nt, ht⟩
   use max Ns Nt
-  sorry
+  intro Nst P
+  have P' : max Ns Nt ≤ Nst := P
+  have hs0 : |s Nst - a| < ε / 2 := hs Nst (le_of_max_le_left P')
+  have ht0 : |t Nst - b| < ε / 2 := ht Nst (le_of_max_le_right P')
+  have Q : |s Nst + t Nst - (a + b)| ≤ |s Nst - a| + |t Nst - b| := by
+    calc
+      |s Nst + t Nst - (a + b)| = |s Nst + t Nst - a - b| := by ring_nf
+      _ = |(s Nst - a) + (t Nst - b)| := by ring_nf
+      _ ≤ |s Nst - a| + |t Nst - b| := abs_add (s Nst - a) (t Nst - b)
+  have R :|s Nst - a| + |t Nst - b| < ε := by
+    calc
+     |s Nst - a| + |t Nst - b| < ε / 2 + ε / 2 := by apply add_lt_add hs0 ht0
+      _ = ε := by linarith
+  exact lt_of_le_of_lt Q R
+
 
 theorem convergesTo_mul_const {s : ℕ → ℝ} {a : ℝ} (c : ℝ) (cs : ConvergesTo s a) :
     ConvergesTo (fun n ↦ c * s n) (c * a) := by
