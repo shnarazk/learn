@@ -24,7 +24,7 @@ example (h : s ⊆ t) : s ∩ u ⊆ t ∩ u := by
   exact ⟨h xsu.1, xsu.2⟩
 
 example (h : s ⊆ t) : s ∩ u ⊆ t ∩ u :=
-  fun x ⟨xs, xu⟩ ↦ ⟨h xs, xu⟩
+  fun _x ⟨xs, xu⟩ ↦ ⟨h xs, xu⟩
 
 example : s ∩ (t ∪ u) ⊆ s ∩ t ∪ s ∩ u := by
   intro x hx
@@ -44,7 +44,20 @@ example : s ∩ (t ∪ u) ⊆ s ∩ t ∪ s ∩ u := by
   . right; exact ⟨xs, xu⟩
 
 example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
-  sorry
+  rintro x (⟨left, right⟩ | other)
+  {
+    simp only [mem_inter_iff, mem_union]
+    constructor
+    { exact left }
+    { left; exact right }
+  }
+  {
+    rcases other with ⟨l,r⟩
+    constructor
+    { exact l }
+    { right ; exact r }
+  }
+
 example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
   intro x xstu
   have xs : x ∈ s := xstu.1.1
