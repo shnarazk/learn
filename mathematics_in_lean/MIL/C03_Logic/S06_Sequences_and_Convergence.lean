@@ -134,7 +134,7 @@ theorem convergesTo_unique {s : ℕ → ℝ} {a b : ℝ}
       (sa : ConvergesTo s a) (sb : ConvergesTo s b) :
     a = b := by
   by_contra abne
-  have : |a - b| > 0 := by sorry
+  have : |a - b| > 0 := by apply abs_pos.mpr (sub_ne_zero_of_ne abne)
   let ε := |a - b| / 2
   have εpos : ε > 0 := by
     change |a - b| / 2 > 0
@@ -142,8 +142,23 @@ theorem convergesTo_unique {s : ℕ → ℝ} {a b : ℝ}
   rcases sa ε εpos with ⟨Na, hNa⟩
   rcases sb ε εpos with ⟨Nb, hNb⟩
   let N := max Na Nb
-  have absa : |s N - a| < ε := by sorry
-  have absb : |s N - b| < ε := by sorry
+  have absa : |s N - a| < ε := by
+    rcases le_or_gt Na Nb with C1 | C1
+    {
+      have : max Na Nb = Nb := max_eq_right_iff.mpr C1
+      have : N = Nb := by rw [← this]
+      rw [← this] at C1
+      exact hNa N C1
+    }
+    {
+      have : max Na Nb = Na := by exact max_eq_left_of_lt C1
+      have : N = Na := by rw [← this]
+      have : N ≥ Na := by exact Nat.le_max_left Na Nb
+      exact hNa N this
+    }
+  have absb : |s N - b| < ε := by
+    have Nr : Nb ≤ N := by sorry
+    exact hNb N Nr
   have : |a - b| < |a - b| := by sorry
   exact lt_irrefl _ this
 
