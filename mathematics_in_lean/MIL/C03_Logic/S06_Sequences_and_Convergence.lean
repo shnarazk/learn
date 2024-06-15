@@ -157,9 +157,34 @@ theorem convergesTo_unique {s : ℕ → ℝ} {a b : ℝ}
       exact hNa N this
     }
   have absb : |s N - b| < ε := by
-    have Nr : Nb ≤ N := by sorry
-    exact hNb N Nr
-  have : |a - b| < |a - b| := by sorry
+    rcases le_or_gt Nb Na with C1 | C1
+    {
+      have : max Na Nb = Na := max_eq_left_iff.mpr C1
+      have : N = Na := by rw [← this]
+      rw [← this] at C1
+      exact hNb N C1
+      done
+    }
+    {
+      have : max Na Nb = Nb := by exact max_eq_right_of_lt C1
+      have : N = Nb := by rw [← this]
+      have : N ≥ Nb := by exact Nat.le_max_right Na Nb
+      exact hNb N this
+    }
+  have : |a - b| < |a - b| := by
+    have sub1 : |a - b| = 2 * ε := by ring
+    have sub2 : |a - b| < 2 * ε := by
+      calc
+        |a - b| = |a - b + 0| := by rw [add_zero (a - b)]
+        _ = |a - b + (s N - s N)| := by rw [← sub_self (s N)]
+        _ = |s N - b - (s N - a)| := by ring_nf
+        _ ≤ |s N - b| + |s N - a| := abs_sub (s N - b) (s N - a)
+        _ < ε + ε := by exact add_lt_add absb absa
+        _ = 2 * ε := by ring
+      done
+    rw [← sub1] at sub2
+    exact sub2
+    done
   exact lt_irrefl _ this
 
 section
