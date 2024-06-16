@@ -73,11 +73,26 @@ example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
 
 example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
   rintro x ⟨⟨xs, xnt⟩, xnu⟩
-  use xs
+  use xs -- 条件付きの導入されている変数も指定できる
+  -- 存在しないオブジェクトを導入したらゴールはFalseになる？
   rintro (xt | xu) <;> contradiction
 
+-- reverse inclusion
 example : s \ (t ∪ u) ⊆ (s \ t) \ u := by
-  sorry
+  rintro x ⟨xx, xntu⟩
+  constructor
+  {
+    use xx
+    intro xt
+    have xtu : x ∈ t ∪ u := by exact mem_union_left u xt
+    exact absurd xtu xntu
+  }
+  {
+    by_contra xu
+    have xtu : x ∈ t ∪ u := by exact mem_union_right t xu
+    exact absurd xtu xntu
+  }
+
 example : s ∩ t = t ∩ s := by
   ext x
   simp only [mem_inter_iff]
@@ -248,4 +263,3 @@ example : ⋂₀ s = ⋂ t ∈ s, t := by
   rfl
 
 end
-
