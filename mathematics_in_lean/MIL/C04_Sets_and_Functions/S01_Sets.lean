@@ -114,7 +114,14 @@ example : s ∩ t = t ∩ s :=
     Subset.antisymm (fun _ ⟨s, t⟩ ↦ ⟨t, s⟩) (fun _ ⟨s, t⟩ ↦ ⟨t, s⟩)
 
 example : s ∩ (s ∪ t) = s := by
-  sorry
+  apply Subset.antisymm
+  { rintro x xs; exact xs.left } -- ∩ はleft/rightで分離できる
+  {
+    rintro x xs
+    constructor
+    { exact xs }
+    { left; exact xs }
+  }
 
 example : s ∪ s ∩ t = s := by
   sorry
