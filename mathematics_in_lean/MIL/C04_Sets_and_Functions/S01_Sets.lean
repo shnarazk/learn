@@ -124,7 +124,19 @@ example : s ∩ (s ∪ t) = s := by
   }
 
 example : s ∪ s ∩ t = s := by
-  sorry
+  apply Subset.antisymm
+  {
+    rintro x xs
+    simp at xs
+    rcases xs with a | b
+    { exact a }
+    { exact b.left }
+  }
+  {
+    rintro x xs
+    left
+    exact xs
+  }
 
 example : s \ t ∪ t = s ∪ t := by
   sorry
