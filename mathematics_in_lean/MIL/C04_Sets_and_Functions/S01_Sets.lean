@@ -139,7 +139,22 @@ example : s ∪ s ∩ t = s := by
   }
 
 example : s \ t ∪ t = s ∪ t := by
-  sorry
+  apply Subset.antisymm
+  {
+    rintro x h
+    rcases h with (⟨xs, _⟩ | xt)
+    { constructor; exact xs }
+    { right; exact xt }
+  }
+  {
+    rintro x h
+    contrapose! h
+    intro ax
+    simp at h
+    rcases ax with c | c
+    { exact absurd c h.left }
+    { exact absurd c h.right }
+  }
 
 example : s \ t ∪ t \ s = (s ∪ t) \ (s ∩ t) := by
   sorry
