@@ -157,7 +157,45 @@ example : s \ t ∪ t = s ∪ t := by
   }
 
 example : s \ t ∪ t \ s = (s ∪ t) \ (s ∩ t) := by
-  sorry
+  apply Subset.antisymm
+  {
+    rintro x h
+    simp
+    simp at h
+    constructor
+    {
+      rcases h with ⟨xs, _xnt⟩ | ⟨xt, _xns⟩
+      { left; exact xs }
+      { right; exact xt }
+    }
+    {
+      intro xss
+      rcases h with ⟨_xs, xnt⟩ | ⟨_xt, xns⟩
+      { exact xnt }
+      { contradiction }
+    }
+  }
+  {
+    rintro x h1
+    simp
+    rcases h1 with ⟨(xs | xt), cap⟩
+    {
+      simp at cap
+      have xnt : x ∉ t := cap xs
+      left
+      constructor
+      { exact xs }
+      { exact xnt }
+    }
+    {
+      simp at cap
+      have xns : x ∉ s := by exact fun a ↦ cap a xt
+      right
+      constructor
+      { exact xt }
+      { exact xns }
+    }
+  }
 
 def evens : Set ℕ :=
   { n | Even n }
