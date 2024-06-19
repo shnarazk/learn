@@ -13,7 +13,7 @@ use {
         symbols::border,
         widgets::{block::*, *},
     },
-    std::io::{self, stdout},
+    std::io::stdout,
 };
 mod errors;
 mod tui;
@@ -176,7 +176,7 @@ mod tests {
     }
 
     #[test]
-    fn handle_key_event() -> io::Result<()> {
+    fn handle_key_event() -> std::io::Result<()> {
         let mut app = App::default();
         app.handle_key_event(KeyCode::Right.into()).unwrap();
         assert_eq!(app.counter, 1);
