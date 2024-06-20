@@ -18,7 +18,7 @@ mod tui;
 
 #[derive(Debug)]
 pub struct App {
-    counter: u8,
+    counter: i16,
     exit: bool,
     start: Instant,
 }
@@ -45,39 +45,32 @@ impl App {
             .direction(Direction::Vertical)
             .constraints([Constraint::Min(5), Constraint::Min(5)])
             .split(frame.size());
-        let d: f64 = (self.start.elapsed().as_millis() % 10000u128) as f64 / 5000.0;
-        let v1 = [
-            (-0.8, d + -0.7),
-            (-0.6, d + -0.6),
-            (-0.4, d + -0.5),
-            (-0.3, d + -0.6),
-            (-0.2, d + -0.3),
-            (-0.1, d + -0.2),
-            (0.0, d + -0.3),
-            (0.2, d + -0.1),
-            (0.3, d + -0.2),
-            (0.4, d + 0.5),
-            (0.5, d + 0.3),
-            (0.6, d + 0.9),
-            (0.7, d + 1.1),
-            (0.8, d + 0.8),
-            (0.9, d + 0.9),
-            (1.0, d + 1.0),
-        ];
+        let d1: f64 = (self.start.elapsed().as_millis() % 10000u128) as f64 / 5000.0;
+        let d2: f64 = if self.counter == 0 {
+            1.0
+        } else {
+            (self.counter as f64 / 8.0).log2()
+        };
+        let v1 = (1isize..50)
+            .map(|n| {
+                let x = (n as f64 / 25.0) - 1.0;
+                (x, ((x * d2 + d1) * 6.0).sin())
+            })
+            .collect::<Vec<_>>();
         let v2 = (1isize..50)
             .map(|n| {
                 let x = (n as f64 / 25.0) - 1.0;
-                (x, ((x + d) * 6.0).sin())
+                (x, ((x * d2 + d1) * 6.0).cos())
             })
             .collect::<Vec<_>>();
         let dataset: Vec<Dataset> = vec![
             Dataset::default()
-                .name("sample dataset 1")
+                .name("sin() wave")
                 .marker(symbols::Marker::Dot)
                 .style(Style::default().fg(Color::Cyan))
                 .data(&v1),
             Dataset::default()
-                .name("sin() wave")
+                .name("cosine() wave")
                 .marker(symbols::Marker::Dot)
                 .style(Style::default().fg(Color::Red))
                 .data(&v2),
@@ -87,7 +80,7 @@ impl App {
         frame.render_widget(self, chunks[1]);
     }
     fn handle_events(&mut self) -> Result<()> {
-        if crossterm::event::poll(Duration::from_millis(20))? {
+        if crossterm::event::poll(Duration::from_millis(10))? {
             match event::read()? {
                 Event::Key(key_event) if key_event.kind == KeyEventKind::Press => self
                     .handle_key_event(key_event)
@@ -111,18 +104,20 @@ impl App {
         self.exit = true;
     }
     fn decrement_counter(&mut self) -> Result<()> {
-        if self.counter == 0 {
+        if let Some(n) = self.counter.checked_sub(1) {
+            self.counter = n;
+            Ok(())
+        } else {
             bail!("counter underflow");
         }
-        self.counter -= 1;
-        Ok(())
     }
     fn increment_counter(&mut self) -> Result<()> {
-        self.counter += 1;
-        if 2 < self.counter {
-            bail!("counter overflow");
+        if let Some(n) = self.counter.checked_add(1) {
+            self.counter = n;
+            Ok(())
+        } else {
+            bail!("counter underflow");
         }
-        Ok(())
     }
 }
 
