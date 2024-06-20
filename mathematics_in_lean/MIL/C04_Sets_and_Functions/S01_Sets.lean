@@ -282,13 +282,13 @@ end
 end
 
 section
-variable {α I : Type*}
+variable {α I : Type*}   -- Type* は識別子それぞれに個別の型を割り当てる
 variable (A B : I → Set α)
 variable (s : Set α)
 
 open Set
 
-example : (s ∩ ⋃ i, A i) = ⋃ i, A i ∩ s := by
+example : (s ∩ ⋃ i, A i) = ⋃ i, A i ∩ s := by  -- i の型はここでのコンテキストでの型推論から決まる？
   ext x
   simp only [mem_inter_iff, mem_iUnion]
   constructor
@@ -312,9 +312,40 @@ example : (⋂ i, A i ∩ B i) = (⋂ i, A i) ∩ ⋂ i, B i := by
   · exact h1 i
   exact h2 i
 
-
+-- using `by_cases xs : x ∈ s
 example : (s ∪ ⋂ i, A i) = ⋂ i, A i ∪ s := by
-  sorry
+  ext x
+  simp
+  constructor
+  {
+    intro h
+    rcases h with xs | h'
+    {
+      intro i
+      right
+      exact xs
+      done
+    }
+    {
+      intro i
+      by_cases xs : x ∈ s
+      { right ; exact xs }
+      { left ; exact h' i }
+    }
+   }
+  {
+    rintro iI
+    by_cases xs : x ∈ s
+    { left ; exact xs }
+    {
+      right
+      rintro i
+      have iI1 : ∀ (i : I), (x ∈ A i) ∨ (x ∈ s) := by exact fun i ↦ iI i
+      rcases iI1 i with h | h
+      { exact h }
+      { exact absurd h xs }
+    }
+  }
 
 def primes : Set ℕ :=
   { x | Nat.Prime x }
@@ -334,8 +365,16 @@ example : (⋂ p ∈ primes, { x | ¬p ∣ x }) ⊆ { x | x = 1 } := by
   simp
   apply Nat.exists_prime_and_dvd
 
+/-
+If you start typing eq_univ, tab completion will tell you that
+`apply eq_univ_of_forall` is a good way to start the proof.
+We also recommend using the theorem `Nat.exists_infinite_primes`.
+-/
 example : (⋃ p ∈ primes, { x | x ≤ p }) = univ := by
-  sorry
+  ext x
+  simp
+  have p1 : ∃i, x ≤ i ∧ i.Prime := Nat.exists_infinite_primes x
+  exact inter_nonempty_iff_exists_right.mp p1
 
 end
 
