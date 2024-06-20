@@ -36,7 +36,7 @@ impl App {
             .constraints([Constraint::Min(5), Constraint::Min(5)])
             .split(frame.size());
         let dataset: Vec<Dataset> = vec![Dataset::default()
-            .name("dataset")
+            .name("sample dataset 1")
             .marker(symbols::Marker::Dot)
             .style(Style::default().fg(Color::Cyan))
             .data(&[
@@ -89,24 +89,36 @@ impl App {
 
 impl App {
     fn chart<'a>(&'a self, dataset: Vec<Dataset<'a>>) -> Chart<'a> {
+        let x_labels = vec![
+            Span::styled("-2", Style::default()),
+            Span::styled("-1", Style::default()),
+            Span::styled("0", Style::default()),
+            Span::styled("1", Style::default()),
+            Span::styled("2", Style::default()),
+        ];
+        let y_labels = vec![
+            Span::styled("-1", Style::default()),
+            Span::styled("0", Style::default()),
+            Span::styled("1", Style::default()),
+        ];
         let chart = Chart::new(dataset)
             .block(
-                Block::bordered().title(
-                    Title::default()
-                        .content("Chart".cyan().bold())
-                        .alignment(Alignment::Center),
-                ),
+                Block::bordered()
+                    .title(" Chart 1 ".cyan().bold())
+                    .title_alignment(Alignment::Center),
             )
             .x_axis(
                 Axis::default()
                     .title("X axis")
                     .style(Style::default().fg(Color::Gray))
+                    .labels(x_labels)
                     .bounds([-2.0, 2.0]),
             )
             .y_axis(
                 Axis::default()
                     .title("Y axis")
                     .style(Style::default().fg(Color::Gray))
+                    .labels(y_labels)
                     .bounds([-1.0, 1.0]),
             );
         chart
