@@ -11,15 +11,25 @@ use {
         symbols::border,
         widgets::{block::*, *},
     },
-    // std::io::stdout,
+    std::time::{Duration, Instant},
 };
 mod errors;
 mod tui;
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
     counter: u8,
     exit: bool,
+    start: Instant,
+}
+impl Default for App {
+    fn default() -> Self {
+        App {
+            counter: 0,
+            exit: false,
+            start: Instant::now(),
+        }
+    }
 }
 
 impl App {
@@ -35,28 +45,57 @@ impl App {
             .direction(Direction::Vertical)
             .constraints([Constraint::Min(5), Constraint::Min(5)])
             .split(frame.size());
-        let dataset: Vec<Dataset> = vec![Dataset::default()
-            .name("sample dataset 1")
-            .marker(symbols::Marker::Dot)
-            .style(Style::default().fg(Color::Cyan))
-            .data(&[
-                (0.0, 0.3),
-                (0.2, 0.1),
-                (0.3, 0.2),
-                (0.4, 0.5),
-                (0.6, 0.9),
-                (0.8, 1.1),
-            ])];
+        let d: f64 = (self.start.elapsed().as_millis() % 10000u128) as f64 / 5000.0;
+        let v1 = [
+            (-0.8, d + -0.7),
+            (-0.6, d + -0.6),
+            (-0.4, d + -0.5),
+            (-0.3, d + -0.6),
+            (-0.2, d + -0.3),
+            (-0.1, d + -0.2),
+            (0.0, d + -0.3),
+            (0.2, d + -0.1),
+            (0.3, d + -0.2),
+            (0.4, d + 0.5),
+            (0.5, d + 0.3),
+            (0.6, d + 0.9),
+            (0.7, d + 1.1),
+            (0.8, d + 0.8),
+            (0.9, d + 0.9),
+            (1.0, d + 1.0),
+        ];
+        let v2 = (1isize..50)
+            .map(|n| {
+                let x = (n as f64 / 25.0) - 1.0;
+                (x, ((x + d) * 6.0).sin())
+            })
+            .collect::<Vec<_>>();
+        let dataset: Vec<Dataset> = vec![
+            Dataset::default()
+                .name("sample dataset 1")
+                .marker(symbols::Marker::Dot)
+                .style(Style::default().fg(Color::Cyan))
+                .data(&v1),
+            Dataset::default()
+                .name("sin() wave")
+                .marker(symbols::Marker::Dot)
+                .style(Style::default().fg(Color::Red))
+                .data(&v2),
+        ];
         let chart = self.chart(dataset);
         frame.render_widget(chart, chunks[0]);
         frame.render_widget(self, chunks[1]);
     }
     fn handle_events(&mut self) -> Result<()> {
-        match event::read()? {
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => self
-                .handle_key_event(key_event)
-                .wrap_err_with(|| format!("handling key event failed:\n{key_event:#?}")),
-            _ => Ok(()),
+        if crossterm::event::poll(Duration::from_millis(20))? {
+            match event::read()? {
+                Event::Key(key_event) if key_event.kind == KeyEventKind::Press => self
+                    .handle_key_event(key_event)
+                    .wrap_err_with(|| format!("handling key event failed:\n{key_event:#?}")),
+                _ => Ok(()),
+            }
+        } else {
+            Ok(())
         }
     }
     fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<()> {
@@ -90,16 +129,18 @@ impl App {
 impl App {
     fn chart<'a>(&'a self, dataset: Vec<Dataset<'a>>) -> Chart<'a> {
         let x_labels = vec![
+            Span::styled("-1.0", Style::default()),
+            Span::styled("-0.5", Style::default()),
+            Span::styled("0.0", Style::default()),
+            Span::styled("0.5", Style::default()),
+            Span::styled("1.0", Style::default()),
+        ];
+        let y_labels = vec![
             Span::styled("-2", Style::default()),
             Span::styled("-1", Style::default()),
             Span::styled("0", Style::default()),
             Span::styled("1", Style::default()),
             Span::styled("2", Style::default()),
-        ];
-        let y_labels = vec![
-            Span::styled("-1", Style::default()),
-            Span::styled("0", Style::default()),
-            Span::styled("1", Style::default()),
         ];
         let chart = Chart::new(dataset)
             .block(
@@ -112,14 +153,14 @@ impl App {
                     .title("X axis")
                     .style(Style::default().fg(Color::Gray))
                     .labels(x_labels)
-                    .bounds([-2.0, 2.0]),
+                    .bounds([-1.0, 1.0]),
             )
             .y_axis(
                 Axis::default()
                     .title("Y axis")
                     .style(Style::default().fg(Color::Gray))
                     .labels(y_labels)
-                    .bounds([-1.0, 1.0]),
+                    .bounds([-2.0, 2.0]),
             );
         chart
         // chart.render(area, buf);
