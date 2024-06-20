@@ -1,12 +1,13 @@
 use {
     color_eyre::{
         eyre::{bail, WrapErr},
-        owo_colors::{Color, OwoColorize, Style},
         Result,
     },
     crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
     ratatui::{
+        layout::{Direction, Layout, Rect},
         prelude::*,
+        style::Color,
         symbols::border,
         widgets::{block::*, *},
     },
@@ -30,7 +31,25 @@ impl App {
         Ok(())
     }
     fn render_frame(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.size());
+        let chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Min(5), Constraint::Min(5)])
+            .split(frame.size());
+        let dataset: Vec<Dataset> = vec![Dataset::default()
+            .name("dataset")
+            .marker(symbols::Marker::Dot)
+            .style(Style::default().fg(Color::Cyan))
+            .data(&[
+                (0.0, 0.3),
+                (0.2, 0.1),
+                (0.3, 0.2),
+                (0.4, 0.5),
+                (0.6, 0.9),
+                (0.8, 1.1),
+            ])];
+        let chart = self.chart(dataset);
+        frame.render_widget(chart, chunks[0]);
+        frame.render_widget(self, chunks[1]);
     }
     fn handle_events(&mut self) -> Result<()> {
         match event::read()? {
@@ -68,6 +87,33 @@ impl App {
     }
 }
 
+impl App {
+    fn chart<'a>(&'a self, dataset: Vec<Dataset<'a>>) -> Chart<'a> {
+        let chart = Chart::new(dataset)
+            .block(
+                Block::bordered().title(
+                    Title::default()
+                        .content("Chart".cyan().bold())
+                        .alignment(Alignment::Center),
+                ),
+            )
+            .x_axis(
+                Axis::default()
+                    .title("X axis")
+                    .style(Style::default().fg(Color::Gray))
+                    .bounds([-2.0, 2.0]),
+            )
+            .y_axis(
+                Axis::default()
+                    .title("Y axis")
+                    .style(Style::default().fg(Color::Gray))
+                    .bounds([-1.0, 1.0]),
+            );
+        chart
+        // chart.render(area, buf);
+    }
+}
+
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer)
     where
@@ -82,31 +128,6 @@ impl Widget for &App {
             " Quit ".into(),
             "<Q> ".blue().bold(),
         ]));
-        let dataset: Vec<Dataset> = vec![Dataset::default()
-            .name("dataset")
-            .marker(symbols::Marker::Dot)
-            // .style(Style::default())
-            .data(&[(0.0, 0.3), (0.2, 0.1), (0.3, 0.2), (0.4, 0.5), (0.6, 0.9)])];
-        let chart = Chart::new(dataset)
-            .block(
-                Block::bordered().title(
-                    Title::default()
-                        .content("Chart".cyan().bold())
-                        .alignment(Alignment::Center),
-                ),
-            )
-            .x_axis(
-                Axis::default()
-                    .title("X axis")
-                    // .style(Style::default().color(Color::Gray))
-                    .bounds([-2.0, 2.0]),
-            )
-            .y_axis(
-                Axis::default()
-                    .title("Y axis")
-                    // .style(Style::default())
-                    .bounds([-1.0, 1.0]),
-            );
         let block = Block::default()
             .title(title.alignment(Alignment::Center))
             .title(
@@ -120,7 +141,6 @@ impl Widget for &App {
             "Value: ".into(),
             self.counter.to_string().yellow(),
         ])]);
-        chart.render(area, buf);
         Paragraph::new(counter_text)
             .centered()
             .block(block)
