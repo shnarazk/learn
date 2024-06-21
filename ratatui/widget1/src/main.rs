@@ -1,8 +1,6 @@
 use {
-    color_eyre::{
-        eyre::{bail, WrapErr},
-        Result,
-    },
+    color_eyre::eyre::{bail, WrapErr}, // owo_colors::Style, Result
+
     crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
     ratatui::{
         layout::{Direction, Layout, Rect},
@@ -33,7 +31,7 @@ impl Default for App {
 }
 
 impl App {
-    pub fn run(&mut self, terminal: &mut tui::Tui) -> Result<()> {
+    pub fn run(&mut self, terminal: &mut tui::Tui) -> color_eyre::Result<()> {
         while !self.exit {
             terminal.draw(|frame| self.render_frame(frame))?;
             self.handle_events().wrap_err("handle events failed")?;
@@ -43,7 +41,7 @@ impl App {
     fn render_frame(&self, frame: &mut Frame) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Min(5), Constraint::Min(5)])
+            .constraints([Constraint::Min(5), Constraint::Min(5), Constraint::Min(5)])
             .split(frame.size());
         let d1: f64 = (self.start.elapsed().as_millis() % 10000u128) as f64 / 5000.0;
         let d2: f64 = if self.counter == 0 {
@@ -76,10 +74,12 @@ impl App {
                 .data(&v2),
         ];
         let chart = self.chart(dataset);
+        let bar_chart = self.bar_chart();
         frame.render_widget(chart, chunks[0]);
-        frame.render_widget(self, chunks[1]);
+        frame.render_widget(bar_chart, chunks[1]);
+        frame.render_widget(self, chunks[2]);
     }
-    fn handle_events(&mut self) -> Result<()> {
+    fn handle_events(&mut self) -> color_eyre::Result<()> {
         if crossterm::event::poll(Duration::from_millis(10))? {
             match event::read()? {
                 Event::Key(key_event) if key_event.kind == KeyEventKind::Press => self
@@ -91,7 +91,7 @@ impl App {
             Ok(())
         }
     }
-    fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<()> {
+    fn handle_key_event(&mut self, key_event: KeyEvent) -> color_eyre::Result<()> {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
             KeyCode::Left => self.decrement_counter()?,
@@ -103,7 +103,7 @@ impl App {
     fn exit(&mut self) {
         self.exit = true;
     }
-    fn decrement_counter(&mut self) -> Result<()> {
+    fn decrement_counter(&mut self) -> color_eyre::Result<()> {
         if let Some(n) = self.counter.checked_sub(1) {
             self.counter = n;
             Ok(())
@@ -111,7 +111,7 @@ impl App {
             bail!("counter underflow");
         }
     }
-    fn increment_counter(&mut self) -> Result<()> {
+    fn increment_counter(&mut self) -> color_eyre::Result<()> {
         if let Some(n) = self.counter.checked_add(1) {
             self.counter = n;
             Ok(())
@@ -122,6 +122,27 @@ impl App {
 }
 
 impl App {
+    fn bar_chart<'a>(&'a self) -> BarChart<'a> {
+        let b = vec![
+            ("data0", 2),
+            ("data1", 4),
+            ("data2", 1),
+            ("data3", self.counter.max(2) as u64),
+            ("data4", 3),
+            ("data5", 5),
+            ("data6", 10),
+            ("data7", 6),
+            ("data8", 18),
+            ("data9", 5),
+        ];
+        let barchart = BarChart::default()
+            .block(Block::bordered().title("BarChart"))
+            .data(&b)
+            .bar_width(7)
+            .bar_style(Style::default().fg(Color::Red))
+            .value_style(Style::default().fg(Color::White).bg(Color::Blue));
+        barchart
+    }
     fn chart<'a>(&'a self, dataset: Vec<Dataset<'a>>) -> Chart<'a> {
         let x_labels = vec![
             Span::styled("-1.0", Style::default()),
@@ -196,7 +217,7 @@ impl Widget for &App {
     }
 }
 
-fn main() -> Result<()> {
+fn main() -> color_eyre::Result<()> {
     errors::install_hooks()?;
     let mut terminal = tui::init()?;
     App::default().run(&mut terminal)?;
