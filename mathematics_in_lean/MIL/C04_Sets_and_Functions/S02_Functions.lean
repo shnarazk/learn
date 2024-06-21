@@ -67,13 +67,32 @@ example (h : s ⊆ t) : f '' s ⊆ f '' t := by
   exact image_mono h
 
 example (h : u ⊆ v) : f ⁻¹' u ⊆ f ⁻¹' v := by
-  sorry
+  intro x xh
+  exact h xh
 
 example : f ⁻¹' (u ∪ v) = f ⁻¹' u ∪ f ⁻¹' v := by
-  sorry
+  ext x
+  constructor
+  { simp }
+  { simp }
 
 example : f '' (s ∩ t) ⊆ f '' s ∩ f '' t := by
-  sorry
+  simp
+  constructor
+  {
+    intro x hx
+    simp
+    use x
+    simp
+    exact mem_of_mem_inter_left hx
+  }
+  {
+    intro x hx
+    simp
+    use x
+    simp
+    exact mem_of_mem_inter_right hx
+  }
 
 example (h : Injective f) : f '' s ∩ f '' t ⊆ f '' (s ∩ t) := by
   sorry
