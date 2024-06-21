@@ -34,19 +34,37 @@ example : s ⊆ f ⁻¹' (f '' s) := by
   use x, xs
 
 example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
-  sorry
+  constructor
+  { simp }
+  { simp }
 
+-- Injective =単射
 example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
-  sorry
+  intro x1
+  simp
+  intro x0 xh eq
+  exact mem_of_eq_of_mem (h (Eq.symm eq)) xh
+  done
 
 example : f '' (f ⁻¹' u) ⊆ u := by
-  sorry
+  simp
+  intro x X
+  exact X
 
+-- Surjective = 全射
 example (h : Surjective f) : u ⊆ f '' (f ⁻¹' u) := by
-  sorry
+  intro y yu
+  rcases h y with ⟨x, B⟩
+  simp
+  use x
+  constructor
+  { exact mem_of_eq_of_mem B yu }
+  { exact B }
 
 example (h : s ⊆ t) : f '' s ⊆ f '' t := by
-  sorry
+  simp
+  rw [← image_subset_iff]
+  exact image_mono h
 
 example (h : u ⊆ v) : f ⁻¹' u ⊆ f ⁻¹' v := by
   sorry
