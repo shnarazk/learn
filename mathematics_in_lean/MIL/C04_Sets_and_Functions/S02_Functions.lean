@@ -95,7 +95,17 @@ example : f '' (s ∩ t) ⊆ f '' s ∩ f '' t := by
   }
 
 example (h : Injective f) : f '' s ∩ f '' t ⊆ f '' (s ∩ t) := by
-  sorry
+  intro x xh
+  rcases xh with ⟨xs, xt⟩
+  simp at xs
+  simp at xt
+  rw [mem_image]
+  simp
+  rcases xs with ⟨y1, ⟨h1y0, h1y1⟩⟩
+  rcases xt with ⟨y2, ⟨h2y0, h2y1⟩⟩
+  rw [← h2y1] at h1y1  -- h を使うためにはf x = f yの形の式が必要
+  rcases h h1y1 with ⟨A, B⟩
+  use y1
 
 example : f '' s \ f '' t ⊆ f '' (s \ t) := by
   sorry
