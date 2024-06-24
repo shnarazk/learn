@@ -158,10 +158,18 @@ example : f '' (s ∩ f ⁻¹' u) ⊆ f '' s ∩ u := by
   use x
 
 example : s ∩ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∩ u) := by
-  sorry
+  simp
+  intro x hx
+  rcases hx with ⟨A, _⟩
+  simp
+  use x
 
 example : s ∪ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∪ u) := by
-  sorry
+  simp
+  intro x xs
+  simp
+  constructor -- これをleftとしても同じ構成になる
+  { use x }   -- 証明になっているのか？
 
 variable {I : Type*} (A : I → Set α) (B : I → Set β)
 
