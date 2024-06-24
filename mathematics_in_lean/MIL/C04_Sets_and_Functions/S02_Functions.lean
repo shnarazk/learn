@@ -122,13 +122,40 @@ example : f '' s \ f '' t ⊆ f '' (s \ t) := by
   { exact left.right }
 
 example : f ⁻¹' u \ f ⁻¹' v ⊆ f ⁻¹' (u \ v) := by
-  sorry
+  simp
+  rfl
 
 example : f '' s ∩ v = f '' (s ∩ f ⁻¹' v) := by
-  sorry
+  ext x
+  constructor
+  {
+    intro ximage
+    simp at ximage
+    simp
+    rcases ximage with ⟨left, right⟩
+    rcases left with ⟨y, ⟨ya, left'⟩⟩
+    use y
+    constructor
+    { rw [← left'] at right ; exact ⟨ya, right⟩ }
+    { exact left' }
+  }
+  {
+    intro ximage
+    simp at ximage
+    simp
+    rcases ximage with ⟨y, ⟨⟨A, B⟩, C⟩⟩
+    constructor
+    { use y }
+    { rw [C] at B ; exact B }
+  }
 
 example : f '' (s ∩ f ⁻¹' u) ⊆ f '' s ∩ u := by
-  sorry
+  simp
+  intro x xh
+  simp
+  rcases xh with ⟨xs, p⟩
+  simp at p
+  use x
 
 example : s ∩ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∩ u) := by
   sorry
