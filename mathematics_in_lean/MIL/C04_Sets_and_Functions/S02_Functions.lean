@@ -174,10 +174,29 @@ example : s ∪ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∪ u) := by
 variable {I : Type*} (A : I → Set α) (B : I → Set β)
 
 example : (f '' ⋃ i, A i) = ⋃ i, f '' A i := by
-  sorry
+  ext xi
+  simp
+  constructor
+  { simp ; intro yi i yh1 yh2 ; use i, yi }
+  {
+    simp
+    intro x a ha fa
+    use a
+    constructor
+    { use x }
+    { exact fa }
+  }
 
 example : (f '' ⋂ i, A i) ⊆ ⋂ i, f '' A i := by
-  sorry
+  intro b hb
+  simp at hb
+  rcases hb with ⟨a, ⟨left, right⟩⟩
+  simp
+  intro x
+  use a
+  constructor
+  { exact left x }
+  { exact right }
 
 example (i : I) (injf : Injective f) : (⋂ i, f '' A i) ⊆ f '' ⋂ i, A i := by
   sorry
