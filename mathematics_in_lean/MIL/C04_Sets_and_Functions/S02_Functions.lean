@@ -108,7 +108,18 @@ example (h : Injective f) : f '' s ∩ f '' t ⊆ f '' (s ∩ t) := by
   use y1
 
 example : f '' s \ f '' t ⊆ f '' (s \ t) := by
-  sorry
+  intro x xf
+  simp
+  simp at xf
+  rcases xf with ⟨⟨y, left⟩, right⟩
+  use y
+  constructor
+  {
+    constructor
+    { exact left.left }
+    { by_contra yt ; exact absurd left.right (right y yt) }
+  }
+  { exact left.right }
 
 example : f ⁻¹' u \ f ⁻¹' v ⊆ f ⁻¹' (u \ v) := by
   sorry
