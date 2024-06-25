@@ -199,7 +199,15 @@ example : (f '' ⋂ i, A i) ⊆ ⋂ i, f '' A i := by
   { exact right }
 
 example (i : I) (injf : Injective f) : (⋂ i, f '' A i) ⊆ f '' ⋂ i, A i := by
+  intro a h
+  simp at h
+  simp
+  rcases h i with ⟨a, ⟨ha, _, _⟩⟩
+  use a
+  rcases h i with ⟨a0, ⟨left, right⟩⟩
+  rcases injf right with ⟨_, _⟩
   sorry
+
 
 example : (f ⁻¹' ⋃ i, B i) = ⋃ i, f ⁻¹' B i := by
   sorry
