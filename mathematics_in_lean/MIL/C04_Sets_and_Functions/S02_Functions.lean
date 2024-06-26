@@ -250,16 +250,77 @@ example : range exp = { y | y > 0 } := by
   rw [exp_log ypos]
 
 example : InjOn sqrt { x | x ≥ 0 } := by
-  sorry
+  intro x xnonneg y ynonneg
+  intro e
+  calc
+    x = √(x * x) := by rw [sqrt_mul_self xnonneg]
+    _ = √x * √x := by rw [sqrt_mul xnonneg x]
+    _ = √y * √y := by rw [e]
+    _ = √(y * y) := by rw [← sqrt_mul ynonneg y]
+    _ = y := by rw [sqrt_mul_self ynonneg]
 
 example : InjOn (fun x ↦ x ^ 2) { x : ℝ | x ≥ 0 } := by
-  sorry
+  intro x xnonneg y ynonneg
+  intro xy
+  simp at xy
+  rw [pow_eq_pow_iff_of_ne_zero _] at xy
+  rcases xy with eq | ne
+  { exact eq ; done }
+  { simp at ne
+    simp at xnonneg
+    simp at ynonneg
+    rw [le_iff_eq_or_lt] at xnonneg
+    rcases xnonneg with Case | Case
+    {
+      rw [← Case] at ne
+      simp at ne
+      rw [Case] at ne
+      exact ne.symm
+      done
+    }
+    {
+      rw [ne] at Case
+      simp at Case
+      rw [lt_iff_not_ge y 0] at Case
+      exact absurd ynonneg Case
+    }
+  }
+  { simp }
 
 example : sqrt '' { x | x ≥ 0 } = { y | y ≥ 0 } := by
-  sorry
+  ext x
+  simp
+  constructor
+  {
+    intro h
+    rcases h with ⟨y, _, C⟩
+    have C': 0 ≤ √y := by exact sqrt_nonneg y
+    rw [C] at C'
+    exact C'
+  }
+  {
+    intro zx
+    use x ^ 2
+    constructor
+    { exact sq_nonneg x }
+    { exact sqrt_sq zx }
+  }
 
 example : (range fun x ↦ x ^ 2) = { y : ℝ | y ≥ 0 } := by
-  sorry
+  ext x
+  simp
+  constructor
+  {
+    intro Y
+    rcases Y with ⟨y, Y2⟩
+    rw [← Y2]
+    exact sq_nonneg y
+  }
+  {
+    intro zx
+    use √x
+    rw [sq_sqrt zx]
+  }
 
 end
 
