@@ -356,19 +356,13 @@ open Function
 
 example : Injective f ↔ LeftInverse (inverse f) f := by
   constructor
-  {
-    intro inj a
-    apply inj
-    apply inverse_spec
-    use a
-  }
-  {
-    exact LeftInverse.injective
-  }
-  done
+  { intro inj a ; apply inj ; apply inverse_spec ; use a }
+  { exact LeftInverse.injective }
 
-example : Surjective f ↔ RightInverse (inverse f) f :=
-  sorry
+example : Surjective f ↔ RightInverse (inverse f) f := by
+  constructor
+  { intro sf b ; apply inverse_spec ; exact sf b }
+  { exact RightInverse.surjective }
 
 end
 
