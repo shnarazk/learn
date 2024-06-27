@@ -379,12 +379,7 @@ theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
     have : j ∉ f j := by rwa [h] at h'
     contradiction
   have h₂ : j ∈ S
-  { rw [h] at h₁ -- もっと簡単になるのでは？
-    contrapose!
-    intro C
-    rw [← h] at h₁
-    exact h₁
-  }
+  { contrapose! ; intro _ ; exact h₁ }
   have h₃ : j ∉ S
   { rw [h] at h₁ ; exact absurd h₂ h₁ }
   contradiction
