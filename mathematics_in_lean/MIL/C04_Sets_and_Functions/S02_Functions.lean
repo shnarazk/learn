@@ -351,8 +351,21 @@ variable (f : α → β)
 
 open Function
 
-example : Injective f ↔ LeftInverse (inverse f) f :=
-  sorry
+#print LeftInverse
+#print RightInverse
+
+example : Injective f ↔ LeftInverse (inverse f) f := by
+  constructor
+  {
+    intro inj a
+    apply inj
+    apply inverse_spec
+    use a
+  }
+  {
+    exact LeftInverse.injective
+  }
+  done
 
 example : Surjective f ↔ RightInverse (inverse f) f :=
   sorry
