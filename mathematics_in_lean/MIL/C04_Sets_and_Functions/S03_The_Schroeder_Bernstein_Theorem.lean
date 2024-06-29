@@ -22,6 +22,11 @@ def sbSet :=
 def sbFun (x : α) : β :=
   if x ∈ sbSet f g then f x else invFun g x
 
+/-
+You will need to use `invFun_eq` at the end.
+Notice that rewriting with `sbAux` here replaces `sbAux f g 0`
+with the right-hand side of the corresponding defining equation.
+-/
 theorem sb_right_inv {x : α} (hx : x ∉ sbSet f g) : g (invFun g x) = x := by
   have : x ∈ g '' univ := by
     contrapose! hx
