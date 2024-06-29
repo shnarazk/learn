@@ -10,6 +10,10 @@ ARTICLE: "leibniz" "leibniz"
 
 ABOUT: "leibniz"
 
-HELP: lpi
+HELP: leibniz
 { $description "ここなのだ" }
+;
+
+HELP: leib
+{ $description "leibnizのショートカット" }
 ;
