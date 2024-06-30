@@ -61,17 +61,24 @@ theorem sb_injective (hf : Injective f) : Injective (sbFun f g) := by
       rw [if_pos x₁A, if_neg x₂nA] at hxeq
       rw [A_def, sbSet, mem_iUnion] at x₁A
       have x₂eq : x₂ = g (f x₁) := by
+        -- sb_right_invを使うはず
         rw [hxeq]
-        -- rw [invFun_eq hf]
-        sorry
+        symm
+        rw [A_def] at x₂nA
+        apply sb_right_inv f g x₂nA
       rcases x₁A with ⟨n, hn⟩
       rw [A_def, sbSet, mem_iUnion]
       use n + 1
       simp [sbAux]
       exact ⟨x₁, hn, x₂eq.symm⟩
-    sorry
+    rw [if_pos x₁A, if_pos x₂A] at hxeq
+    apply hf
+    exact hxeq
   push_neg  at xA
-  -- rw [xA.left, xA.right] at hxeq
+  rw [if_neg xA.right, if_neg xA.left] at hxeq
+  have C : g (invFun g x₁) = g (invFun g x₂) := by rw [hxeq]
+  rw [sb_right_inv f g xA.left, sb_right_inv f g xA.right] at C
+  exact C
 
 
 theorem sb_surjective (hf : Injective f) (hg : Injective g) : Surjective (sbFun f g) := by
