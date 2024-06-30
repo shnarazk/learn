@@ -81,7 +81,7 @@ theorem sb_injective (hf : Injective f) : Injective (sbFun f g) := by
   exact C
 
 
-theorem sb_surjective (hf : Injective f) (hg : Injective g) : Surjective (sbFun f g) := by
+theorem sb_surjective (_hf : Injective f) (hg : Injective g) : Surjective (sbFun f g) := by
   set A := sbSet f g with A_def
   set h := sbFun f g with h_def
   intro y
@@ -98,7 +98,14 @@ theorem sb_surjective (hf : Injective f) (hg : Injective g) : Surjective (sbFun 
       exact ⟨n, xmem⟩
     simp only [h_def, sbFun, if_pos this]
     exact hg hx
-  sorry
+  {
+    use g y
+    rw [A_def] at gyA
+    simp only [h_def, sbFun, if_neg gyA]
+    apply hg
+    apply invFun_eq
+    use y
+  }
 
 end
 
