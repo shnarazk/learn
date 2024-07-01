@@ -49,22 +49,36 @@ example (a b c : Nat) (h : a * b = a * c) (h' : a ≠ 0) : b = c :=
   -- apply? suggests the following:
   (mul_right_inj' h').mp h
 
+/-
+  Use `even_of_even_sqr` and `Nat.dvd_gcd`
+  - `even_of_even_sqr : 2 ∣ m ^ 2 = 2 ∣ m`
+-/
 example {m n : ℕ} (coprime_mn : m.Coprime n) : m ^ 2 ≠ 2 * n ^ 2 := by
   intro sqr_eq
-  have : 2 ∣ m := by
-    sorry
-  obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp this
-  have : 2 * (2 * k ^ 2) = 2 * n ^ 2 := by
+  have step1 : 2 ∣ m := by
+    have tmp1 : 2 ∣ 2 * n ^ 2 := by exact Nat.dvd_mul_right 2 (n ^ 2)
+    rw [← sqr_eq] at tmp1
+    apply Nat.Prime.dvd_of_dvd_pow Nat.prime_two tmp1
+    done
+  obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp step1
+  have step2 : 2 * (2 * k ^ 2) = 2 * n ^ 2 := by
     rw [← sqr_eq, meq]
     ring
-  have : 2 * k ^ 2 = n ^ 2 :=
-    sorry
-  have : 2 ∣ n := by
-    sorry
-  have : 2 ∣ m.gcd n := by
-    sorry
+  have step2 : 2 * k ^ 2 = n ^ 2 := by
+    have two_neq_zero : 2 ≠ 0 := by exact Ne.symm (Nat.zero_ne_add_one 1)
+    rw [meq] at sqr_eq
+    apply (mul_right_inj' two_neq_zero).mp at step2
+    exact step2
+  have step3 : 2 ∣ n := by
+    have tmp2 : 2 ∣ 2 * k ^ 2 := Nat.dvd_mul_right 2 (k ^ 2)
+    rw [step2] at tmp2
+    exact even_of_even_sqr tmp2
+  have step4 : 2 ∣ m.gcd n := by
+    exact Nat.dvd_gcd step1 step3
   have : 2 ∣ 1 := by
-    sorry
+    have tmp3 : m.gcd n = 1 := coprime_mn
+    rw [tmp3] at step4
+    exact step4
   norm_num at this
 
 example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prime) : m ^ 2 ≠ p * n ^ 2 := by
