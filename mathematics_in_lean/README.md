@@ -61,3 +61,22 @@ index 90f5f6c..816c82a 100644
  -- import Mathlib.Algebra.BigOperators.Basic
  import MIL.Common
  ```
+
+ ### 4.9.0
+
+ ```diff
+ diff --git a/mathematics_in_lean/MIL/C08_Groups_and_Rings/S01_Groups.lean b/mathematics_in_lean/MIL/C08_Groups_and_Ring
+s/S01_Groups.lean
+index f609a76..29ceee5 100644
+--- a/mathematics_in_lean/MIL/C08_Groups_and_Rings/S01_Groups.lean
++++ b/mathematics_in_lean/MIL/C08_Groups_and_Rings/S01_Groups.lean
+@@ -274,7 +274,7 @@ open MonoidHom
+ #check Nat.eq_of_mul_eq_mul_right
+
+ -- The following line is working around a Lean bug that will be fixed very soon.
+-attribute [-instance] Subtype.instInhabited
++-- attribute [-instance] Subtype.instInhabited
+
+ lemma aux_card_eq [Fintype G] (h' : card G = card H * card K) : card (G ⧸ H) = card K := by
+   sorry
+```
