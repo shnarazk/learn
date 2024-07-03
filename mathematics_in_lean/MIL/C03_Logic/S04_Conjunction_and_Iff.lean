@@ -1,6 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Nat.Prime
+import Mathlib.Data.Nat.Prime.Defs
 
 namespace C03S04
 

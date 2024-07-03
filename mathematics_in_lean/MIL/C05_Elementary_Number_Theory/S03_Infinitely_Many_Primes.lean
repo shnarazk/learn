@@ -1,4 +1,4 @@
-import Mathlib.Data.Nat.Prime
+import Mathlib.Data.Nat.Prime.Defs
 -- import Mathlib.Algebra.BigOperators.Basic
 import MIL.Common
 
