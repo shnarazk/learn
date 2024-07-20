@@ -1,6 +1,6 @@
 import MIL.Common
 import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Data.Nat.Prime.Defs
+import Mathlib.Data.Nat.Prime.Basic
 
 #print Nat.Coprime
 
@@ -110,9 +110,9 @@ example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prime) : m ^ 2 ≠
   exact absurd this step5
 
 #check Nat.factors
-#check Nat.prime_of_mem_factors
-#check Nat.prod_factors
-#check Nat.factors_unique
+#check Nat.prime_of_mem_primeFactorsList
+#check Nat.prod_primeFactorsList
+#check Nat.primeFactorsList_unique
 
 theorem factorization_mul' {m n : ℕ} (mnez : m ≠ 0) (nnez : n ≠ 0) (p : ℕ) :
     (m * n).factorization p = m.factorization p + n.factorization p := by
@@ -143,18 +143,18 @@ example {m n p : ℕ} (nnz : n ≠ 0) (prime_p : p.Prime) : m ^ 2 ≠ p * n ^ 2 
   rw [add_comm, Nat.add_mul_mod_self_left, Nat.mul_mod_right] at this
   norm_num at this
 
-example {m n k r : ℕ} (nnz : n ≠ 0) (pow_eq : m ^ k = r * n ^ k) {p : ℕ} (_prime_p : p.Prime) :
+example {m n k r : ℕ} (nnz : n ≠ 0) (pow_eq : m ^ k = r * n ^ k) {p : ℕ} :
     k ∣ r.factorization p := by
   rcases r with _ | r
   · simp
   have npow_nz : n ^ k ≠ 0 := fun npowz ↦ nnz (pow_eq_zero npowz)
   have eq1 : (m ^ k).factorization p = k * m.factorization p := by
     rw [factorization_pow' m _ _]
-  have eq2 : (r.succ * n ^ k).factorization p =
-      k * n.factorization p + r.succ.factorization p := by
+  have eq2 : ((r + 1) * n ^ k).factorization p =
+      k * n.factorization p + (r + 1).factorization p := by
     rw [factorization_mul' (Ne.symm (Nat.zero_ne_add_one r)) _ _]
     rw [factorization_pow' n k _]
-    rw [Nat.succ_eq_add_one]
+    -- rw [Nat.succ_eq_add_one]
     rw [add_comm ((r + 1).factorization p) (k * n.factorization p)]
     exact npow_nz
   have : r.succ.factorization p = k * m.factorization p - k * n.factorization p := by

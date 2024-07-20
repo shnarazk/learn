@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Lattice
-import Mathlib.Data.Nat.Prime.Defs
+import Mathlib.Data.Nat.Prime.Basic
 import MIL.Common
 
 section
