@@ -2,6 +2,32 @@
 
 # patches to the repository
 
+## 4.10rc2 against [df66203](https://github.com/leanprover-community/mathematics_in_lean/commit/df662034d2d23aa6aaf61dfd9ef53f7a852096cf)
+
+```diff
+diff --git a/mathematics_in_lean/MIL/C05_Elementary_Number_Theory/S01_Irrational_Roo
+ts.lean b/mathematics_in_lean/MIL/C05_Elementary_Number_Theory/S01_Irrational_Roots.
+lean
+index 437a723..a6a75d7 100644
+--- a/mathematics_in_lean/MIL/C05_Elementary_Number_Theory/S01_Irrational_Roots.lean
++++ b/mathematics_in_lean/MIL/C05_Elementary_Number_Theory/S01_Irrational_Roots.lean
+@@ -110,9 +110,9 @@ example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prim
+e) : m ^ 2 ≠
+   exact absurd this step5
+ #check Nat.factors
+-#check Nat.prime_of_mem_factors
+-#check Nat.prod_factors
+-#check Nat.factors_unique
++#check Nat.prime_of_mem_primeFactorsList
++#check Nat.prod_primeFactorsList
++#check Nat.primeFactorsList_unique
+ theorem factorization_mul' {m n : ℕ} (mnez : m ≠ 0) (nnez : n ≠ 0) (p : ℕ) :
+     (m * n).factorization p = m.factorization p + n.factorization p := by
+```
+-------
+
+## Obsoluted patches
+
 ### 4.10
 ```diff
 diff --git a/mathematics_in_lean/MIL/C05_Elementary_Number_Theory/S01_Irrational_Roots.lean b/mathematics_in_lean/MIL/C05_Elementary_Number_Theory/S01_Irrational_Roots.lean
