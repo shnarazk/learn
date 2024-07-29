@@ -48,7 +48,16 @@ theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) : i ∣ fac n := by
 theorem pow_two_le_fac (n : ℕ) : 2 ^ (n - 1) ≤ fac n := by
   rcases n with _ | n
   · simp [fac]
-  sorry
+  induction' n with n ih
+  · simp
+    rfl
+  simp at ih
+  simp
+  rw [pow_succ, fac]
+  rw [mul_comm]
+  have T1 : 2 ≤ n + 2 := by exact Nat.le_add_left 2 n
+  exact Nat.mul_le_mul T1 ih
+
 section
 
 variable {α : Type*} (s : Finset ℕ) (f : ℕ → ℕ) (n : ℕ)
