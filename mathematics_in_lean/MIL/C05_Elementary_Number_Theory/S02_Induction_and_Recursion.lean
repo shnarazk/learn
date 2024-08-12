@@ -101,6 +101,9 @@ example (a b c d e f : ℕ) : a * (b * c * f * (d * e)) = d * (a * f * e) * (c *
   simp [mul_assoc, mul_comm, mul_left_comm]
 
 theorem sum_id (n : ℕ) : ∑ i in range (n + 1), i = n * (n + 1) / 2 := by
+  -- 両者は等価
+  -- have zero_lt_two : 0 < 2 := by norm_num
+  -- symm; apply Nat.div_eq_of_eq_mul_right zero_lt_two
   symm; apply Nat.div_eq_of_eq_mul_right (by norm_num : 0 < 2)
   induction' n with n ih
   · simp
@@ -108,7 +111,11 @@ theorem sum_id (n : ℕ) : ∑ i in range (n + 1), i = n * (n + 1) / 2 := by
   ring
 
 theorem sum_sqr (n : ℕ) : ∑ i in range (n + 1), i ^ 2 = n * (n + 1) * (2 * n + 1) / 6 := by
-  sorry
+  symm; apply Nat.div_eq_of_eq_mul_right (by norm_num : 0 < 6)
+  induction' n with n ih
+  · simp
+  rw [Finset.sum_range_succ, mul_add 6, ← ih]
+  ring_nf
 end
 
 inductive MyNat
