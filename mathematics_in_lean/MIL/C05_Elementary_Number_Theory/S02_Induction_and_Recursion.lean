@@ -150,13 +150,35 @@ theorem add_comm (m n : MyNat) : add m n = add n m := by
   rw [add, succ_add, ih]
 
 theorem add_assoc (m n k : MyNat) : add (add m n) k = add m (add n k) := by
-  sorry
+  induction' k with k ih
+  { rw [add_comm, zero_add, add_comm n, zero_add]; }
+  { rw [add_comm _ (n.add k.succ), add_comm n k.succ, succ_add, add_comm k n, succ_add, add_comm _ m,← ih] ; rfl }
+
 theorem mul_add (m n k : MyNat) : mul m (add n k) = add (mul m n) (mul m k) := by
-  sorry
+  induction' k with k ih
+  { rw [add_comm, zero_add]
+    simp [mul]
+    rw [add_comm, zero_add]
+  }
+  {
+    rw [add, mul, add_comm (m.mul n)]
+    simp [mul, add_comm _ (m.mul n)]
+    rw [← add_assoc, ← ih]
+  }
+
 theorem zero_mul (n : MyNat) : mul zero n = zero := by
-  sorry
+  induction' n with n ih
+  { rw [mul] }
+  { rw [mul, ih, add] }
+
 theorem succ_mul (m n : MyNat) : mul (succ m) n = add (mul m n) n := by
-  sorry
+  induction' n with n ih
+  { rw [mul, mul, add] }
+  { rw [mul, ih, mul,add_assoc, add_comm n m.succ, succ_add m, add_assoc, add_comm m n.succ, succ_add, add_comm n m] }
+
 theorem mul_comm (m n : MyNat) : mul m n = mul n m := by
-  sorry
+  induction' n with n ih
+  { rw [mul, zero_mul] }
+  { rw [succ_mul, mul, ih] }
+
 end MyNat
