@@ -38,7 +38,7 @@ theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) : ∃ p : Nat, p.Prime ∧ p
   have mgt2 : 2 ≤ m := two_le this mne1
   by_cases mp : m.Prime
   · use m, mp
-  . rcases ih m mltn mgt2 mp with ⟨p, pp, pdvd⟩
+  · rcases ih m mltn mgt2 mp with ⟨p, pp, pdvd⟩
     use p, pp
     apply pdvd.trans mdvdn
 
@@ -57,16 +57,24 @@ theorem primes_infinite : ∀ n, ∃ p > n, Nat.Prime p := by
     simp
     exact sub
   rcases exists_prime_factor this with ⟨p, pp, pdvd⟩
-  refine' ⟨p, _, pp⟩
+  -- refine' ⟨p, _, pp⟩
+  use p
+  refine ⟨?h.left, pp⟩
   show p > n
   by_contra ple
   push_neg  at ple
   have : p ∣ Nat.factorial (n + 1) := by
-    sorry
+    have p_pos : 0 < p := by exact Nat.Prime.pos pp
+    have ple1 : p ≤ n + 1 := by exact Nat.le_add_right_of_le ple
+    apply Nat.dvd_factorial p_pos ple1
   have : p ∣ 1 := by
-    sorry
+    exact (Nat.dvd_add_iff_right this).mpr pdvd
   show False
-  sorry
+  rw [@Nat.dvd_one] at this
+  apply Nat.Prime.ne_one at this
+  { exact this }
+  { exact pp }
+
 open Finset
 
 section
@@ -234,4 +242,3 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
   have : p = 3 := by
     sorry
   contradiction
-
