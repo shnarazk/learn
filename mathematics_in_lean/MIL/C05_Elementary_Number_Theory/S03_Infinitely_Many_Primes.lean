@@ -45,7 +45,17 @@ theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) : ∃ p : Nat, p.Prime ∧ p
 theorem primes_infinite : ∀ n, ∃ p > n, Nat.Prime p := by
   intro n
   have : 2 ≤ Nat.factorial (n + 1) + 1 := by
-    sorry
+    have sub : 1 ≤ Nat.factorial (n + 1) := by
+      induction' n with n0 ih
+      { simp }
+      {
+        have fact_ord : Nat.factorial (n0 + 1) ≤ Nat.factorial (n0 + 2) := by
+          refine Nat.factorial_le ?h
+          exact Nat.le_add_right (n0 + 1) 1
+        exact le_trans ih fact_ord
+      }
+    simp
+    exact sub
   rcases exists_prime_factor this with ⟨p, pp, pdvd⟩
   refine' ⟨p, _, pp⟩
   show p > n
