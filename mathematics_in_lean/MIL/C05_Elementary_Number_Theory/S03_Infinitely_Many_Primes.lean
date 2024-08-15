@@ -124,7 +124,13 @@ example (s : Finset ℕ) (n : ℕ) (h : n ∈ s) : n ∣ ∏ i in s, i :=
 theorem _root_.Nat.Prime.eq_of_dvd_of_prime {p q : ℕ}
       (prime_p : Nat.Prime p) (prime_q : Nat.Prime q) (h : p ∣ q) :
     p = q := by
-  sorry
+  by_contra contra
+  apply Nat.Prime.eq_one_or_self_of_dvd at h
+  { rcases h with h1 | ih
+    { exact absurd h1 (by exact Nat.Prime.ne_one prime_p) }
+    { exact absurd ih contra }
+  }
+  { exact prime_q }
 
 theorem mem_of_dvd_prod_primes {s : Finset ℕ} {p : ℕ} (prime_p : p.Prime) :
     (∀ n ∈ s, Nat.Prime n) → (p ∣ ∏ n in s, n) → p ∈ s := by
@@ -213,8 +219,8 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
     apply mod_4_eq_3_or_mod_4_eq_3
     rw [neq, h]
   rcases this with h1 | h1
-  . sorry
-  . sorry
+  · sorry
+  · sorry
 example (m n : ℕ) (s : Finset ℕ) (h : m ∈ erase s n) : m ≠ n ∧ m ∈ s := by
   rwa [mem_erase] at h
 
