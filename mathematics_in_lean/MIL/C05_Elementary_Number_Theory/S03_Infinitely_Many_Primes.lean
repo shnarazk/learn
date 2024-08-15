@@ -140,7 +140,12 @@ theorem mem_of_dvd_prod_primes {s : Finset ℕ} {p : ℕ} (prime_p : p.Prime) :
     linarith [prime_p.two_le]
   simp [Finset.prod_insert ans, prime_p.dvd_mul] at h₀ h₁
   rw [mem_insert]
-  sorry
+  rcases h₀ with ⟨h0, h1⟩
+  rcases ih h1 with ih₀
+  rcases h₁ with h₁₀ | h₁₁
+  { left ; exact _root_.Nat.Prime.eq_of_dvd_of_prime prime_p h0 h₁₀ }
+  { right ; exact ih₀ h₁₁ }
+
 example (s : Finset ℕ) (x : ℕ) : x ∈ s.filter Nat.Prime ↔ x ∈ s ∧ x.Prime :=
   mem_filter
 
