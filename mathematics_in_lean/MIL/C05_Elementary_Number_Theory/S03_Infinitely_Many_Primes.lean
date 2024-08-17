@@ -159,7 +159,18 @@ theorem primes_infinite' : ∀ s : Finset Nat, ∃ p, Nat.Prime p ∧ p ∉ s :=
     simp [s'_def]
     apply h
   have : 2 ≤ (∏ i in s', i) + 1 := by
-    sorry
+    have s'1 : ∀ i ∈ s', 1 ≤ i := by
+      have s2 : ∀ k ∈ s', k.Prime := by
+        intros k' ks
+        simp [mem_s'] at ks  -- なんだこれは?
+        exact ks
+      intros j ji
+      simp [mem_s'] at s2 ji
+      exact Nat.Prime.one_le ji
+    have y : (∏ i in s', 1) ≤ (∏ i in s', i) := by exact prod_le_prod' s'1
+    simp at y
+    ring_nf
+    exact Nat.sub_le_iff_le_add'.mp y
   rcases exists_prime_factor this with ⟨p, pp, pdvd⟩
   have : p ∣ ∏ i in s', i := by
     sorry
