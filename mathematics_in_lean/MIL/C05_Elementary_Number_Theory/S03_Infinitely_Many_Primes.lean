@@ -173,12 +173,18 @@ theorem primes_infinite' : ∀ s : Finset Nat, ∃ p, Nat.Prime p ∧ p ∉ s :=
     exact Nat.sub_le_iff_le_add'.mp y
   rcases exists_prime_factor this with ⟨p, pp, pdvd⟩
   have : p ∣ ∏ i in s', i := by
-    sorry
+    have p_in_s' : p ∈ s' := by
+      apply mem_s'.mpr
+      exact pp
+    exact dvd_prod_of_mem (fun i ↦ i) p_in_s'
   have : p ∣ 1 := by
     convert Nat.dvd_sub' pdvd this
     simp
   show False
-  sorry
+  rw [Nat.dvd_one] at this
+  apply Nat.Prime.ne_one at pp
+  exact absurd this pp
+
 theorem bounded_of_ex_finset (Q : ℕ → Prop) :
     (∃ s : Finset ℕ, ∀ k, Q k → k ∈ s) → ∃ n, ∀ k, Q k → k < n := by
   rintro ⟨s, hs⟩
