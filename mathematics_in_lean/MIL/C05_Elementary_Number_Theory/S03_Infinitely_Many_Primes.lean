@@ -259,13 +259,20 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
     }
   }
   {
-    by_cases mp : m.Prime
+    by_cases mp : (n / m).Prime
     {
       use (n / m)
-      exact ⟨mp, mdvdn, _⟩
-      sorry
+      exact ⟨mp, Nat.div_dvd_of_dvd mdvdn, h1⟩
     }
-    sorry --    rcases ih (n / m) h1
+    {
+      have zltn : 0 < n := by exact Nat.zero_lt_of_lt mltn
+      have now : n / m < n := by exact Nat.div_lt_self zltn mge2
+      rcases ih (n / m) now h1 mp with ⟨p, pp, pm, p1⟩
+      use p
+      have : n / m ∣ n := by exact Nat.div_dvd_of_dvd mdvdn
+      have : p ∣ n := by exact Nat.dvd_trans pm this
+      exact ⟨pp, this, p1⟩
+    }
   }
 
 example (m n : ℕ) (s : Finset ℕ) (h : m ∈ erase s n) : m ≠ n ∧ m ∈ s := by
