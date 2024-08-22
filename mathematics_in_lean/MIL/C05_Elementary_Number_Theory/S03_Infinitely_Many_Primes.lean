@@ -248,8 +248,18 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
     apply mod_4_eq_3_or_mod_4_eq_3
     rw [neq, h]
   rcases this with h1 | h1
+  {
+    by_cases mp : m.Prime
+    { use m }
+    {
+      rcases ih m mltn h1 mp with ⟨p, pp, pm, p1⟩
+      use p
+      have : p ∣ n := by exact Nat.dvd_trans pm mdvdn
+      exact ⟨pp, this, p1⟩
+    }
+  }
   · sorry
-  · sorry
+
 example (m n : ℕ) (s : Finset ℕ) (h : m ∈ erase s n) : m ≠ n ∧ m ∈ s := by
   rwa [mem_erase] at h
 
