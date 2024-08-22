@@ -258,7 +258,15 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
       exact ⟨pp, this, p1⟩
     }
   }
-  · sorry
+  {
+    by_cases mp : m.Prime
+    {
+      use (n / m)
+      exact ⟨mp, mdvdn, _⟩
+      sorry
+    }
+    sorry --    rcases ih (n / m) h1
+  }
 
 example (m n : ℕ) (s : Finset ℕ) (h : m ∈ erase s n) : m ≠ n ∧ m ∈ s := by
   rwa [mem_erase] at h
