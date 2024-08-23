@@ -305,16 +305,19 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
   have ps : p ∈ s := by
     rcases hs p with pr
     exact pr.mp ⟨pp, p4eq⟩
+  /- by_contra から導出できるかと思ったらnの取り扱いで袋小路　-/
   have pne3 : p ≠ 3 := by
-    by_cases pn : p > n
-    {
-      have p3 : Nat.Prime 3 := by exact Nat.prime_three
-      rcases hn p pn with this
-      exact absurd p4eq (this pp)
-    }
-    {
-      sorry
-    }
+    by_contra p3
+    rw [p3] at pdvd
+    rw [← Nat.dvd_add_iff_left (Nat.dvd_refl 3)] at pdvd
+    rw [Nat.prime_three.dvd_mul] at pdvd
+    norm_num at pdvd
+    have : 3 ∈ s.erase 3 := by
+      apply mem_of_dvd_prod_primes Nat.prime_three _ pdvd
+      intro k
+      simp [← hs k]
+      exact fun k_ne_3 a k43 ↦ a
+    simp at this
   have : p ∣ 4 * ∏ i in erase s 3, i := by
     sorry
   have : p ∣ 3 := by
