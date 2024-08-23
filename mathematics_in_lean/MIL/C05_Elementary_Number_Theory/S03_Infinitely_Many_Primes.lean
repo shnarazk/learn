@@ -323,7 +323,7 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
     have p4' : p ∣ ∏ i in erase s 3, i := by exact dvd_prod_of_mem (fun i ↦ i) p4
     exact Dvd.dvd.mul_left p4' 4
   have : p ∣ 3 := by
-    sorry
+    exact (Nat.dvd_add_iff_right this).mpr pdvd
   have : p = 3 := by
-    sorry
+    rw [Nat.Prime.eq_of_dvd_of_prime pp Nat.prime_three this]
   contradiction
