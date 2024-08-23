@@ -298,8 +298,8 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
     exact ⟨p, pltn, pp, p4⟩
   rcases this with ⟨s, hs⟩
   have h₁ : ((4 * ∏ i in erase s 3, i) + 3) % 4 = 3 := by
-    have h₂ : (4 * ∏ i in erase s 3, i) % 4 = 0 := by
-      exact Nat.mul_mod_right 4 (∏ i ∈ s.erase 3, i)
+    -- have h₂ : (4 * ∏ i in erase s 3, i) % 4 = 0 := by
+    --  exact Nat.mul_mod_right 4 (∏ i ∈ s.erase 3, i)
     rw [Nat.mul_add_mod]
   rcases exists_prime_factor_mod_4_eq_3 h₁ with ⟨p, pp, pdvd, p4eq⟩
   have ps : p ∈ s := by
@@ -316,7 +316,7 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
       apply mem_of_dvd_prod_primes Nat.prime_three _ pdvd
       intro k
       simp [← hs k]
-      exact fun k_ne_3 a k43 ↦ a
+      exact fun _k_ne_3 a _k43 ↦ a
     simp at this
   have : p ∣ 4 * ∏ i in erase s 3, i := by
     have p4 : p ∈ erase s 3 := by exact mem_erase_of_ne_of_mem pne3 ps
