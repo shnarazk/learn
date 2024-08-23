@@ -17,7 +17,7 @@
 -- import MIL.C05_Elementary_Number_Theory.S01_Irrational_Roots
 -- import MIL.C05_Elementary_Number_Theory.S02_Induction_and_Recursion
 -- import MIL.C05_Elementary_Number_Theory.S03_Infinitely_Many_Primes
--- import MIL.C06_Structures.S01_Structures
+import MIL.C06_Structures.S01_Structures
 -- import MIL.C06_Structures.S02_Algebraic_Structures
 -- import MIL.C06_Structures.S03_Building_the_Gaussian_Integers
 -- import MIL.C07_Hierarchies.S01_Basics
