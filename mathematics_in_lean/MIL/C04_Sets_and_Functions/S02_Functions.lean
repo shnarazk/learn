@@ -44,12 +44,11 @@ example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
   simp
   intro x0 xh eq
   exact mem_of_eq_of_mem (h (Eq.symm eq)) xh
-  done
 
 example : f '' (f ⁻¹' u) ⊆ u := by
   simp
-  intro x X
-  exact X
+  -- intro x X
+  -- exact X
 
 -- Surjective = 全射
 example (h : Surjective f) : u ⊆ f '' (f ⁻¹' u) := by
@@ -123,7 +122,7 @@ example : f '' s \ f '' t ⊆ f '' (s \ t) := by
 
 example : f ⁻¹' u \ f ⁻¹' v ⊆ f ⁻¹' (u \ v) := by
   simp
-  rfl
+  -- rfl
 
 example : f '' s ∩ v = f '' (s ∩ f ⁻¹' v) := by
   ext x
@@ -265,7 +264,7 @@ example : InjOn (fun x ↦ x ^ 2) { x : ℝ | x ≥ 0 } := by
   simp at xy
   rw [pow_eq_pow_iff_of_ne_zero _] at xy
   rcases xy with eq | ne
-  { exact eq ; done }
+  { exact eq }
   { simp at ne
     simp at xnonneg
     simp at ynonneg
@@ -276,7 +275,6 @@ example : InjOn (fun x ↦ x ^ 2) { x : ℝ | x ≥ 0 } := by
       simp at ne
       rw [Case] at ne
       exact ne.symm
-      done
     }
     {
       rw [ne] at Case

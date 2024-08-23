@@ -1,6 +1,6 @@
 import MIL.Common
 import Mathlib.Topology.Instances.Real
-import Mathlib.Analysis.NormedSpace.BanachSteinhaus
+import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
 
 open Set Filter
 open Topology Filter
@@ -102,12 +102,12 @@ example {s : Set X} (hs : IsCompact s) {u : ℕ → X} (hu : ∀ n, u n ∈ s) :
 example {s : Set X} (hs : IsCompact s) (hs' : s.Nonempty) {f : X → ℝ}
       (hfs : ContinuousOn f s) :
     ∃ x ∈ s, ∀ y ∈ s, f x ≤ f y :=
-  hs.exists_forall_le hs' hfs
+  hs.exists_isMinOn hs' hfs
 
 example {s : Set X} (hs : IsCompact s) (hs' : s.Nonempty) {f : X → ℝ}
       (hfs : ContinuousOn f s) :
     ∃ x ∈ s, ∀ y ∈ s, f y ≤ f x :=
-  hs.exists_forall_ge hs' hfs
+  hs.exists_isMaxOn hs' hfs
 
 example {s : Set X} (hs : IsCompact s) : IsClosed s :=
   hs.isClosed

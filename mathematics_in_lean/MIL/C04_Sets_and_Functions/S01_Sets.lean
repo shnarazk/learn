@@ -207,7 +207,8 @@ example : evens ∪ odds = univ := by
   rw [evens, odds]
   ext n
   simp
-  apply Classical.em
+  exact Nat.even_or_odd n
+  -- apply Classical.em
 
 example (x : ℕ) (h : x ∈ (∅ : Set ℕ)) : False :=
   h
@@ -224,9 +225,10 @@ example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
   rcases Nat.Prime.eq_two_or_odd xp with case1 | case2
   { linarith }
   {
-    intro st
-    have : x % 2 = 0 := Nat.even_iff.mp st
-    linarith
+    -- intro st
+    exact Nat.odd_iff.mpr case2
+    -- have : x % 2 = 0 := Nat.even_iff.mp st
+    -- linarith
   }
 
 #print Prime
@@ -324,7 +326,6 @@ example : (s ∪ ⋂ i, A i) = ⋂ i, A i ∪ s := by
       intro i
       right
       exact xs
-      done
     }
     {
       intro i
