@@ -276,11 +276,15 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
   }
 
 example (m n : ℕ) (s : Finset ℕ) (h : m ∈ erase s n) : m ≠ n ∧ m ∈ s := by
-  rwa [mem_erase] at h
+  rwa [mem_erase] at h  -- rwaはrwしてからassumptionを使う
 
 example (m n : ℕ) (s : Finset ℕ) (h : m ∈ erase s n) : m ≠ n ∧ m ∈ s := by
   simp at h
   assumption
+
+/-  Use them -/
+#check Nat.dvd_add_iff_left
+#check Nat.dvd_sub'
 
 theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3 := by
   by_contra h
@@ -294,12 +298,23 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
     exact ⟨p, pltn, pp, p4⟩
   rcases this with ⟨s, hs⟩
   have h₁ : ((4 * ∏ i in erase s 3, i) + 3) % 4 = 3 := by
-    sorry
+    have h₂ : (4 * ∏ i in erase s 3, i) % 4 = 0 := by
+      exact Nat.mul_mod_right 4 (∏ i ∈ s.erase 3, i)
+    rw [Nat.mul_add_mod]
   rcases exists_prime_factor_mod_4_eq_3 h₁ with ⟨p, pp, pdvd, p4eq⟩
   have ps : p ∈ s := by
-    sorry
+    rcases hs p with pr
+    exact pr.mp ⟨pp, p4eq⟩
   have pne3 : p ≠ 3 := by
-    sorry
+    by_cases pn : p > n
+    {
+      have p3 : Nat.Prime 3 := by exact Nat.prime_three
+      rcases hn p pn with this
+      exact absurd p4eq (this pp)
+    }
+    {
+      sorry
+    }
   have : p ∣ 4 * ∏ i in erase s 3, i := by
     sorry
   have : p ∣ 3 := by
