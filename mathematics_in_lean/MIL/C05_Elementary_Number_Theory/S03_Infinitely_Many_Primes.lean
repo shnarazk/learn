@@ -319,7 +319,9 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
       exact fun k_ne_3 a k43 ↦ a
     simp at this
   have : p ∣ 4 * ∏ i in erase s 3, i := by
-    sorry
+    have p4 : p ∈ erase s 3 := by exact mem_erase_of_ne_of_mem pne3 ps
+    have p4' : p ∣ ∏ i in erase s 3, i := by exact dvd_prod_of_mem (fun i ↦ i) p4
+    exact Dvd.dvd.mul_left p4' 4
   have : p ∣ 3 := by
     sorry
   have : p = 3 := by
