@@ -56,28 +56,28 @@ example (a b c : Nat) (h : a * b = a * c) (h' : a ≠ 0) : b = c :=
 example {m n : ℕ} (coprime_mn : m.Coprime n) : m ^ 2 ≠ 2 * n ^ 2 := by
   intro sqr_eq
   have step1 : 2 ∣ m := by
-    have tmp1 : 2 ∣ 2 * n ^ 2 := by exact Nat.dvd_mul_right 2 (n ^ 2)
-    rw [← sqr_eq] at tmp1
-    apply Nat.Prime.dvd_of_dvd_pow Nat.prime_two tmp1
+    have tmp : 2 ∣ 2 * n ^ 2 := by exact Nat.dvd_mul_right 2 (n ^ 2)
+    rw [← sqr_eq] at tmp
+    apply Nat.Prime.dvd_of_dvd_pow Nat.prime_two tmp
   obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp step1
   have step2 : 2 * (2 * k ^ 2) = 2 * n ^ 2 := by
     rw [← sqr_eq, meq]
     ring
-  have step2 : 2 * k ^ 2 = n ^ 2 := by
+  have step3 : 2 * k ^ 2 = n ^ 2 := by
     have two_neq_zero : 2 ≠ 0 := by exact Ne.symm (Nat.zero_ne_add_one 1)
     rw [meq] at sqr_eq
     apply (mul_right_inj' two_neq_zero).mp at step2
     exact step2
-  have step3 : 2 ∣ n := by
-    have tmp2 : 2 ∣ 2 * k ^ 2 := Nat.dvd_mul_right 2 (k ^ 2)
-    rw [step2] at tmp2
-    exact even_of_even_sqr tmp2
-  have step4 : 2 ∣ m.gcd n := by
-    exact Nat.dvd_gcd step1 step3
+  have step4 : 2 ∣ n := by
+    have tmp : 2 ∣ 2 * k ^ 2 := Nat.dvd_mul_right 2 (k ^ 2)
+    rw [step3] at tmp
+    exact even_of_even_sqr tmp
+  have step5 : 2 ∣ m.gcd n := by
+    exact Nat.dvd_gcd step1 step4
   have : 2 ∣ 1 := by
-    have tmp3 : m.gcd n = 1 := coprime_mn
-    rw [tmp3] at step4
-    exact step4
+    have tmp : m.gcd n = 1 := coprime_mn
+    rw [tmp] at step5
+    exact step5
   norm_num at this
 
 example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prime) : m ^ 2 ≠ p * n ^ 2 := by
@@ -96,18 +96,19 @@ example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prime) : m ^ 2 ≠
     apply (mul_right_inj' p_neq_zero).mp at step2
     exact step2
   have step3 : p ∣ n := by
-    have tmp2 : p ∣ p * k ^ 2 := Nat.dvd_mul_right p (k ^ 2)
-    rw [step2] at tmp2
-    exact Nat.Prime.dvd_of_dvd_pow prime_p tmp2
+    have tmp : p ∣ p * k ^ 2 := Nat.dvd_mul_right p (k ^ 2)
+    rw [step2] at tmp
+    exact Nat.Prime.dvd_of_dvd_pow prime_p tmp
   have step4 : p ∣ m.gcd n := by
     exact Nat.dvd_gcd step1 step3
   have : p ∣ 1 := by
-    have tmp3 : m.gcd n = 1 := coprime_mn
-    rw [tmp3] at step4
+    --have tmp : m.gcd n = 1 := coprime_mn
+    -- rw [tmp] at step4
+    rw [(coprime_mn : m.gcd n = 1)] at step4
     exact step4
   norm_num at this
-  have step5 : ¬p = 1 := by exact (Nat.Prime.ne_one prime_p)
-  exact absurd this step5
+  -- have step5 : ¬p = 1 := by exact (Nat.Prime.ne_one prime_p)
+  exact absurd this (by exact (Nat.Prime.ne_one prime_p) : ¬p = 1)
 
 #check Nat.factors
 #check Nat.prime_of_mem_primeFactorsList
@@ -171,9 +172,9 @@ example {m n k r : ℕ} (nnz : n ≠ 0) (pow_eq : m ^ k = r * n ^ k) {p : ℕ} :
   rw [pow_eq]
   rw [factorization_mul']
   simp
-  have : r.succ ≠ 0 := by exact Nat.succ_ne_zero r
+  -- have : r.succ ≠ 0 := by exact Nat.succ_ne_zero r
   rw [← Nat.succ_eq_add_one]
-  . exact this
+  . exact (by exact Nat.succ_ne_zero r : r.succ ≠ 0)
   . exact npow_nz
   . exact Nat.dvd_mul_right k (m.factorization p)
   . exact Nat.dvd_mul_right k (n.factorization p)

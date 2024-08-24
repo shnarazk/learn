@@ -254,8 +254,8 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
     {
       rcases ih m mltn h1 mp with ⟨p, pp, pm, p1⟩
       use p
-      have : p ∣ n := by exact Nat.dvd_trans pm mdvdn
-      exact ⟨pp, this, p1⟩
+      -- have : p ∣ n := by exact Nat.dvd_trans pm mdvdn
+      exact ⟨pp, by exact Nat.dvd_trans pm mdvdn, p1⟩
     }
   }
   {
@@ -270,8 +270,8 @@ theorem exists_prime_factor_mod_4_eq_3 {n : Nat} (h : n % 4 = 3) :
       rcases ih (n / m) now h1 mp with ⟨p, pp, pm, p1⟩
       use p
       have : n / m ∣ n := by exact Nat.div_dvd_of_dvd mdvdn
-      have : p ∣ n := by exact Nat.dvd_trans pm this
-      exact ⟨pp, this, p1⟩
+      -- have : p ∣ n := by exact Nat.dvd_trans pm this
+      exact ⟨pp, by exact Nat.dvd_trans pm this, p1⟩
     }
   }
 

@@ -181,20 +181,22 @@ example : s \ t ∪ t \ s = (s ∪ t) \ (s ∩ t) := by
     rcases h1 with ⟨(xs | xt), cap⟩
     {
       simp at cap
-      have xnt : x ∉ t := cap xs
+      -- have xnt : x ∉ t := cap xs
       left
       constructor
       { exact xs }
-      { exact xnt }
-    }
+      -- { exact xnt }
+      { exact (cap xs : x ∉ t) }
+   }
     {
       simp at cap
-      have xns : x ∉ s := by exact fun a ↦ cap a xt
+      -- have xns : x ∉ s := by exact fun a ↦ cap a xt
       right
       constructor
       { exact xt }
-      { exact xns }
-    }
+      -- { exact xns }
+      { exact (by exact fun a ↦ cap a xt : x ∉ s) }
+   }
   }
 
 def evens : Set ℕ :=
@@ -273,10 +275,10 @@ example (h₀ : ∀ x ∈ t, ¬Even x) (h₁ : ∀ x ∈ t, Prime x) : ∀ x ∈
 
 example (h : ∃ x ∈ s, ¬Even x ∧ Prime x) : ∃ x ∈ t, Prime x := by
   rcases h with ⟨x, xs, p⟩
-  have xt : x ∈ t := ssubt xs
+  -- have xt : x ∈ t := ssubt xs
   use x
   constructor
-  { exact xt }
+  { exact (ssubt xs : x ∈ t) }
   { exact p.right }
 
 end
