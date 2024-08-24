@@ -34,9 +34,9 @@ example : s ⊆ f ⁻¹' (f '' s) := by
   use x, xs
 
 example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
-  constructor
-  { simp }
-  { simp }
+  constructor <;> simp
+  -- { simp }
+  -- { simp }
 
 -- Injective =単射
 example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
@@ -71,9 +71,9 @@ example (h : u ⊆ v) : f ⁻¹' u ⊆ f ⁻¹' v := by
 
 example : f ⁻¹' (u ∪ v) = f ⁻¹' u ∪ f ⁻¹' v := by
   ext x
-  constructor
-  { simp }
-  { simp }
+  constructor <;> simp
+  -- { simp }
+  -- { simp }
 
 example : f '' (s ∩ t) ⊆ f '' s ∩ f '' t := by
   simp
