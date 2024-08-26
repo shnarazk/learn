@@ -81,14 +81,18 @@ theorem addAlt_comm (a b : Point) : addAlt a b = addAlt b a := by
   repeat' apply add_comm
 
 protected theorem add_assoc (a b c : Point) : (a.add b).add c = a.add (b.add c) := by
-  sorry
+  simp [add]
+  repeat' constructor
+  repeat' apply add_assoc
 
 def smul (r : ℝ) (a : Point) : Point :=
-  sorry
+  ⟨r * a.x, r * a.y, r * a.z⟩
 
 theorem smul_distrib (r : ℝ) (a b : Point) :
     (smul r a).add (smul r b) = smul r (a.add b) := by
-  sorry
+  simp [add, smul]
+  repeat' constructor
+  repeat' rw [mul_add r]
 
 end Point
 
@@ -206,4 +210,3 @@ variable (s : StdSimplex)
 #check s.2
 
 end
-
