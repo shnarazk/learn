@@ -208,9 +208,8 @@ def odds : Set ℕ :=
 example : evens ∪ odds = univ := by
   rw [evens, odds]
   ext n
-  simp
-  exact Nat.even_or_odd n
-  -- apply Classical.em
+  simp [-Nat.not_even_iff_odd]
+  apply Classical.em
 
 example (x : ℕ) (h : x ∈ (∅ : Set ℕ)) : False :=
   h
