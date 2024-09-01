@@ -180,7 +180,36 @@ end Int
 
 theorem sq_add_sq_eq_zero {α : Type*} [LinearOrderedRing α] (x y : α) :
     x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
-  sorry
+  constructor
+  {
+    have y2nonneg : 0 ≤ y ^ 2 := sq_nonneg y
+    by_cases xx : x = 0
+    {
+      by_cases yy : y = 0
+      { intro ; exact ⟨xx, yy⟩ }
+      {
+        intro hxy
+        simp [xx]
+        simp [xx] at hxy
+        exact absurd hxy yy
+      }
+    }
+    {
+      simp [xx]
+      have x2_pos : 0 < x ^ 2 := by exact pow_two_pos_of_ne_zero xx
+      by_cases yy : y = 0
+      { simp [yy] ; exact xx }
+      {
+        have : 0 < x ^ 2 + y ^ 2 := by exact Right.add_pos_of_pos_of_nonneg x2_pos y2nonneg
+        exact ne_of_gt this
+      }
+    }
+  }
+  {
+    intro ⟨a, b⟩
+    simp [a, b]
+  }
+
 namespace GaussInt
 
 def norm (x : GaussInt) :=
