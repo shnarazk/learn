@@ -217,11 +217,41 @@ def norm (x : GaussInt) :=
 
 @[simp]
 theorem norm_nonneg (x : GaussInt) : 0 ≤ norm x := by
-  sorry
+  simp [norm]
+  have (a b : ℝ) (a_nonneg : 0 ≤ a) (b_nonneg : 0 ≤ b) : 0 ≤ a + b := by
+    exact Left.add_nonneg a_nonneg b_nonneg
+  exact Left.add_nonneg (pow_two_nonneg x.re) (pow_two_nonneg x.im)
+
 theorem norm_eq_zero (x : GaussInt) : norm x = 0 ↔ x = 0 := by
-  sorry
+  simp [norm, GaussInt.zero_def]
+  constructor
+  {
+    intro z
+    have : x.re = 0 ∧ x.im = 0 := by exact (sq_add_sq_eq_zero x.re x.im).mp z
+    exact GaussInt.ext_iff.mpr this
+  }
+  {
+    intro x_def
+    apply (sq_add_sq_eq_zero x.re x.im).mpr
+    constructor <;> exact by simp [x_def]
+  }
+
 theorem norm_pos (x : GaussInt) : 0 < norm x ↔ x ≠ 0 := by
-  sorry
+  constructor
+  {
+    contrapose!
+    intro Z
+    apply (norm_eq_zero x).mpr at Z
+    exact Int.le_of_eq Z
+  }
+  {
+    intro xnez
+    contrapose! xnez
+    have : 0 ≤ x.norm := by exact norm_nonneg x
+    have : x.norm = 0 := by exact Eq.symm (Int.le_antisymm this xnez)
+    exact (norm_eq_zero x).mp this
+  }
+
 theorem norm_mul (x y : GaussInt) : norm (x * y) = norm x * norm y := by
   sorry
 def conj (x : GaussInt) : GaussInt :=
