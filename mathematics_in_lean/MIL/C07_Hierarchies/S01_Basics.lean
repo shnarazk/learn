@@ -4,6 +4,8 @@ import Mathlib.Data.Real.Basic
 
 set_option autoImplicit true
 
+-- 何を言っているのか
+example (a : ℕ) : ℕ := by exact a
 
 class One₁ (α : Type) where
   /-- The element one -/
@@ -46,7 +48,7 @@ class Semigroup₁ (α : Type) where
 attribute [instance] Semigroup₁.toDia₁
 
 example {α : Type} [Semigroup₁ α] (a b : α) : α := a ⋄ b
-
+example {α : Type} [Semigroup₁ α] (a _b : α) : α := by exact a
 
 class Semigroup₂ (α : Type) extends Dia₁ α where
   /-- Diamond is associative -/
@@ -113,14 +115,20 @@ example {M : Type} [Monoid₁ M] {a b c : M} (hba : b ⋄ a = 𝟙) (hac : a ⋄
   rw [← one_dia c, ← hba, dia_assoc, hac, dia_one b]
 
 
-lemma inv_eq_of_dia [Group₁ G] {a b : G} (h : a ⋄ b = 𝟙) : a⁻¹ = b :=
-  sorry
+lemma inv_eq_of_dia [Group₁ G] {a b : G} (h : a ⋄ b = 𝟙) : a⁻¹ = b := by
+  symm
+  calc
+    b = 𝟙 ⋄ b := by exact symm (one_dia b)
+    _ = (a⁻¹ ⋄ a) ⋄ b := by rw [inv_dia]
+    _ = a⁻¹ ⋄ (a ⋄ b) := by rw [dia_assoc]
+    _ = a⁻¹ ⋄ 𝟙 := by rw [h]
+    _ = a⁻¹ := by rw [dia_one]
 
-lemma dia_inv [Group₁ G] (a : G) : a ⋄ a⁻¹ = 𝟙 :=
-  sorry
-
-
-
+lemma dia_inv [Group₁ G] (a : G) : a ⋄ a⁻¹ = 𝟙 := by
+  have dbl : a⁻¹⁻¹ = a := by refine inv_eq_of_dia (inv_dia a)
+  have inv : a⁻¹⁻¹ ⋄ a⁻¹ = 𝟙 := by exact inv_dia a⁻¹
+  rw [dbl] at inv
+  exact inv
 
 class AddSemigroup₃ (α : Type) extends Add α where
 /-- Addition is associative -/
