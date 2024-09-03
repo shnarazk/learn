@@ -199,7 +199,7 @@ lemma mul_left_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : a * b = a * c)
   rw [←Group₃.inv_mul a, mul_assoc₃, mul_assoc₃, h]
 
 @[to_additive]
-lemma mul_right_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : b*a = c*a) : b = c := by
+lemma mul_right_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : b * a = c * a) : b = c := by
   rw [←mul_one b, ←mul_one c]
   rw [←@Group₃.mul_inv _ _ a, ←mul_assoc₃, ←mul_assoc₃, h]
 
@@ -219,7 +219,25 @@ class Ring₃ (R : Type) extends AddGroup₃ R, Monoid₃ R, MulZeroClass R wher
 instance {R : Type} [Ring₃ R] : AddCommGroup₃ R :=
 { Ring₃.toAddGroup₃ with
   add_comm := by
-    sorry }
+    intro a b
+    have : a + (b + a) + b = a + (a + b) + b := by
+      calc
+        a + (b + a) + b = a + ((b + a) + b) := by rw [add_assoc₃]
+        _ = a + (b + a + b) := by rw [add_assoc₃]
+        _ = a + (b + (a + b)) := by rw [add_assoc₃]
+        _ = (a + b) + (a + b) := by rw [add_assoc₃]
+        _ = (a + b) * 1 + (a + b) * 1 := by rw [mul_one]
+        _ = (a + b) * (1 + 1) := by rw [Ring₃.left_distrib]
+        _ = a * (1 + 1) + b * (1 + 1) := by rw [Ring₃.right_distrib]
+        _ = a * 1 + a * 1 + (b * 1 + b * 1) := by rw [Ring₃.left_distrib, Ring₃.left_distrib]
+        _ = a + a + (b + b) := by simp
+        _ = a + (a + (b + b)) := by rw [add_assoc₃]
+        _ = a + ((a + b) + b) := by rw [add_assoc₃]
+        _ = a + (a + b) + b := by rw [←add_assoc₃]
+    apply add_right_cancel₃ at this
+    apply add_left_cancel₃ at this
+    exact symm this
+}
 
 instance : Ring₃ ℤ where
   add := (· + ·)
