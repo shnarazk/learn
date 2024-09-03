@@ -181,21 +181,27 @@ attribute [simp] Group₃.inv_mul AddGroup₃.neg_add
 
 
 @[to_additive]
-lemma inv_eq_of_mul [Group₃ G] {a b : G} (h : a * b = 1) : a⁻¹ = b :=
-  sorry
-
+lemma inv_eq_of_mul [Group₃ G] {a b : G} (h : a * b = 1) : a⁻¹ = b := by
+  have one : a⁻¹ * a = 1 := by exact Group₃.inv_mul a
+  exact left_inv_eq_right_inv' one h
 
 @[to_additive (attr := simp)]
 lemma Group₃.mul_inv {G : Type} [Group₃ G] {a : G} : a * a⁻¹ = 1 := by
-  sorry
+  have dbl : a⁻¹⁻¹ = a := by refine inv_eq_of_mul (inv_mul a)
+  symm
+  calc
+    1 = a⁻¹⁻¹ * a⁻¹ := by rw [←inv_mul]
+    _ = a * a⁻¹ := by rw [dbl]
 
 @[to_additive]
 lemma mul_left_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : a * b = a * c) : b = c := by
-  sorry
+  rw [←one_mul b, ←one_mul c]
+  rw [←Group₃.inv_mul a, mul_assoc₃, mul_assoc₃, h]
 
 @[to_additive]
 lemma mul_right_cancel₃ {G : Type} [Group₃ G] {a b c : G} (h : b*a = c*a) : b = c := by
-  sorry
+  rw [←mul_one b, ←mul_one c]
+  rw [←@Group₃.mul_inv _ _ a, ←mul_assoc₃, ←mul_assoc₃, h]
 
 class AddCommGroup₃ (G : Type) extends AddGroup₃ G, AddCommMonoid₃ G
 
