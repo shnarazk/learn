@@ -263,10 +263,19 @@ class LE₁ (α : Type) where
 
 @[inherit_doc] infix:50 " ≤₁ " => LE₁.le
 
+/-
+1. Reflexivity: ∀ a : α, a ≤₁ a
+1. Transitivity (a b c : α) (ab : a ≤₁ b) (bc : b ≤₁ c) : a ≤₁ c
+-/
 class Preorder₁ (α : Type)
 
+/-
+1. Extends Preorder
+1. Antisymmetry (a b : α) (ab : a ≤₁ b) (ba : b ≤₁ a) : a = b
+-/
 class PartialOrder₁ (α : Type)
 
+/- ??? -/
 class OrderedCommMonoid₁ (α : Type)
 
 instance : OrderedCommMonoid₁ ℕ where
