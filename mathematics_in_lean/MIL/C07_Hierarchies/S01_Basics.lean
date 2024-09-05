@@ -267,18 +267,38 @@ class LE₁ (α : Type) where
 1. Reflexivity: ∀ a : α, a ≤₁ a
 1. Transitivity (a b c : α) (ab : a ≤₁ b) (bc : b ≤₁ c) : a ≤₁ c
 -/
-class Preorder₁ (α : Type)
+class Preorder₁ (α : Type) extends LE₁ α where
+  le_refl : ∀ a : α, a ≤₁ a
+  le_trans : ∀ a b c : α, a ≤₁ b → b ≤₁ c → a ≤₁ c
 
 /-
 1. Extends Preorder
 1. Antisymmetry (a b : α) (ab : a ≤₁ b) (ba : b ≤₁ a) : a = b
 -/
-class PartialOrder₁ (α : Type)
+class PartialOrder₁ (α : Type) extends Preorder₁ α, CommMonoid₃ α where
+  le_antisymm : ∀ a b : α, a ≤₁ b → b ≤₁ a → a = b
 
-/- ??? -/
-class OrderedCommMonoid₁ (α : Type)
+/- a class for ordered commutative monoids, which have both a partial order and a commutative monoid structure such that
+∀ a b : α, a ≤ b → ∀ c : α, c * a ≤ c * b.
+-/
+class OrderedCommMonoid₁ (α : Type) extends PartialOrder₁ α where
+  le_of_mul : ∀ a b : α, a ≤₁ b → ∀ c : α, c * a ≤₁ c * b
 
 instance : OrderedCommMonoid₁ ℕ where
+  le := (· ≤ ·)
+  le_refl := by simp
+  le_trans := by intro a b c ; exact Nat.le_trans
+  one_mul := by simp
+  mul_one := by simp
+  mul_assoc₃ := by intro a b c ; exact Nat.mul_assoc a b c
+  mul_comm := by intro a b ; exact Nat.mul_comm a b
+  le_antisymm := by intro a b ; simp ; exact Nat.le_antisymm
+  le_of_mul := by
+    intro a b ab
+    intro c
+    simp at ab
+    simp
+    exact Nat.mul_le_mul_left c ab
 
 class SMul₃ (α : Type) (β : Type) where
   /-- Scalar multiplication -/
