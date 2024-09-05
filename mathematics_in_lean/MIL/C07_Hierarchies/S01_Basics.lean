@@ -330,13 +330,17 @@ def zsmul₁ {M : Type*} [Zero M] [Add M] [Neg M] : ℤ → M → M
   | Int.ofNat n, a => nsmul₁ n a
   | Int.negSucc n, a => -nsmul₁ n.succ a
 
+/- You are not asked to replace those sorries with proofs
+If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul1. -/
 instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   smul := zsmul₁
-  zero_smul := sorry
-  one_smul := sorry
-  mul_smul := sorry
-  add_smul := sorry
-  smul_add := sorry
+  zero_smul := by intro x ; simp [zsmul₁, nsmul₁]
+  one_smul := by intro x ; simp [zsmul₁, nsmul₁]
+  mul_smul := by
+    intro x y m
+    sorry
+  add_smul := by intro a b m ; sorry
+  smul_add := by intro a b m ; sorry
 
 #synth Module₁ ℤ ℤ -- abGrpModule ℤ
 
