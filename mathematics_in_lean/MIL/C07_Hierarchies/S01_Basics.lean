@@ -338,8 +338,43 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   one_smul := by intro x ; simp [zsmul₁, nsmul₁]
   mul_smul := by
     intro x y m
-    sorry
-  add_smul := by intro a b m ; sorry
+    simp [zsmul₁]
+    rcases x with xN | xN
+    {
+      rcases y with yN | yZ
+      {
+        have xy_mul (a b : ℕ): Int.ofNat a * Int.ofNat b = Int.ofNat (a * b) := by exact rfl
+        rw [xy_mul]
+        simp
+        induction' xN with x0 xp
+        { rcases yN with _|yN <;> { simp ; rfl } }
+        {
+          induction' yN with y0 yp
+          {
+            simp [nsmul₁] at xp
+            simp [nsmul₁]
+            exact xp
+          }
+          {
+            -- simp [nsmul₁] at xp
+            -- simp [nsmul₁] at yp
+            -- simp [nsmul₁]
+
+          }
+        }
+      }
+      { sorry }
+    }
+    { sorry }
+
+  add_smul := by
+    intro a b m
+    simp [zsmul₁]
+    by_cases ab : 0 ≤ a + b
+    {
+      simp
+    }
+    { sorry }
   smul_add := by intro a b m ; sorry
 
 #synth Module₁ ℤ ℤ -- abGrpModule ℤ
