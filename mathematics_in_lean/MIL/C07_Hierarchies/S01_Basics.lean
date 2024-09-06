@@ -331,11 +331,12 @@ def zsmul₁ {M : Type*} [Zero M] [Add M] [Neg M] : ℤ → M → M
   | Int.negSucc n, a => -nsmul₁ n.succ a
 
 /- You are not asked to replace those sorries with proofs
-If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul1. -/
+If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul₁. -/
 instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   smul := zsmul₁
   zero_smul := by intro x ; simp [zsmul₁, nsmul₁]
   one_smul := by intro x ; simp [zsmul₁, nsmul₁]
+  /- postponed after add_smul -/
   mul_smul := by
     intro x y m
     simp [zsmul₁]
@@ -368,7 +369,7 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
     { sorry }
 
   add_smul := by
-    have zind (n : ℤ) (m : A): m + zsmul₁ n m = zsmul₁ (n + 1) m := by
+    have zinc (n : ℤ) (m : A): m + zsmul₁ n m = zsmul₁ (n + 1) m := by
       induction' n with nnn nn
       {
         induction' nnn with n0 hn
@@ -434,9 +435,9 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
       }
     intro a b m
     simp
-    rw [zsmul₁.eq_def (a + b) m]
+    -- rw [zsmul₁.eq_def (a + b) m]
     have z_zero : zsmul₁ 0 m = 0 := by exact rfl
-    have zind' (a b : ℤ) : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
+    have zinc' (a b : ℤ) : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
       rcases b with bN | bZ
       {
         induction' bN with b0 bP
@@ -445,9 +446,9 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
           have : Int.ofNat (b0 + 1) = Int.ofNat b0 + 1 := by rfl
           simp only [this]
           rw [← add_assoc₃]
-          rw [← zind]
+          rw [← zinc]
           rw [bP]
-          rw [← zind]
+          rw [← zinc]
           rw [← add_assoc₃]
           rw [← add_assoc₃]
           rw [AddCommSemigroup₃.add_comm _ m]
@@ -457,33 +458,52 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
         induction' bZ with b0 bP
         {
           simp
-          have : m + zsmul₁ (a + -1) m = zsmul₁ (a + -1 + 1) m := by exact zind (a + -1) m
+          have : m + zsmul₁ (a + -1) m = zsmul₁ (a + -1 + 1) m := by exact zinc (a + -1) m
           simp [linarith] at this
           rw [← this]
-          have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zind (-1) m))
+          have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1) m))
           rw [this]
           rw [AddCommSemigroup₃.add_comm m]
           rw [add_assoc₃]
           simp
         }
         {
+          let c : ℤ := Int.negSucc b0
+          have as_c : c = Int.negSucc b0 := by rfl
           have : Int.negSucc (b0 + 1) = Int.negSucc b0 - 1 := rfl
-
-          sorry
+          rw [this]
+          rw [←as_c]
+          rw [←as_c] at bP
+          have : m + zsmul₁ (a + c - 1) m = zsmul₁ (a + c - 1 + 1) m := by exact zinc (a + c - 1) m
+          have sub1 : a + c - 1 = a + (c - 1) := by exact Int.add_sub_assoc a c 1
+          have sub2 : a + c - 1 + 1 = a + c := by exact Int.sub_add_cancel (a + c) 1
+          nth_rewrite 1 [sub1] at this
+          rw [sub2] at this
+          nth_rewrite 1 [←zero_add (zsmul₁ _ _)]
+          rw [←@AddGroup₃.add_neg _ _ m, AddCommSemigroup₃.add_comm m, add_assoc₃, this]
+          have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1) m))
+          rw [bP, ←add_assoc₃, AddCommGroup₃.add_comm (-m), add_assoc₃]
+          have last_one : -m + zsmul₁ c m = zsmul₁ (c - 1) m := by
+            symm
+            simp [zsmul₁]
+            have : c - 1 = Int.negSucc b0 - 1 := by rw [as_c]
+            simp [this]
+            simp [nsmul₁]
+            have dist (a b : A) : -(a + b) = -a + -b := by
+              have : a + b + (-a + -b) = 0 := by
+                calc
+                  a + b + (-a + -b) = a + (b + (-a + -b)) := by exact add_assoc₃ a b (-a + -b)
+                  _ = a + (b + (-b + -a)) := by rw [AddCommGroup₃.add_comm (-a)]
+                  _ = a + (b + -b + -a) := by rw [add_assoc₃ b]
+                  _ = a + -a := by simp
+                  _ = 0 := by simp
+              exact neg_eq_of_add this
+            rw [←dist]
+          rw [last_one]
         }
       }
-    by_cases a_nonneg : 0 ≤ a
-    {
-      by_cases b_nonneg : 0 ≤ b
-      {
-        simp [zsmul₁, a_nonneg, b_nonneg]
-        have ab_nonneg : 0 ≤ a + b := by exact Int.add_nonneg a_nonneg b_nonneg
-        -- simp [ab_nonneg]
-        sorry
-      }
-      sorry
-    }
-    { sorry }
+    exact zinc' a b
+
   smul_add := by intro a b m ; sorry
 
 #synth Module₁ ℤ ℤ -- abGrpModule ℤ
