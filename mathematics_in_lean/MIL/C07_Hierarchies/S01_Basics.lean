@@ -359,7 +359,7 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
             -- simp [nsmul₁] at xp
             -- simp [nsmul₁] at yp
             -- simp [nsmul₁]
-
+            sorry
           }
         }
       }
@@ -368,11 +368,120 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
     { sorry }
 
   add_smul := by
+    have zind (n : ℤ) (m : A): m + zsmul₁ n m = zsmul₁ (n + 1) m := by
+      induction' n with nnn nn
+      {
+        induction' nnn with n0 hn
+        { simp [zsmul₁] ; exact rfl }
+        {
+          have : Int.ofNat (n0 + 1) = Int.ofNat n0 + 1 := rfl
+          rw [this]
+          nth_rewrite 2 [zsmul₁.eq_def]
+          have : Int.ofNat n0 + 1 + 1 = Int.ofNat (n0 + 1 + 1) := by rfl
+          rw [this]
+          have : ↑n0 + 1 = Int.ofNat (n0 + 1) := by rfl
+          simp only [zsmul₁, this]
+          rfl
+        }
+      }
+      {
+        induction' nn with n hn
+        {
+          simp [zsmul₁]
+          nth_rewrite 2 [nsmul₁.eq_def]
+          simp
+          simp only [nsmul₁]
+          rw [add_zero]
+          simp
+        }
+        {
+          have flip (n : ℕ) : zsmul₁ (Int.negSucc n) m = -nsmul₁ (n + 1) m := rfl
+          by_cases n0 : n = 0
+          {
+            simp only [n0]
+            rw [flip 1]
+            have : Int.negSucc (0 + 1) + 1 = Int.negSucc 0 := rfl
+            simp only [this]
+            rw [flip 0]
+            have : -nsmul₁ (1 + 1) m = -(m + nsmul₁ 1 m) := by exact flip 1
+            simp [this]
+            have : nsmul₁ 1 m = m := by simp [nsmul₁]
+            simp only [this]
+            apply @add_right_cancel₃ _ _ (m + m)
+            rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + m)), @AddGroup₃.add_neg A _ (m + m)]
+            simp
+            simp [←add_assoc₃]
+          }
+          {
+            rw [flip] at hn
+            have n_pos : 0 < n := by exact Nat.zero_lt_of_ne_zero n0
+            rw [flip (n + 1)]
+            have : Int.negSucc (n + 1) = Int.negSucc n - 1 := rfl
+            rw [this]
+            have : Int.negSucc n = Int.negSucc n - 1 + 1 := by sorry
+            rw [← this]
+            simp [flip]
+            have val (n : ℕ) : nsmul₁ (n + 1) m = m + nsmul₁ n m := by exact rfl
+            have : nsmul₁ (n + 1 + 1) m = m + nsmul₁ (n + 1) m := by exact val (n + 1)
+            simp [this]
+            apply @add_right_cancel₃ _ _ (m + nsmul₁ (n + 1) m)
+            rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + nsmul₁ (n + 1) m)), @AddGroup₃.add_neg A _ _]
+            rw [add_zero]
+            rw [←AddCommSemigroup₃.add_comm, add_assoc₃, ←AddCommSemigroup₃.add_comm]
+            rw [@AddGroup₃.add_neg, zero_add]
+          }
+        }
+      }
     intro a b m
-    simp [zsmul₁]
-    by_cases ab : 0 ≤ a + b
+    simp
+    rw [zsmul₁.eq_def (a + b) m]
+    have z_zero : zsmul₁ 0 m = 0 := by exact rfl
+    have zind' (a b : ℤ) : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
+      rcases b with bN | bZ
+      {
+        induction' bN with b0 bP
+        { simp [z_zero] }
+        {
+          have : Int.ofNat (b0 + 1) = Int.ofNat b0 + 1 := by rfl
+          simp only [this]
+          rw [← add_assoc₃]
+          rw [← zind]
+          rw [bP]
+          rw [← zind]
+          rw [← add_assoc₃]
+          rw [← add_assoc₃]
+          rw [AddCommSemigroup₃.add_comm _ m]
+        }
+      }
+      {
+        induction' bZ with b0 bP
+        {
+          simp
+          have : m + zsmul₁ (a + -1) m = zsmul₁ (a + -1 + 1) m := by exact zind (a + -1) m
+          simp [linarith] at this
+          rw [← this]
+          have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zind (-1) m))
+          rw [this]
+          rw [AddCommSemigroup₃.add_comm m]
+          rw [add_assoc₃]
+          simp
+        }
+        {
+          have : Int.negSucc (b0 + 1) = Int.negSucc b0 - 1 := rfl
+
+          sorry
+        }
+      }
+    by_cases a_nonneg : 0 ≤ a
     {
-      simp
+      by_cases b_nonneg : 0 ≤ b
+      {
+        simp [zsmul₁, a_nonneg, b_nonneg]
+        have ab_nonneg : 0 ≤ a + b := by exact Int.add_nonneg a_nonneg b_nonneg
+        -- simp [ab_nonneg]
+        sorry
+      }
+      sorry
     }
     { sorry }
   smul_add := by intro a b m ; sorry
