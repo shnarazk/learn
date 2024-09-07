@@ -333,7 +333,7 @@ def zsmul₁ {M : Type*} [Zero M] [Add M] [Neg M] : ℤ → M → M
 /- You are not asked to replace those sorries with proofs
 If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul₁. -/
 
-lemma add_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
+lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
   have zinc {m : A} (n : ℤ) : m + zsmul₁ n m = zsmul₁ (n + 1) m := by
     induction' n with nnn nn
     {
@@ -463,6 +463,49 @@ lemma add_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b) m =
     }
   }
 
+lemma add_left_distℕ₁ (a b : ℕ) (m : A) [AddCommGroup₃ A] : nsmul₁ (a + b) m = nsmul₁ a m + nsmul₁ b m := by
+  let az : ℤ := Int.ofNat a
+  let bz : ℤ := Int.ofNat b
+  have : zsmul₁ (az + bz) m = zsmul₁ az m + zsmul₁ bz m := by exact add_left_dist₁ az bz m
+  exact this
+
+lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m = zsmul₁ a (zsmul₁ b m) := by
+  have zinc {m : A} (a b : ℕ) : nsmul₁ (a * b) m = nsmul₁ a (nsmul₁ b m) := by
+    induction' a with a ha
+    { simp only [nsmul₁] ; simp ; simp only [nsmul₁] }
+    {
+      simp only [add_mul, one_mul]
+      rw [add_left_distℕ₁, ha]
+      rw [add_left_distℕ₁]
+      have : nsmul₁ 1 (nsmul₁ b m) = nsmul₁ b m := by simp [nsmul₁,]
+      rw [this]
+    }
+  by_cases aN : 0 ≤ a
+  {
+    by_cases  bN : 0 ≤ b
+    {
+      have ap : 0 ≤ a * b := by exact Int.mul_nonneg aN bN
+      rcases a with an | az
+      {
+        rcases b with bn | bz
+        {
+          induction' an with a0 ia
+          { simp [zsmul₁, nsmul₁] }
+          {
+            have xx : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
+            have xy : 0 ≤ Int.ofNat a0 * Int.ofNat bn := by exact Int.mul_nonneg xx bN
+            rcases ia xx xy with ia'
+            sorry
+          }
+        }
+        sorry
+      }
+      sorry
+    }
+    sorry
+  }
+  sorry
+
 instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   smul := zsmul₁
   zero_smul := by intro x ; simp [zsmul₁, nsmul₁]
@@ -471,6 +514,8 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   mul_smul := by
     intro x y m
     simp [zsmul₁]
+    have add_left_dist (a b : ℕ) : nsmul₁ (a + b) m = nsmul₁ a m + nsmul₁ b m := by
+      sorry
     rcases x with xN | xN
     {
       rcases y with yN | yZ
@@ -478,17 +523,22 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
         have xy_mul (a b : ℕ): Int.ofNat a * Int.ofNat b = Int.ofNat (a * b) := by exact rfl
         rw [xy_mul]
         simp
-        induction' xN with x0 xp
+        induction' xN with x0 hx
         { rcases yN with _|yN <;> { simp ; rfl } }
         {
-          induction' yN with y0 yp
+          induction' yN with y0 hy
           {
-            simp [nsmul₁] at xp
+            simp [nsmul₁] at hx
             simp [nsmul₁]
-            exact xp
+            exact hx
           }
           {
-            -- simp [nsmul₁] at xp
+            have : (x0 + 1) * (y0 + 1) = x0 * y0 + x0 + y0 + 1 := by exact Nat.succ_mul_succ x0 y0
+            simp only [this]
+            rw [add_left_dist _ 1, add_left_dist _ y0, add_left_dist _ x0]
+            --simp only [hy]
+
+            rw [add_left_dist]
             -- simp [nsmul₁] at yp
             -- simp [nsmul₁]
             sorry
@@ -499,8 +549,8 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
     }
     { sorry }
 
-  add_smul := by intro a b c ; simp ; exact add_dist₁ a b c
-  smul_add := by intro a b m ; sorry
+  add_smul := by intro a b c ; simp ; exact add_left_dist₁ a b c
+  smul_add := by intro a b c ; simp ; exact sorry -- add_dist₁ a b c
 
 #synth Module₁ ℤ ℤ -- abGrpModule ℤ
 
