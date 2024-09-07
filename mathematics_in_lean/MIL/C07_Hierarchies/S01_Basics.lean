@@ -333,6 +333,20 @@ def zsmul₁ {M : Type*} [Zero M] [Add M] [Neg M] : ℤ → M → M
 /- You are not asked to replace those sorries with proofs
 If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul₁. -/
 
+lemma zsmul_eq_nsmul {m : A} [AddCommGroup₃ A] (a : ℕ) : zsmul₁ ↑a m = nsmul₁ a m := by
+  simp [zsmul₁]
+
+lemma zsmul_eq_nsmul_of_nonneg {m : A} [AddCommGroup₃ A] (a : ℤ) (b : ℕ) (h : a = ↑b) :
+    zsmul₁ a m = nsmul₁ b m := by
+  rcases a with aN | aZ
+  { rw [h] ; rfl }
+  {
+    have X : ¬ 0 ≤ Int.negSucc aZ := by exact of_decide_eq_false rfl
+    have Y : 0 ≤ (↑b : ℤ) := by exact Int.ofNat_zero_le b
+    rw [h] at X
+    exact absurd Y X
+  }
+
 lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
   have zinc {m : A} (n : ℤ) : m + zsmul₁ n m = zsmul₁ (n + 1) m := by
     induction' n with nnn nn
@@ -470,6 +484,10 @@ lemma add_left_distℕ₁ (a b : ℕ) (m : A) [AddCommGroup₃ A] : nsmul₁ (a 
   exact this
 
 lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m = zsmul₁ a (zsmul₁ b m) := by
+  have one_mul_eq_cancel (a : ℤ) (m : A) : zsmul₁ a m = zsmul₁ (Int.ofNat 1) (zsmul₁ a m) := by
+    nth_rewrite 2 [zsmul₁.eq_def]
+    simp
+    simp [nsmul₁]
   have zinc {m : A} (a b : ℕ) : nsmul₁ (a * b) m = nsmul₁ a (nsmul₁ b m) := by
     induction' a with a ha
     { simp only [nsmul₁] ; simp ; simp only [nsmul₁] }
@@ -495,10 +513,26 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
             have xx : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
             have xy : 0 ≤ Int.ofNat a0 * Int.ofNat bn := by exact Int.mul_nonneg xx bN
             rcases ia xx xy with ia'
-            sorry
+            have : ∀ x y z : ℤ, (x + y) * z = x * z + y * z := by exact add_mul
+            /- もしかしてzincを使えばいいだけじゃなかろか -/
+            calc
+              zsmul₁ (Int.ofNat (a0 + 1) * Int.ofNat bn) m =
+                zsmul₁ ((Int.ofNat a0 + Int.ofNat 1) * Int.ofNat bn) m := by exact rfl
+              _ = zsmul₁ (Int.ofNat a0 * Int.ofNat bn + Int.ofNat 1 * Int.ofNat bn) m := by rw [add_mul]
+              _ = zsmul₁ (Int.ofNat a0 * Int.ofNat bn) m + zsmul₁ (Int.ofNat 1 * Int.ofNat bn) m := by rw [add_left_dist₁ (Int.ofNat a0 * Int.ofNat bn) (Int.ofNat 1 * Int.ofNat bn) m]
+              _ = zsmul₁ (Int.ofNat a0) (zsmul₁ (Int.ofNat bn) m) + zsmul₁ (Int.ofNat 1 * Int.ofNat bn) m := by rw [ia']
+              _ = zsmul₁ (Int.ofNat a0) (zsmul₁ (Int.ofNat bn) m) + zsmul₁ (Int.ofNat bn) m := by simp
+              _ = zsmul₁ (Int.ofNat a0) (zsmul₁ (Int.ofNat bn) m) + zsmul₁ (Int.ofNat 1) (zsmul₁ (Int.ofNat bn) m) := by
+                nth_rewrite 2 [one_mul_eq_cancel (Int.ofNat bn) m]
+                rfl
+              _ = zsmul₁ (Int.ofNat a0 + Int.ofNat 1) (zsmul₁ (Int.ofNat bn) m) := by rw [
+                ←add_left_dist₁ (Int.ofNat a0) (Int.ofNat 1) (zsmul₁ (Int.ofNat bn) m)]
+              _ = zsmul₁ (Int.ofNat (a0 + 1)) (zsmul₁ (Int.ofNat bn) m) := by exact rfl
           }
         }
-        sorry
+        {
+          sorry
+        }
       }
       sorry
     }
