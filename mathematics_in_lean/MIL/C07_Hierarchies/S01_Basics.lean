@@ -332,6 +332,137 @@ def zsmul₁ {M : Type*} [Zero M] [Add M] [Neg M] : ℤ → M → M
 
 /- You are not asked to replace those sorries with proofs
 If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul₁. -/
+
+lemma add_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
+  have zinc {m : A} (n : ℤ) : m + zsmul₁ n m = zsmul₁ (n + 1) m := by
+    induction' n with nnn nn
+    {
+      induction' nnn with n0 _
+      { simp [zsmul₁] ; exact rfl }
+      {
+        have : Int.ofNat (n0 + 1) = Int.ofNat n0 + 1 := rfl
+        rw [this]
+        nth_rewrite 2 [zsmul₁.eq_def]
+        have : Int.ofNat n0 + 1 + 1 = Int.ofNat (n0 + 1 + 1) := by rfl
+        rw [this]
+        have : ↑n0 + 1 = Int.ofNat (n0 + 1) := by rfl
+        simp only [zsmul₁, this]
+        rfl
+      }
+    }
+    {
+      induction' nn with n hn
+      {
+        simp [zsmul₁]
+        nth_rewrite 2 [nsmul₁.eq_def]
+        simp
+        simp only [nsmul₁]
+        rw [add_zero]
+        simp
+      }
+      {
+        have flip (n : ℕ) : zsmul₁ (Int.negSucc n) m = -nsmul₁ (n + 1) m := rfl
+        by_cases n0 : n = 0
+        {
+          simp only [n0]
+          rw [flip 1]
+          have : Int.negSucc (0 + 1) + 1 = Int.negSucc 0 := rfl
+          simp only [this]
+          rw [flip 0]
+          have : -nsmul₁ (1 + 1) m = -(m + nsmul₁ 1 m) := by exact flip 1
+          simp [this]
+          have : nsmul₁ 1 m = m := by simp [nsmul₁]
+          simp only [this]
+          apply @add_right_cancel₃ _ _ (m + m)
+          rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + m)), @AddGroup₃.add_neg A _ (m + m)]
+          simp
+          simp [←add_assoc₃]
+        }
+        {
+          rw [flip] at hn
+          rw [flip (n + 1)]
+          have : Int.negSucc (n + 1) = Int.negSucc n - 1 := rfl
+          rw [this]
+          have : Int.negSucc n = Int.negSucc n - 1 + 1 := by exact rfl
+          rw [← this]
+          simp [flip]
+          have val (n : ℕ) : nsmul₁ (n + 1) m = m + nsmul₁ n m := by exact rfl
+          have : nsmul₁ (n + 1 + 1) m = m + nsmul₁ (n + 1) m := by exact val (n + 1)
+          simp [this]
+          apply @add_right_cancel₃ _ _ (m + nsmul₁ (n + 1) m)
+          rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + nsmul₁ (n + 1) m)), @AddGroup₃.add_neg A _ _]
+          rw [add_zero]
+          rw [←AddCommSemigroup₃.add_comm, add_assoc₃, ←AddCommSemigroup₃.add_comm]
+          rw [@AddGroup₃.add_neg, zero_add]
+        }
+      }
+    }
+  have z_zero : zsmul₁ 0 m = 0 := by exact rfl
+  rcases b with bN | bZ
+  {
+    induction' bN with b0 bP
+    { simp [z_zero] }
+    {
+      have : Int.ofNat (b0 + 1) = Int.ofNat b0 + 1 := by rfl
+      simp only [this]
+      rw [← add_assoc₃]
+      rw [← zinc]
+      rw [bP]
+      rw [← zinc]
+      rw [← add_assoc₃]
+      rw [← add_assoc₃]
+      rw [AddCommSemigroup₃.add_comm _ m]
+    }
+  }
+  {
+    induction' bZ with b0 bP
+    {
+      simp
+      have : m + zsmul₁ (a + -1) m = zsmul₁ (a + -1 + 1) m := by exact zinc (a + -1)
+      simp [linarith] at this
+      rw [← this]
+      have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1)))
+      rw [this]
+      rw [AddCommSemigroup₃.add_comm m]
+      rw [add_assoc₃]
+      simp
+    }
+    {
+      let c : ℤ := Int.negSucc b0
+      have as_c : c = Int.negSucc b0 := by rfl
+      have : Int.negSucc (b0 + 1) = Int.negSucc b0 - 1 := rfl
+      rw [this]
+      rw [←as_c]
+      rw [←as_c] at bP
+      have : m + zsmul₁ (a + c - 1) m = zsmul₁ (a + c - 1 + 1) m := by exact zinc (a + c - 1)
+      have sub1 : a + c - 1 = a + (c - 1) := by exact Int.add_sub_assoc a c 1
+      have sub2 : a + c - 1 + 1 = a + c := by exact Int.sub_add_cancel (a + c) 1
+      nth_rewrite 1 [sub1] at this
+      rw [sub2] at this
+      nth_rewrite 1 [←zero_add (zsmul₁ _ _)]
+      rw [←@AddGroup₃.add_neg _ _ m, AddCommSemigroup₃.add_comm m, add_assoc₃, this]
+      have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1)))
+      rw [bP, ←add_assoc₃, AddCommGroup₃.add_comm (-m), add_assoc₃]
+      have last_one : -m + zsmul₁ c m = zsmul₁ (c - 1) m := by
+        symm
+        simp [zsmul₁]
+        have : c - 1 = Int.negSucc b0 - 1 := by rw [as_c]
+        simp [this]
+        simp [nsmul₁]
+        have dist (a b : A) : -(a + b) = -a + -b := by
+          have : a + b + (-a + -b) = 0 := by
+            calc
+              a + b + (-a + -b) = a + (b + (-a + -b)) := by exact add_assoc₃ a b (-a + -b)
+              _ = a + (b + (-b + -a)) := by rw [AddCommGroup₃.add_comm (-a)]
+              _ = a + (b + -b + -a) := by rw [add_assoc₃ b]
+              _ = a + -a := by simp
+              _ = 0 := by simp
+          exact neg_eq_of_add this
+        rw [←dist]
+      rw [last_one]
+    }
+  }
+
 instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   smul := zsmul₁
   zero_smul := by intro x ; simp [zsmul₁, nsmul₁]
@@ -368,142 +499,7 @@ instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
     }
     { sorry }
 
-  add_smul := by
-    have zinc (n : ℤ) (m : A): m + zsmul₁ n m = zsmul₁ (n + 1) m := by
-      induction' n with nnn nn
-      {
-        induction' nnn with n0 hn
-        { simp [zsmul₁] ; exact rfl }
-        {
-          have : Int.ofNat (n0 + 1) = Int.ofNat n0 + 1 := rfl
-          rw [this]
-          nth_rewrite 2 [zsmul₁.eq_def]
-          have : Int.ofNat n0 + 1 + 1 = Int.ofNat (n0 + 1 + 1) := by rfl
-          rw [this]
-          have : ↑n0 + 1 = Int.ofNat (n0 + 1) := by rfl
-          simp only [zsmul₁, this]
-          rfl
-        }
-      }
-      {
-        induction' nn with n hn
-        {
-          simp [zsmul₁]
-          nth_rewrite 2 [nsmul₁.eq_def]
-          simp
-          simp only [nsmul₁]
-          rw [add_zero]
-          simp
-        }
-        {
-          have flip (n : ℕ) : zsmul₁ (Int.negSucc n) m = -nsmul₁ (n + 1) m := rfl
-          by_cases n0 : n = 0
-          {
-            simp only [n0]
-            rw [flip 1]
-            have : Int.negSucc (0 + 1) + 1 = Int.negSucc 0 := rfl
-            simp only [this]
-            rw [flip 0]
-            have : -nsmul₁ (1 + 1) m = -(m + nsmul₁ 1 m) := by exact flip 1
-            simp [this]
-            have : nsmul₁ 1 m = m := by simp [nsmul₁]
-            simp only [this]
-            apply @add_right_cancel₃ _ _ (m + m)
-            rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + m)), @AddGroup₃.add_neg A _ (m + m)]
-            simp
-            simp [←add_assoc₃]
-          }
-          {
-            rw [flip] at hn
-            have n_pos : 0 < n := by exact Nat.zero_lt_of_ne_zero n0
-            rw [flip (n + 1)]
-            have : Int.negSucc (n + 1) = Int.negSucc n - 1 := rfl
-            rw [this]
-            have : Int.negSucc n = Int.negSucc n - 1 + 1 := by sorry
-            rw [← this]
-            simp [flip]
-            have val (n : ℕ) : nsmul₁ (n + 1) m = m + nsmul₁ n m := by exact rfl
-            have : nsmul₁ (n + 1 + 1) m = m + nsmul₁ (n + 1) m := by exact val (n + 1)
-            simp [this]
-            apply @add_right_cancel₃ _ _ (m + nsmul₁ (n + 1) m)
-            rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + nsmul₁ (n + 1) m)), @AddGroup₃.add_neg A _ _]
-            rw [add_zero]
-            rw [←AddCommSemigroup₃.add_comm, add_assoc₃, ←AddCommSemigroup₃.add_comm]
-            rw [@AddGroup₃.add_neg, zero_add]
-          }
-        }
-      }
-    intro a b m
-    simp
-    -- rw [zsmul₁.eq_def (a + b) m]
-    have z_zero : zsmul₁ 0 m = 0 := by exact rfl
-    have zinc' (a b : ℤ) : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
-      rcases b with bN | bZ
-      {
-        induction' bN with b0 bP
-        { simp [z_zero] }
-        {
-          have : Int.ofNat (b0 + 1) = Int.ofNat b0 + 1 := by rfl
-          simp only [this]
-          rw [← add_assoc₃]
-          rw [← zinc]
-          rw [bP]
-          rw [← zinc]
-          rw [← add_assoc₃]
-          rw [← add_assoc₃]
-          rw [AddCommSemigroup₃.add_comm _ m]
-        }
-      }
-      {
-        induction' bZ with b0 bP
-        {
-          simp
-          have : m + zsmul₁ (a + -1) m = zsmul₁ (a + -1 + 1) m := by exact zinc (a + -1) m
-          simp [linarith] at this
-          rw [← this]
-          have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1) m))
-          rw [this]
-          rw [AddCommSemigroup₃.add_comm m]
-          rw [add_assoc₃]
-          simp
-        }
-        {
-          let c : ℤ := Int.negSucc b0
-          have as_c : c = Int.negSucc b0 := by rfl
-          have : Int.negSucc (b0 + 1) = Int.negSucc b0 - 1 := rfl
-          rw [this]
-          rw [←as_c]
-          rw [←as_c] at bP
-          have : m + zsmul₁ (a + c - 1) m = zsmul₁ (a + c - 1 + 1) m := by exact zinc (a + c - 1) m
-          have sub1 : a + c - 1 = a + (c - 1) := by exact Int.add_sub_assoc a c 1
-          have sub2 : a + c - 1 + 1 = a + c := by exact Int.sub_add_cancel (a + c) 1
-          nth_rewrite 1 [sub1] at this
-          rw [sub2] at this
-          nth_rewrite 1 [←zero_add (zsmul₁ _ _)]
-          rw [←@AddGroup₃.add_neg _ _ m, AddCommSemigroup₃.add_comm m, add_assoc₃, this]
-          have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1) m))
-          rw [bP, ←add_assoc₃, AddCommGroup₃.add_comm (-m), add_assoc₃]
-          have last_one : -m + zsmul₁ c m = zsmul₁ (c - 1) m := by
-            symm
-            simp [zsmul₁]
-            have : c - 1 = Int.negSucc b0 - 1 := by rw [as_c]
-            simp [this]
-            simp [nsmul₁]
-            have dist (a b : A) : -(a + b) = -a + -b := by
-              have : a + b + (-a + -b) = 0 := by
-                calc
-                  a + b + (-a + -b) = a + (b + (-a + -b)) := by exact add_assoc₃ a b (-a + -b)
-                  _ = a + (b + (-b + -a)) := by rw [AddCommGroup₃.add_comm (-a)]
-                  _ = a + (b + -b + -a) := by rw [add_assoc₃ b]
-                  _ = a + -a := by simp
-                  _ = 0 := by simp
-              exact neg_eq_of_add this
-            rw [←dist]
-          rw [last_one]
-        }
-      }
-    exact zinc' a b
-
+  add_smul := by intro a b c ; simp ; exact add_dist₁ a b c
   smul_add := by intro a b m ; sorry
 
 #synth Module₁ ℤ ℤ -- abGrpModule ℤ
