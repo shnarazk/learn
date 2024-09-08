@@ -531,14 +531,55 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
           }
         }
         {
-          sorry
+          induction' an with a0 ia
+          { simp [zsmul₁,nsmul₁] }
+          {
+            have : Int.ofNat (a0 + 1) = Int.ofNat a0 + Int.ofNat 1 := rfl
+            rw [this]
+            rw [add_mul]
+            rw [add_left_dist₁]
+            have : zsmul₁ (Int.ofNat a0 * Int.negSucc bz) m = zsmul₁ (Int.ofNat a0) (zsmul₁ (Int.negSucc bz) m) := by
+              have an' : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
+              have ap' : 0 ≤ Int.ofNat a0 * Int.negSucc bz := by exact Int.mul_nonneg an' bN
+              exact ia an' ap'
+            rw [this]
+            rw [add_left_dist₁]
+            simp
+            have : 1 = Int.ofNat 1 := rfl
+            rw [this, ←one_mul_eq_cancel (Int.negSucc bz)]
+          }
         }
       }
-      sorry
+      {
+        have aNN : ¬ 0≤ Int.negSucc az := by exact of_decide_eq_false rfl
+        exact absurd aN aNN
+      }
     }
+    {
+      rcases a with a_N | a_Z
+      {
+        induction' a_N with a0 ia
+        { simp [zsmul₁,nsmul₁] }
+        {
+          have : Int.ofNat (a0 + 1) = Int.ofNat a0 + Int.ofNat 1 := rfl
+          simp only [this]
+          have : (Int.ofNat a0 + Int.ofNat 1) * b = (Int.ofNat a0) * b + b := by exact add_one_mul (↑a0) b
+          simp only [this]
+          rw [add_left_dist₁]
+          have : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
+          rw [ia this]
+          nth_rewrite 3 [one_mul_eq_cancel]
+          rw [add_left_dist₁]
+        }
+      }
+      {
+        sorry
+      }
+    }
+  }
+  {
     sorry
   }
-  sorry
 
 instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
   smul := zsmul₁
