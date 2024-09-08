@@ -339,8 +339,7 @@ lemma neg_zero_eq_zero {A : Type} [AddCommGroup₃ A] : -(0 : A) = (0 : A) := by
 
 lemma neg_dist₁ (m n : A) [AddCommGroup₃ A] : -(m + n) = -m + -n := by
   apply neg_eq_of_add
-  rw [AddCommGroup₃.add_comm m n]
-  rw [←add_assoc₃]
+  rw [AddCommGroup₃.add_comm m n, ←add_assoc₃]
   nth_rewrite 2 [add_assoc₃]
   simp
 
@@ -352,8 +351,8 @@ lemma zsmul_zero_eq_zero {m : A} [AddCommGroup₃ A] : zsmul₁ 0 m = 0 := rfl
 lemma nsmul_zero_eq_zero {m : A} [AddCommGroup₃ A] : nsmul₁ 0 m = 0 := rfl
 
 lemma zsmul_one_eq_cancel {m : A} [AddCommGroup₃ A] : zsmul₁ 1 m = m := by
-  simp [zsmul₁]
-  simp [nsmul₁]
+  simp [zsmul₁, nsmul₁]
+
 lemma nsmul_one_eq_cancel {m : A} [AddCommGroup₃ A] : nsmul₁ 1 m = m := by
   simp [nsmul₁]
 
@@ -375,14 +374,7 @@ lemma nsmul_neg_eq_neg_nsmul {m : A} [AddCommGroup₃ A] (a : ℕ) :
     nsmul₁ a m = -nsmul₁ a (-m) := by
   induction' a with a0 a1
   { simp [nsmul₁] ; exact Eq.symm neg_zero_eq_zero }
-  {
-    simp [nsmul₁]
-    simp only [neg_dist₁, a1]
-    have : m = - -m := by
-      refine Eq.symm (neg_eq_of_add ?h)
-      exact AddGroup₃.neg_add m
-    rw [←this]
-  }
+  { simp [nsmul₁] ; simp [neg_dist₁, a1] ; rw [neg_neg_eq_cancel] }
 
 lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b) m = zsmul₁ a m + zsmul₁ b m := by
   have zinc {m : A} (n : ℤ) : m + zsmul₁ n m = zsmul₁ (n + 1) m := by
@@ -426,7 +418,6 @@ lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b
           simp only [this]
           apply @add_right_cancel₃ _ _ (m + m)
           rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + m)), @AddGroup₃.add_neg A _ (m + m)]
-          simp
           simp [←add_assoc₃]
         }
         {
@@ -442,9 +433,8 @@ lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b
           simp [this]
           apply @add_right_cancel₃ _ _ (m + nsmul₁ (n + 1) m)
           rw [add_assoc₃ m, AddCommSemigroup₃.add_comm (-(m + nsmul₁ (n + 1) m)), @AddGroup₃.add_neg A _ _]
-          rw [add_zero]
-          rw [←AddCommSemigroup₃.add_comm, add_assoc₃, ←AddCommSemigroup₃.add_comm]
-          rw [@AddGroup₃.add_neg, zero_add]
+          rw [add_zero, ←AddCommSemigroup₃.add_comm, add_assoc₃]
+          rw [←AddCommSemigroup₃.add_comm, AddGroup₃.add_neg, zero_add]
         }
       }
     }
@@ -456,12 +446,7 @@ lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b
     {
       have : Int.ofNat (b0 + 1) = Int.ofNat b0 + 1 := by rfl
       simp only [this]
-      rw [← add_assoc₃]
-      rw [← zinc]
-      rw [bP]
-      rw [← zinc]
-      rw [← add_assoc₃]
-      rw [← add_assoc₃]
+      rw [← add_assoc₃, ←zinc, bP, ←zinc, ← add_assoc₃, ← add_assoc₃]
       rw [AddCommSemigroup₃.add_comm _ m]
     }
   }
@@ -498,18 +483,8 @@ lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b
         symm
         simp [zsmul₁]
         have : c - 1 = Int.negSucc b0 - 1 := by rw [as_c]
-        simp [this]
-        simp [nsmul₁]
-        have dist (a b : A) : -(a + b) = -a + -b := by
-          have : a + b + (-a + -b) = 0 := by
-            calc
-              a + b + (-a + -b) = a + (b + (-a + -b)) := by exact add_assoc₃ a b (-a + -b)
-              _ = a + (b + (-b + -a)) := by rw [AddCommGroup₃.add_comm (-a)]
-              _ = a + (b + -b + -a) := by rw [add_assoc₃ b]
-              _ = a + -a := by simp
-              _ = 0 := by simp
-          exact neg_eq_of_add this
-        rw [←dist]
+        simp [this, nsmul₁]
+        rw [←neg_dist₁]
       rw [last_one]
     }
   }
@@ -531,8 +506,7 @@ lemma add_right_dist₁ (a : ℤ) (m n : A) [AddCommGroup₃ A] :
       {
         simp only [zsmul₁]
         have : 0 ≤ Int.ofNat a00 := by exact Int.zero_le_ofNat a00
-        simp [this] at ia0
-        simp [zsmul₁] at ia0
+        simp [this, zsmul₁] at ia0
         simp [add_left_distℕ₁]
         rw [ia0]
         simp [nsmul_one_eq_cancel]
@@ -545,16 +519,16 @@ lemma add_right_dist₁ (a : ℤ) (m n : A) [AddCommGroup₃ A] :
       }
     }
     {
-      have aNN : ¬0 ≤ Int.negSucc ia := by exact of_decide_eq_false rfl
-      exact absurd aN aNN
+      -- have : ¬0 ≤ Int.negSucc ia := by exact of_decide_eq_false rfl
+      exact absurd aN (by exact of_decide_eq_false rfl)
     }
   }
   {
     simp only [zsmul₁]
     rcases a with an | ap
     {
-      have aNN : 0 ≤ Int.ofNat an := by exact Int.zero_le_ofNat an
-      exact absurd aNN aN
+      -- have : 0 ≤ Int.ofNat an := by exact Int.zero_le_ofNat an
+      exact absurd (by exact Int.zero_le_ofNat an) aN
     }
     {
       simp
@@ -565,8 +539,7 @@ lemma add_right_dist₁ (a : ℤ) (m n : A) [AddCommGroup₃ A] :
         -- left hand
         rw [add_left_distℕ₁]
         simp only [neg_dist₁, ia]
-        rw [nsmul_one_eq_cancel]
-        rw [neg_dist₁, ←add_assoc₃]
+        rw [nsmul_one_eq_cancel, neg_dist₁, ←add_assoc₃]
         -- right hand
         nth_rewrite 3 [add_left_distℕ₁]
         rw [neg_dist₁]
@@ -592,7 +565,6 @@ lemma add_right_distℕ₁ (a : ℕ) (m n : A) [AddCommGroup₃ A] :
 lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m = zsmul₁ a (zsmul₁ b m) := by
   have one_mul_eq_cancel (a : ℤ) (m : A) : zsmul₁ a m = zsmul₁ (Int.ofNat 1) (zsmul₁ a m) := by
     nth_rewrite 2 [zsmul₁.eq_def]
-    simp
     simp [nsmul₁]
   by_cases aN : 0 ≤ a
   {
@@ -609,8 +581,6 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
             have xx : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
             have xy : 0 ≤ Int.ofNat a0 * Int.ofNat bn := by exact Int.mul_nonneg xx bN
             rcases ia xx xy with ia'
-            have : ∀ x y z : ℤ, (x + y) * z = x * z + y * z := by exact add_mul
-            /- もしかしてzincを使えばいいだけじゃなかろか -/
             calc
               zsmul₁ (Int.ofNat (a0 + 1) * Int.ofNat bn) m =
                 zsmul₁ ((Int.ofNat a0 + Int.ofNat 1) * Int.ofNat bn) m := by exact rfl
@@ -631,24 +601,20 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
           { simp [zsmul₁,nsmul₁] }
           {
             have : Int.ofNat (a0 + 1) = Int.ofNat a0 + Int.ofNat 1 := rfl
-            rw [this]
-            rw [add_mul]
-            rw [add_left_dist₁]
+            rw [this, add_mul, add_left_dist₁]
             have : zsmul₁ (Int.ofNat a0 * Int.negSucc bz) m = zsmul₁ (Int.ofNat a0) (zsmul₁ (Int.negSucc bz) m) := by
               have an' : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
               have ap' : 0 ≤ Int.ofNat a0 * Int.negSucc bz := by exact Int.mul_nonneg an' bN
               exact ia an' ap'
-            rw [this]
-            rw [add_left_dist₁]
+            rw [this, add_left_dist₁]
             simp
-            have : 1 = Int.ofNat 1 := rfl
-            rw [this, ←one_mul_eq_cancel (Int.negSucc bz)]
+            rw [(by rfl : 1 = Int.ofNat 1), ←one_mul_eq_cancel (Int.negSucc bz)]
           }
         }
       }
       {
-        have aNN : ¬ 0≤ Int.negSucc az := by exact of_decide_eq_false rfl
-        exact absurd aN aNN
+        -- have : ¬ 0≤ Int.negSucc az := by exact of_decide_eq_false rfl
+        exact absurd aN (by exact of_decide_eq_false rfl)
       }
     }
     {
@@ -669,8 +635,8 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
         }
       }
       {
-        have aNN : ¬0≤ Int.negSucc a_Z := by exact of_decide_eq_false rfl
-        exact absurd aN aNN
+        -- have : ¬0≤ Int.negSucc a_Z := by exact of_decide_eq_false rfl
+        exact absurd aN (by exact of_decide_eq_false rfl)
       }
     }
   }
@@ -718,10 +684,7 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
             _ = a * Int.ofNat bNN0 + a := by rw [Monoid₃.mul_one a]
         rw [ds]
         have : Int.ofNat (bNN0 + 1) = Int.ofNat bNN0 + Int.ofNat 1 := rfl
-        rw [this]
-        rw [add_left_dist₁]
-        rw [add_left_dist₁]
-        rw [bNNN]
+        rw [this, add_left_dist₁, add_left_dist₁, bNNN]
         simp only [add_right_dist₁]
         have : zsmul₁ (Int.ofNat 1)  m = m := by simp [zsmul₁, nsmul₁]
         rw[this]
@@ -738,8 +701,7 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
           { simp [nsmul₁] }
           {
             simp at ia
-            have : 0 ≤ Int.ofNat (aN0' + 1) := by exact Int.zero_le_ofNat (aN0' + 1)
-            exact absurd this aN
+            exact absurd (by exact Int.zero_le_ofNat (aN0' + 1)) aN
           }
         }
         {
@@ -763,8 +725,7 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
         simp only [ib]
         -- right hand
         have : Int.negSucc (bN0 + 1) = Int.negSucc bN0 + -1 := rfl
-        simp only [this]
-        simp only [add_left_dist₁]
+        simp only [this, add_left_dist₁]
         rw [add_right_dist₁]
         have : (zsmul₁ (-1) m) = -m := by
           simp [zsmul₁]
@@ -775,10 +736,7 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
         have : zsmul₁ a (-m) = zsmul₁ (-a) m := by
           simp [zsmul₁]
           induction' a with a_N a_Z
-          {
-            have aNN : 0 ≤ Int.ofNat a_N := by exact Int.zero_le_ofNat a_N
-            exact absurd aNN aN
-          }
+          { exact absurd (by exact Int.zero_le_ofNat a_N) aN }
           {
             induction' a_Z with a_Z0 ia
             {
@@ -797,10 +755,8 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
               rw [←add_assoc₃]
               have : a_Z0 + 2 = (a_Z0 + 1) + 1 := rfl
               simp only [this]
-              rw [add_left_distℕ₁ (a_Z0 + 1) 1 m]
-              rw [nsmul_one_eq_cancel]
-              rw [add_left_distℕ₁ a_Z0 1 m]
-              rw [nsmul_one_eq_cancel]
+              rw [add_left_distℕ₁ (a_Z0 + 1) 1 m, nsmul_one_eq_cancel]
+              rw [add_left_distℕ₁ a_Z0 1 m, nsmul_one_eq_cancel]
               rw [nsmul_neg_eq_neg_nsmul]
               simp only [neg_neg_eq_cancel]
               rw [AddCommGroup₃.add_comm, add_assoc₃]
