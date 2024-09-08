@@ -333,6 +333,8 @@ def zsmul₁ {M : Type*} [Zero M] [Add M] [Neg M] : ℤ → M → M
 /- You are not asked to replace those sorries with proofs
 If you insist on doing it then you will probably want to state and prove several intermediate lemmas about nsmul1 and zsmul₁. -/
 
+lemma zsmul_zero_eq_zero {m : A} [AddCommGroup₃ A] : zsmul₁ 0 m = 0 := rfl
+
 lemma zsmul_eq_nsmul {m : A} [AddCommGroup₃ A] (a : ℕ) : zsmul₁ ↑a m = nsmul₁ a m := by
   simp [zsmul₁]
 
@@ -484,6 +486,9 @@ lemma add_left_distℕ₁ (a b : ℕ) (m : A) [AddCommGroup₃ A] : nsmul₁ (a 
   exact this
 
 lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m = zsmul₁ a (zsmul₁ b m) := by
+  have neg_zero_eq_zero : -(0 : A) = (0 : A) := by
+    have : 0 + 0 = (0 : A) := by exact AddMonoid₃.zero_add 0
+    exact neg_eq_of_add this
   have one_mul_eq_cancel (a : ℤ) (m : A) : zsmul₁ a m = zsmul₁ (Int.ofNat 1) (zsmul₁ a m) := by
     nth_rewrite 2 [zsmul₁.eq_def]
     simp
@@ -573,12 +578,60 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
         }
       }
       {
-        sorry
+        have aNN : ¬0≤ Int.negSucc a_Z := by exact of_decide_eq_false rfl
+        exact absurd aN aNN
       }
     }
   }
   {
-    sorry
+    -- case: a < 0
+    induction' b with bN0 bNp
+    {
+      {
+        induction' bN0 with bNN0 bNNN
+        {
+          simp
+          simp [zsmul_zero_eq_zero]
+          have nsmul_zero : ∀ n : ℕ, nsmul₁ n (0 : A) = 0 := by
+            intro n
+            induction' n with n0 hn
+            { simp [nsmul₁] }
+            { simp [nsmul₁] ; exact hn }
+          have zsmul_zero (a : ℤ) : zsmul₁ a (0 : A) = 0 := by
+            rcases a with aN | aZ
+            { exact nsmul_zero aN }
+            {
+              induction' aZ with aZ0 aZZ
+              {
+                simp [zsmul₁, nsmul₁]
+                exact neg_zero_eq_zero
+              }
+              {
+                have dec (a : ℕ) : Int.negSucc (a + 1) = Int.negSucc a + -1 := rfl
+                simp only [dec]
+                simp [add_left_dist₁, aZZ]
+                simp [zsmul₁]
+                have : (-1 : ℤ) = Int.negSucc 0 := rfl
+                simp only [this, nsmul_zero]
+                exact neg_zero_eq_zero
+              }
+            }
+          simp only [zsmul_zero]
+        }
+        have ds : a * Int.ofNat (bNN0 + 1) = a * Int.ofNat bNN0 + a := by
+          calc
+            a * Int.ofNat (bNN0 + 1) = a * (Int.ofNat bNN0 + Int.ofNat 1) := rfl
+            _ = a * Int.ofNat bNN0 + a * Int.ofNat 1 := by
+              rw [Ring₃.left_distrib a (Int.ofNat bNN0) (Int.ofNat 1)]
+            _ = a * Int.ofNat bNN0 + a * 1 := rfl
+            _ = a * Int.ofNat bNN0 + a := by rw [Monoid₃.mul_one a]
+        rw [ds]
+        rw [add_left_dist₁]
+        rw [bNNN]
+        sorry
+      }
+    }
+    { sorry }
   }
 
 instance abGrpModule (A : Type) [AddCommGroup₃ A] : Module₁ ℤ A where
