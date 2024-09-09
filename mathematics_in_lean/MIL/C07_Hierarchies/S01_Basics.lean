@@ -364,10 +364,9 @@ lemma zsmul_eq_nsmul_of_nonneg {m : A} [AddCommGroup₃ A] (a : ℤ) (b : ℕ) (
   rcases a with aN | aZ
   { rw [h] ; rfl }
   {
-    have X : ¬ 0 ≤ Int.negSucc aZ := by exact of_decide_eq_false rfl
-    have Y : 0 ≤ (↑b : ℤ) := by exact Int.ofNat_zero_le b
+    have X : ¬ 0≤ Int.negSucc aZ := by exact of_decide_eq_false rfl
     rw [h] at X
-    exact absurd Y X
+    exact absurd (by exact Int.ofNat_zero_le b) X
   }
 
 lemma nsmul_neg_eq_neg_nsmul {m : A} [AddCommGroup₃ A] (a : ℕ) :
@@ -383,11 +382,8 @@ lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b
       induction' nnn with n0 _
       { simp [zsmul₁] ; exact rfl }
       {
-        have : Int.ofNat (n0 + 1) = Int.ofNat n0 + 1 := rfl
-        rw [this]
+        rw [(by rfl : Int.ofNat (n0 + 1) = Int.ofNat n0 + 1)]
         nth_rewrite 2 [zsmul₁.eq_def]
-        have : Int.ofNat n0 + 1 + 1 = Int.ofNat (n0 + 1 + 1) := by rfl
-        rw [this]
         have : ↑n0 + 1 = Int.ofNat (n0 + 1) := by rfl
         simp only [zsmul₁, this]
         rfl
@@ -480,10 +476,8 @@ lemma add_left_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a + b
       have : zsmul₁ (-1) m = -m := by exact Eq.symm (neg_eq_of_add (zinc (-1)))
       rw [bP, ←add_assoc₃, AddCommGroup₃.add_comm (-m), add_assoc₃]
       have last_one : -m + zsmul₁ c m = zsmul₁ (c - 1) m := by
-        symm
-        simp [zsmul₁]
         have : c - 1 = Int.negSucc b0 - 1 := by rw [as_c]
-        simp [this, nsmul₁]
+        simp [zsmul₁, this, nsmul₁]
         rw [←neg_dist₁]
       rw [last_one]
     }
@@ -604,8 +598,7 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
             rw [this, add_mul, add_left_dist₁]
             have : zsmul₁ (Int.ofNat a0 * Int.negSucc bz) m = zsmul₁ (Int.ofNat a0) (zsmul₁ (Int.negSucc bz) m) := by
               have an' : 0 ≤ Int.ofNat a0 := by exact Int.zero_le_ofNat a0
-              have ap' : 0 ≤ Int.ofNat a0 * Int.negSucc bz := by exact Int.mul_nonneg an' bN
-              exact ia an' ap'
+              exact ia an' (by exact Int.mul_nonneg an' bN)
             rw [this, add_left_dist₁]
             simp
             rw [(by rfl : 1 = Int.ofNat 1), ←one_mul_eq_cancel (Int.negSucc bz)]
@@ -644,72 +637,60 @@ lemma mul_dist₁ (a b : ℤ) (m : A) [AddCommGroup₃ A] : zsmul₁ (a * b) m =
     -- case: a < 0
     induction' b with bN0 bNp
     {
+      induction' bN0 with bNN0 bNNN
       {
-        induction' bN0 with bNN0 bNNN
-        {
-          simp
-          simp [zsmul_zero_eq_zero]
-          have nsmul_zero : ∀ n : ℕ, nsmul₁ n (0 : A) = 0 := by
-            intro n
-            induction' n with n0 hn
-            { simp [nsmul₁] }
-            { simp [nsmul₁] ; exact hn }
-          have zsmul_zero (a : ℤ) : zsmul₁ a (0 : A) = 0 := by
-            rcases a with aN | aZ
-            { exact nsmul_zero aN }
+        simp [zsmul_zero_eq_zero]
+        have nsmul_zero : ∀ n : ℕ, nsmul₁ n (0 : A) = 0 := by
+          intro n
+          induction' n with n0 hn
+          { simp [nsmul₁] }
+          { simp [nsmul₁] ; exact hn }
+        have zsmul_zero (a : ℤ) : zsmul₁ a (0 : A) = 0 := by
+          rcases a with aN | aZ
+          { exact nsmul_zero aN }
+          {
+            induction' aZ with aZ0 aZZ
             {
-              induction' aZ with aZ0 aZZ
-              {
-                simp [zsmul₁, nsmul₁]
-                exact neg_zero_eq_zero
-              }
-              {
-                have dec (a : ℕ) : Int.negSucc (a + 1) = Int.negSucc a + -1 := rfl
-                simp only [dec]
-                simp [add_left_dist₁, aZZ]
-                simp [zsmul₁]
-                have : (-1 : ℤ) = Int.negSucc 0 := rfl
-                simp only [this, nsmul_zero]
-                exact neg_zero_eq_zero
-              }
+              simp [zsmul₁, nsmul₁]
+              exact neg_zero_eq_zero
             }
-          simp only [zsmul_zero]
-        }
-        have ds : a * Int.ofNat (bNN0 + 1) = a * Int.ofNat bNN0 + a := by
-          calc
-            a * Int.ofNat (bNN0 + 1) = a * (Int.ofNat bNN0 + Int.ofNat 1) := rfl
-            _ = a * Int.ofNat bNN0 + a * Int.ofNat 1 := by
-              rw [Ring₃.left_distrib a (Int.ofNat bNN0) (Int.ofNat 1)]
-            _ = a * Int.ofNat bNN0 + a * 1 := rfl
-            _ = a * Int.ofNat bNN0 + a := by rw [Monoid₃.mul_one a]
-        rw [ds]
-        have : Int.ofNat (bNN0 + 1) = Int.ofNat bNN0 + Int.ofNat 1 := rfl
-        rw [this, add_left_dist₁, add_left_dist₁, bNNN]
-        simp only [add_right_dist₁]
-        have : zsmul₁ (Int.ofNat 1)  m = m := by simp [zsmul₁, nsmul₁]
-        rw[this]
+            {
+              have dec (a : ℕ) : Int.negSucc (a + 1) = Int.negSucc a + -1 := rfl
+              simp [dec, add_left_dist₁, aZZ]
+              have : (-1 : ℤ) = Int.negSucc 0 := rfl
+              simp only [zsmul₁, this, nsmul_zero]
+              exact neg_zero_eq_zero
+            }
+          }
+        simp only [zsmul_zero]
       }
+      have ds : a * Int.ofNat (bNN0 + 1) = a * Int.ofNat bNN0 + a := by
+        calc
+          a * Int.ofNat (bNN0 + 1) = a * (Int.ofNat bNN0 + Int.ofNat 1) := rfl
+          _ = a * Int.ofNat bNN0 + a * Int.ofNat 1 := by
+            rw [Ring₃.left_distrib a (Int.ofNat bNN0) (Int.ofNat 1)]
+          _ = a * Int.ofNat bNN0 + a * 1 := rfl
+          _ = a * Int.ofNat bNN0 + a := by rw [Monoid₃.mul_one a]
+      rw [ds]
+      have : Int.ofNat (bNN0 + 1) = Int.ofNat bNN0 + Int.ofNat 1 := rfl
+      rw [this, add_left_dist₁, add_left_dist₁, bNNN]
+      simp only [add_right_dist₁]
+      have : zsmul₁ (Int.ofNat 1)  m = m := by simp [zsmul₁, nsmul₁]
+      rw[this]
     }
     {
       induction' bNp with bN0 ib
       {
-        simp
         simp [zsmul₁]
         induction' a with aN0 aNN
         {
-          induction' aN0 with aN0' ia
+          induction' aN0 with aN0' _
           { simp [nsmul₁] }
-          {
-            simp at ia
-            exact absurd (by exact Int.zero_le_ofNat (aN0' + 1)) aN
-          }
+          { exact absurd (by exact Int.zero_le_ofNat (aN0' + 1)) aN }
         }
         {
           simp at aN
-          simp
           have : -Int.negSucc aNN = Int.ofNat (aNN + 1) := rfl
-          simp only [this]
-          have : -1 = Int.negSucc 0 := rfl
           simp only [this]
           simp [nsmul_one_eq_cancel]
           rw [nsmul_neg_eq_neg_nsmul]
