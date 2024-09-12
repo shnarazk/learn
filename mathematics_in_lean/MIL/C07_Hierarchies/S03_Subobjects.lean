@@ -52,6 +52,53 @@ instance [Monoid M] : SubmonoidClass₁ (Submonoid₁ M) M where
   mul_mem := Submonoid₁.mul_mem
   one_mem := Submonoid₁.one_mem
 
+/-!
+As an exercise you should define a Subgroup1 structure, endow it with a SetLike
+instance and a SubmonoidClass1 instance, put a Group instance on the subtype
+associated to a Subgroup1 and define a SubgroupClass1 class.
+
+Here are the key characteristics of a subgroup:
+
+1.  **Closure**: The result of combining any two elements from the subset using
+the group operation must also be in the subset.
+2.  **Identity**: The subset must contain the identity element of the original
+group.
+3.  **Inverse**: For each element in the subset, its inverse (i.e., the result of
+applying the group operation to itself) must also be in the subset.
+4.  **Associativity**: The group operation on the elements within the subset must
+still satisfy associativity.
+-/
+@[ext]
+-- structure Subgroup₁ (G : Type) [Monoid G] [Inv G] extends Submonoid₁ G where
+structure Subgroup₁ (G : Type) [Group G] extends Submonoid₁ G where
+  -- inv
+  -- inv {a} : ∃ b ∈ carrier, a * b = 1
+  inv_mem {a} : a ∈ carrier → a⁻¹ ∈ carrier
+
+/-- Subgroups in `G` can be seen as sets in `G`. -/
+instance [Group G] : SetLike (Subgroup₁ G) G where
+  coe := fun self ↦ self.toSubmonoid₁.carrier
+  coe_injective' _ _ := Subgroup₁.ext
+
+/-- 何を要求されているのか? --/
+instance [Group G] : SubmonoidClass₁ (Subgroup₁ G) G where
+  mul_mem := fun self ↦ self.toSubmonoid₁.mul_mem
+  one_mem := fun self ↦ self.toSubmonoid₁.one_mem
+
+/-- 何を要求されているのか? --/
+instance [Group G] (H : Subgroup₁ G) : Group H where
+  mul := fun ⟨x, hx⟩ ⟨y, hy⟩ ↦ ⟨x*y, H.mul_mem hx hy⟩
+  mul_assoc := fun ⟨x, _⟩ ⟨y, _⟩ ⟨z, _⟩ ↦ SetCoe.ext (mul_assoc x y z)
+  one := ⟨1, H.one_mem⟩
+  one_mul := fun ⟨x, _⟩ ↦ SetCoe.ext (one_mul x)
+  mul_one := fun ⟨x, _⟩ ↦ SetCoe.ext (mul_one x)
+  inv := fun ⟨x, hx⟩ ↦ ⟨x⁻¹, H.inv_mem hx⟩
+  inv_mul_cancel := fun ⟨x, hx⟩ ↦ SetCoe.ext (inv_mul_cancel x)
+
+/-- define a SubgroupClass1 class. --/
+class SubgroupClass₁ (S : Type) (G : Type) [Group G] [SetLike S G] : Prop where
+  -- inv_mem {a} {s : S} : a ∈ s → a⁻¹ ∈ s
+  inv_mem : ∀ (a : G) (s : S), a ∈ s → a⁻¹ ∈ s
 
 instance [Monoid M] : Inf (Submonoid₁ M) :=
   ⟨fun S₁ S₂ ↦
