@@ -12,7 +12,7 @@
         devShells.default = pkgs.mkShell {
           packages = [
             pkgs.bashInteractive
-            pkgs.coq_8_19
+            pkgs.coq_8_20
             pkgs.coqPackages.mathcomp
             pkgs.coqPackages.ssreflect
             pkgs.vscodium
