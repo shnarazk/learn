@@ -22,8 +22,8 @@
 -- import MIL.C06_Structures.S03_Building_the_Gaussian_Integers
 -- import MIL.C07_Hierarchies.S01_Basics
 -- import MIL.C07_Hierarchies.S02_Morphisms
-import MIL.C07_Hierarchies.S03_Subobjects
--- import MIL.C08_Groups_and_Rings.S01_Groups
+-- import MIL.C07_Hierarchies.S03_Subobjects
+import MIL.C08_Groups_and_Rings.S01_Groups
 -- import MIL.C08_Groups_and_Rings.S02_Rings
 -- import MIL.C09_Topology.S01_Filters
 -- import MIL.C09_Topology.S02_Metric_Spaces
