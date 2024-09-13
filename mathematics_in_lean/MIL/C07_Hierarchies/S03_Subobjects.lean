@@ -116,7 +116,31 @@ def Submonoid.Setoid [CommMonoid M] (N : Submonoid M) : Setoid M  where
     refl := fun x ↦ ⟨1, N.one_mem, 1, N.one_mem, rfl⟩
     symm := fun ⟨w, hw, z, hz, h⟩ ↦ ⟨z, hz, w, hw, h.symm⟩
     trans := by
-      sorry
+      intro x y z
+      intro xy
+      rcases xy with ⟨a, A, xy⟩
+      rcases xy with ⟨b, B, xy⟩
+      intro yz
+      rcases yz with ⟨c, C, yz⟩
+      rcases yz with ⟨d, D, yz⟩
+      have left : x * c * a = y * b * c := by
+        calc
+          x * c * a = x * a * c := by exact mul_right_comm x c a
+          _ = y * b * c := by rw [xy]
+      have right : y * b * c = z * d * b := by
+        calc
+          y * b * c = y * c * b := by rw [@mul_right_comm]
+          _ = z * d * b := by rw [yz]
+      have : x * c * a = z * d * b := by
+        calc
+          x * c * a = y * b * c := by exact left
+          _ = z * d * b := by rw [right]
+      use c * a
+      simp [by exact Submonoid.mul_mem N C A]
+      use d * b
+      simp [by exact Submonoid.mul_mem N D B]
+      rw [←mul_assoc, ←mul_assoc]
+      exact this
   }
 
 instance [CommMonoid M] : HasQuotient M (Submonoid M) where
@@ -124,6 +148,10 @@ instance [CommMonoid M] : HasQuotient M (Submonoid M) where
 
 def QuotientMonoid.mk [CommMonoid M] (N : Submonoid M) : M → M ⧸ N := Quotient.mk N.Setoid
 
+/- In the last example, you can use Setoid.refl but it won’t automatically pick up
+the relevant Setoid structure. You can fix this issue by providing all arguments
+using the @ syntax, as in @Setoid.refl M N.Setoid.
+-/
 instance [CommMonoid M] (N : Submonoid M) : Monoid (M ⧸ N) where
   mul := Quotient.map₂' (· * ·) (by
       sorry
