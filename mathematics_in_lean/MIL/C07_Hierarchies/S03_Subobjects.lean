@@ -154,12 +154,53 @@ using the @ syntax, as in @Setoid.refl M N.Setoid.
 -/
 instance [CommMonoid M] (N : Submonoid M) : Monoid (M ⧸ N) where
   mul := Quotient.map₂' (· * ·) (by
-      sorry
+      -- r := fun x y ↦ ∃ w ∈ N, ∃ z ∈ N, x * w = y * z
+      rintro a b ⟨x, X, w, W, axbw⟩
+      rintro c d ⟨y, Y, z, Z, cydz⟩
+      have sigma : a * x * c * y = b * w * d * z := by
+        calc
+          a * x * c * y = b * w * c * y := by exact congrFun (congrArg HMul.hMul (congrFun (congrArg HMul.hMul axbw) c)) y
+          _ = b * w * (c * y) := by rw [Semigroup.mul_assoc]
+          _ = b * w * (d * z) := by rw [cydz]
+          _ = b * w * d * z := by rw [←Semigroup.mul_assoc]
+      dsimp
+      use x * y
+      simp [by exact Submonoid.mul_mem N X Y]
+      use w * z
+      simp [by exact Submonoid.mul_mem N W Z]
+      have : a * c * (x * y) = b * d * (w * z) := by
+        calc
+          a * c * (x * y) = a * (c * (x * y)) := by exact mul_assoc a c (x * y)
+          _ = a * ((c * x) * y) := by rw [←mul_assoc c]
+          _ = a * (c * x) * y := by rw [←mul_assoc]
+          _ = a * (x * c) * y := by rw [CommMonoid.mul_comm x]
+          _ = a * x * c * y := by rw [←mul_assoc]
+          _ = b * w * d * z := by rw [sigma]
+          _ = b * w * (d * z) := by rw [mul_assoc (b * w)]
+          _ = b * (w * (d * z)) := by rw [mul_assoc]
+          _ = b * (w * d * z) := by rw [mul_assoc]
+          _ = b * (d * w * z) := by rw [CommMonoid.mul_comm w]
+          _ = b * (d * (w * z)) := by rw [←mul_assoc d]
+          _ = b * d * (w * z) := by rw [mul_assoc]
+      exact this
         )
   mul_assoc := by
-      sorry
+      rintro ⟨a⟩ ⟨b⟩ ⟨c⟩
+      apply Quotient.sound
+      simp
+      rw [Semigroup.mul_assoc]
+      exact @Setoid.refl M N.Setoid (a * (b * c))
   one := QuotientMonoid.mk N 1
   one_mul := by
-      sorry
+      -- intro q
+      rintro ⟨q⟩
+      -- have Q : ∀ (m : M ⧸ N), (m : M) := by sorry
+      -- rw [@Monoid.one_mul (M ⧸ N) q]
+      apply Quotient.sound
+      simp
+      exact @Setoid.refl M N.Setoid q
   mul_one := by
-      sorry
+      rintro ⟨q⟩
+      apply Quotient.sound
+      simp
+      exact @Setoid.refl M N.Setoid q
