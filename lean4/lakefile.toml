@@ -10,6 +10,10 @@ relaxedAutoImplicit = false
 name = "mathlib"
 scope = "leanprover-community"
 
+[[require]]
+name = "aesop"
+scope = "leanprover-community"
+
 [[lean_lib]]
 name = "Le"
 

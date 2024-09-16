@@ -38,6 +38,8 @@ def leibniz₂ (n : Nat) (sum : Float) : Float :=
 def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4.0) 0.0
 -- def leibniz (n : Nat) : Float := leibniz₂ n 0.0
 
+#eval leibniz 1000
+
 def bufsize : USize := 20 * 1024
 
 partial def dump (stream : IO.FS.Stream) : IO Unit := do
