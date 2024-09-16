@@ -18,6 +18,9 @@ scope = "leanprover-community"
 name = "Le"
 
 [[lean_lib]]
+name = "Leibniz"
+
+[[lean_lib]]
 name = "Combinator"
 
 [[lean_exe]]

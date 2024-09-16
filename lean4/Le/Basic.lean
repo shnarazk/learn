@@ -22,24 +22,6 @@ def fib : Nat → Nat
 --   | zero => repeat rw [fib]
 --   | succ n' _ => rw [fib]
 
--- compute pi
-def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
-  match n with
-  | zero => sum + 8.0 / 3.0
-  | succ n' => leibniz₁ n' (k - 4.0) (sum + 8.0 / ((k + 1.0) * (k + 3.0)))
-
-def leibniz₂ (n : Nat) (sum : Float) : Float :=
-  match n with
-  | zero => sum + 8.0 / 3.0
-  | succ n' =>
-      let k := n.toFloat * 4.0
-      leibniz₂ n' (sum + 8.0 / ((k + 1.0) * (k + 3.0)))
-
-def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4.0) 0.0
--- def leibniz (n : Nat) : Float := leibniz₂ n 0.0
-
-#eval leibniz 1000
-
 def bufsize : USize := 20 * 1024
 
 partial def dump (stream : IO.FS.Stream) : IO Unit := do
