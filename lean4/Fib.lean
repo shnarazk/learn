@@ -1,4 +1,4 @@
-import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Nat.Defs
 
 open Nat
 
