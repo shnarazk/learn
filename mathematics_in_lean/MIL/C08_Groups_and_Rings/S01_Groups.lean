@@ -97,7 +97,9 @@ def conjugate {G : Type*} [Group G] (x : G) (H : Subgroup G) : Subgroup G where
     constructor
     { exact (Subgroup.inv_mem_iff H).mpr H1 }
     {
-      sorry
+      rw [H2]
+      simp
+      exact Eq.symm (mul_assoc x h₀⁻¹ x⁻¹)
     }
   mul_mem' := by
     dsimp
