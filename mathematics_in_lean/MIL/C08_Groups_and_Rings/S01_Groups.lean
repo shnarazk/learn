@@ -103,7 +103,11 @@ def conjugate {G : Type*} [Group G] (x : G) (H : Subgroup G) : Subgroup G where
     }
   mul_mem' := by
     dsimp
-    sorry
+    intro a b ⟨h₁, H1, Ha⟩ ⟨h₂, H2, Hb⟩
+    use h₁ * h₂
+    constructor
+    { exact (Subgroup.mul_mem_cancel_right H H2).mpr H1 }
+    { rw [Ha, Hb] ; simp }
 
 example {G H : Type*} [Group G] [Group H] (G' : Subgroup G) (f : G →* H) : Subgroup H :=
   Subgroup.map f G'
