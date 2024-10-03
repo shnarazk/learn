@@ -15,13 +15,13 @@ name = "aesop"
 scope = "leanprover-community"
 
 [[lean_lib]]
-name = "Le"
+name = "Combinator"
 
 [[lean_lib]]
 name = "Leibniz"
 
 [[lean_lib]]
-name = "Combinator"
+name = "Misc"
 
 [[lean_exe]]
 name = "leibniz"
