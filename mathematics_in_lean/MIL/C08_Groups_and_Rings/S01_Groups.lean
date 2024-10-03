@@ -200,7 +200,9 @@ lemma eq_bot_iff_card {G : Type*} [Group G] {H : Subgroup G} :
 
 lemma inf_bot_of_coprime {G : Type*} [Group G] (H K : Subgroup G)
     (h : (Nat.card H).Coprime (Nat.card K)) : H ⊓ K = ⊥ := by
-  sorry
+  exact inf_eq_bot_of_coprime h
+
+
 open Equiv
 
 example {X : Type*} [Finite X] : Subgroup.closure {σ : Perm X | Perm.IsCycle σ} = ⊤ :=
