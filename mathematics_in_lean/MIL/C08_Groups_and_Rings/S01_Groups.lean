@@ -187,11 +187,12 @@ lemma eq_bot_iff_card {G : Type*} [Group G] {H : Subgroup G} :
     { exact X }
   }
   {
-    intro Hx
-    rcases Hx with ⟨x1, ⟨H0, H1⟩⟩
-    have : x1 = 1 := by sorry
-    rw [this] at H1
-    exact H1
+    rintro ⟨x, ⟨_, aH⟩⟩
+    have oH : 1 ∈ H := by exact Subgroup.one_mem H
+    have x1 : x = 1 := by exact
+      (SemiconjBy.eq_one_iff 1 (congrFun (congrArg HMul.hMul (aH 1 oH)) 1)).mp rfl
+    simp [x1] at aH
+    exact aH
   }
 
 
