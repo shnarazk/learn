@@ -178,7 +178,22 @@ lemma eq_bot_iff_card {G : Type*} [Group G] {H : Subgroup G} :
     H = ⊥ ↔ Nat.card H = 1 := by
   suffices (∀ x ∈ H, x = 1) ↔ ∃ x ∈ H, ∀ a ∈ H, a = x by
     simpa [eq_bot_iff_forall, Nat.card_eq_one_iff_exists]
-  sorry
+  constructor
+  {
+    intro X
+    use 1
+    constructor
+    { exact Subgroup.one_mem H }
+    { exact X }
+  }
+  {
+    intro Hx
+    rcases Hx with ⟨x1, ⟨H0, H1⟩⟩
+    have : x1 = 1 := by sorry
+    rw [this] at H1
+    exact H1
+  }
+
 
 #check card_dvd_of_le
 
