@@ -136,20 +136,29 @@ example (φ : G →* H) (S T : Subgroup H) (hST : S ≤ T) : comap φ S ≤ coma
   apply hST sS
 
 example (φ : G →* H) (S T : Subgroup G) (hST : S ≤ T) : map φ S ≤ map φ T := by
-  sorry
+  intro s sS
+  simp at sS
+  simp
+  rcases sS with ⟨s₀, ⟨S₀, sK⟩⟩
+  use s₀
+  constructor
+  { exact hST S₀ }
+  { exact sK }
 
 variable {K : Type*} [Group K]
 
 -- Remember you can use the `ext` tactic to prove an equality of subgroups.
 example (φ : G →* H) (ψ : H →* K) (U : Subgroup K) :
     comap (ψ.comp φ) U = comap φ (comap ψ U) := by
-  sorry
+  -- simp [Subgroup.comap]
+  rfl
 
 -- Pushing a subgroup along one homomorphism and then another is equal to
 -- pushing it forward along the composite of the homomorphisms.
 example (φ : G →* H) (ψ : H →* K) (S : Subgroup G) :
     map (ψ.comp φ) S = map ψ (S.map φ) := by
-  sorry
+  simp [Subgroup.map]
+  exact Eq.symm (Set.image_image ⇑ψ ⇑φ ↑S)
 
 end exercises
 
