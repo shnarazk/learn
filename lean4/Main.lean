@@ -6,9 +6,13 @@ import Leibniz
 -- import «Combinator»
 
 def main : IO Unit := do
-  -- IO.println s!"fib 20 = {fib 20} ."
-  let (result, time) ← Aesop.time <| leibnizIO (100 * 1000 * 1000)
-  IO.println s!"pi = {result} in {time.printAsMillis}."
+  let pairs : Nat := 10 * 1000 * 1000
+  let (result, time) ← Aesop.time <| leibnizIO pairs
+  IO.println s!"pi {pairs} = {result} in {time.printAsMillis}."
+
+  let pairs : Nat := 100 * 1000 * 1000
+  let (result, time) ← Aesop.time <| leibnizIO pairs
+  IO.println s!"pi {pairs} = {result} in {time.printAsMillis}."
   /-
   let lines ← readData "lakefile.lean"
   lines.forM IO.println
