@@ -281,9 +281,22 @@ instance : MulAction G (Subgroup G) where
     apply conjugate_one
   mul_smul := by
     intro x y b
-    simp [HSMul.hSMul]
-    simp [conjugate]
-    sorry
+    -- simp [HSMul.hSMul]
+    ext z
+    constructor
+    {
+      rintro ⟨h, hb, rfl⟩ -- 最後の節は自明なことしか言っていないのでrflで削除する
+      use y * h * y⁻¹     --  •が消えている。何が起きているのか??
+      constructor
+      { use h }
+      { group }
+    }
+    {
+      -- rintro ⟨h, hb, rfl⟩
+      rintro ⟨-, ⟨h, hb, rfl⟩, rfl⟩ -- 上のものよりhを含む集合が小さくなる
+      use h, hb
+      group
+    }
 
 end GroupActions
 
