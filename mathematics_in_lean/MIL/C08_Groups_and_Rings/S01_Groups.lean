@@ -335,7 +335,15 @@ open MonoidHom
 
 lemma aux_card_eq [Finite G] (h' : Nat.card G = Nat.card H * Nat.card K) :
     Nat.card (G ⧸ H) = Nat.card K := by
-  sorry
+  rw [←Subgroup.index_eq_card]
+  have : Nat.card (G ⧸ H) * Nat.card H = Nat.card K * Nat.card H := by
+    rw [←Subgroup.index_eq_card]
+    rw [Subgroup.index_mul_card]
+    rw [mul_comm]
+    exact h'
+  rw [Subgroup.index_eq_card]
+  exact Nat.eq_of_mul_eq_mul_right Nat.card_pos this
+
 variable [H.Normal] [K.Normal] [Fintype G] (h : Disjoint H K)
   (h' : Nat.card G = Nat.card H * Nat.card K)
 
