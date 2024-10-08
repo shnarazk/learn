@@ -73,3 +73,29 @@ lemma they_are_identical (n : Nat) :
       _ = leibniz₂R n0 + 8 / ((4 * ↑(n0 + 1) + 1) * (4 * ↑(n0 + 1) + 3)) := by rw [Rat.zero_add]
       _ = leibniz₂R n0 + 8 / ((↑(n0 + 1) * 4 + 1) * (↑(n0 + 1) * 4 + 3)) := by simp [mul_comm]
   }
+
+#check Fin 10
+#eval ∑ x ∈ Finset.Iic 1, x
+
+def L (n : Nat) : Rat := 4 * ∑ i ≤ (n + 1), ((-1 : Rat)^i / (2 * i + 1 :Rat))
+
+lemma L_is_Leibniz₂ (n : Nat) : L (2 * n) = leibniz₂R n := by
+  induction' n with n0 ih
+  {
+    simp [L, leibniz₂R]
+    have mul_eq_mul (a b c : Rat) (h : a ≠ 0) : b = c ↔ a * b = a * c := by
+      exact Iff.symm (mul_right_inj' h)
+    simp [mul_eq_mul (1 / 4) _ (8 / 3)]
+    norm_num
+    -- sorry
+    -- apply congrArg (HMul.hMul )
+    -- have : ∑ i ∈ Finset.Iic 1, i = 1 := by rfl
+    calc
+      ∑ i ∈ Finset.Iic (1 : Nat), (-1) ^ i / (2 * ↑i + 1 : Rat) = 4 * ∑ i ∈ Finset.Iic (1 : Nat), ((-1) ^ i / (2 * i + 1 : Rat)) := by sorry
+      _ = 2 / 3 := by sorry
+  }
+  {
+    sorry
+  }
+
+#eval (L 100).toFloat
