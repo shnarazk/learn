@@ -24,7 +24,7 @@ def leibnizIO (n : Nat) : IO Float := do return leibniz n
 -- This is the FUN part only on Lean4
 -/
 namespace this_is_pi_approximation
-open Rat
+open Rat Finset
 
 def leibniz₁R (n : Nat) (k: Rat) (sum : Rat) : Rat :=
   match n with
@@ -77,25 +77,72 @@ lemma they_are_identical (n : Nat) :
 #check Fin 10
 #eval ∑ x ∈ Finset.Iic 1, x
 
-def L (n : Nat) : Rat := 4 * ∑ i ≤ (n + 1), ((-1 : Rat)^i / (2 * i + 1 :Rat))
+def L (n : Nat) : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat)^ i / (2 * i + 1 :Rat))
+#eval (L 200).toFloat
+#eval L 1
 
-lemma L_is_Leibniz₂ (n : Nat) : L (2 * n) = leibniz₂R n := by
+lemma range_add_one_eq_sup_self (n : Nat): Finset.range (n + 1) = Finset.range n ⊔ {n} := by
+  refine Finset.ext_iff.mpr ?_
+  intro k
+  constructor
+  {
+    intro kn1
+    by_cases kn : k ∈ range n
+    { rw [sup_eq_union] ; exact mem_union_left {n} kn }
+    {
+      simp [range] at kn
+      simp [range] at kn1
+      rcases kn1 with a|b
+      { simp ; right ; exact a }
+      { contrapose! b ; exact kn }
+    }
+  }
+  {
+    intro H
+    simp at H
+    simp
+    rcases H with A | B
+    {
+       exact Nat.lt_add_right 1 A
+    }
+    {
+      rw [B] ; exact lt_add_one n
+    }
+  }
+
+lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
+  { simp [L, leibniz₂R] ; norm_num }
   {
-    simp [L, leibniz₂R]
-    have mul_eq_mul (a b c : Rat) (h : a ≠ 0) : b = c ↔ a * b = a * c := by
-      exact Iff.symm (mul_right_inj' h)
-    simp [mul_eq_mul (1 / 4) _ (8 / 3)]
-    norm_num
-    -- sorry
-    -- apply congrArg (HMul.hMul )
-    -- have : ∑ i ∈ Finset.Iic 1, i = 1 := by rfl
+    simp [leibniz₂R]
+    rw [←ih]
+    simp [L]
     calc
-      ∑ i ∈ Finset.Iic (1 : Nat), (-1) ^ i / (2 * ↑i + 1 : Rat) = 4 * ∑ i ∈ Finset.Iic (1 : Nat), ((-1) ^ i / (2 * i + 1 : Rat)) := by sorry
-      _ = 2 / 3 := by sorry
+      4 * ∑ i ∈ Finset.range (2 * (n0 + 1) + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1) =
+        4 * ∑ i ∈ Finset.range (2 * n0 + 1 + 1 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+          := by rfl
+      _ = 4 * ∑ i ∈ (Finset.range (2 * n0 + 1 + 1 + 1) ⊔ {2 * n0 + 1 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1) := by rw [range_add_one_eq_sup_self]
+        _ = 4 * ∑ i ∈ (Finset.range (2 * n0 + 1 + 1) ⊔ {2 * n0 + 1 + 1} ⊔ {2 * n0 + 1 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1)
+          := by rw [range_add_one_eq_sup_self]
+      _ = 4 * (
+        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + ∑ i ∈ {2 * n0 + 1 + 1} , (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1))
+          := by sorry
+       _ = 4 * (
+        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + (-1 : Rat) ^ (2 * n0 + 1 + 1) / (2 * ↑(2 * n0 + 1 + 1) + 1)
+        + (-1 : Rat) ^ (2 * n0 + 1 + 1 + 1) / (2 * ↑(2 * n0 + 1 + 1 + 1) + 1))
+          := by sorry
+      _ = 4 * (
+        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + (2 : Rat) / ((2 * ↑(2 * n0 + 1 + 1) + 1) * (2 * ↑(2 * n0 + 1 + 1 + 1) + 1)))
+          := by sorry
+      _ = 4 *
+        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + (8 : Rat) / ((2 * ↑(2 * n0 + 1 + 1) + 1) * (2 * ↑(2 * n0 + 1 + 1 + 1) + 1))
+          := by sorry
+      _ = 4 * ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + (8 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3))
+          := by sorry
   }
-  {
-    sorry
-  }
-
-#eval (L 100).toFloat
