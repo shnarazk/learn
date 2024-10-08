@@ -1,6 +1,25 @@
+import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Nat.Defs
-
+import Mathlib.Tactic
+open BigOperators
 open Nat
+
+section Playground
+open Finset -- for `range`
+variable (n : Nat)
+
+#eval ∑ i < 5, i + 100
+#eval Finset.range 5 = Finset.range 4 ⊔ Finset.mk {4} (by simp)
+
+example : Finset.range 5 = Finset.range 4 ⊔ Finset.mk {4} (by simp) := by rfl
+example : Finset.mk {4} (by simp) = { 4 } := by rfl
+example : Finset.range 5 = Finset.range 4 ⊔ {4} := by rfl
+example : ∑ i ∈ range 5, i = ∑ i ∈ (Finset.range 4 ⊔ {4}), i := by rfl
+example : ∑ i ∈ (Finset.range 4 ⊔ {4}), i =
+    ∑ i ∈ Finset.range 4, i + ∑ i ∈ {4}, i := by
+  rfl
+
+end Playground
 
 def fib (n : ℕ) : ℕ :=
   match n with
