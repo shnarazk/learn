@@ -77,11 +77,9 @@ lemma they_are_identical (n : Nat) :
 #check Fin 10
 #eval ∑ x ∈ Finset.Iic 1, x
 
-def L (n : Nat) : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat) ^ i / (2 * i + 1 :Rat))
-#eval (L 200).toFloat
-#eval L 1
+variable (n : Nat)
 
-lemma range_add_one_eq_sup_self (n : Nat): Finset.range (n + 1) = Finset.range n ⊔ {n} := by
+lemma range_add_one_eq_sup_self : Finset.range (n + 1) = Finset.range n ⊔ {n} := by
   refine Finset.ext_iff.mpr ?_
   intro k
   constructor
@@ -110,7 +108,7 @@ lemma range_add_one_eq_sup_self (n : Nat): Finset.range (n + 1) = Finset.range n
     }
   }
 
-lemma range_sup_eq_add (n : Nat) (f : Nat → Rat) :
+lemma range_sup_eq_add (f : Nat → Rat) :
     ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
   calc
     ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n ∪ {n}, f i
@@ -118,6 +116,21 @@ lemma range_sup_eq_add (n : Nat) (f : Nat → Rat) :
     _ = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
       have : Disjoint (range n) {n} := by simp
       exact sum_union this
+
+def L : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat) ^ i / (2 * i + 1 :Rat))
+#eval (L 200).toFloat
+#eval L 1
+
+lemma L_rec : L (n + 1) = L n + (-1 : Rat) ^ n / (2 * n + 1) := by
+  calc
+    L (n + 1) = 4 * ∑ i ∈ range (n + 1 + 1), (-1 : Rat) ^ i / (2 * i + 1) := by simp [L]
+    _ = 4 * ∑ i ∈ (range (n + 1) ⊔ {n + 1}), (-1 : Rat) ^ i / (2 * i + 1) := by rw [←
+      range_add_one_eq_sup_self]
+    _ = 4 * (
+      ∑ i ∈ range (n + 1), (-1 : Rat) ^ i / (2 * i + 1) + ∑ i ∈ {n + 1}, (-1 : Rat) ^ i / (2 * i + 1)) := by rw [range_sup_eq_add]
+    _ = 4 * ∑ i ∈ range (n + 1), (-1 : Rat) ^ i / (2 * i + 1) + 4 * ∑ i ∈ {n + 1}, (-1 : Rat) ^ i / (2 * i + 1) := by rw [Rat.mul_add]
+    _ = L n + 4 * ∑ i ∈ {n + 1}, (-1 : Rat) ^ i / (2 * i + 1) := by rw [←L]
+    _ = L n + 4 * ((-1 : Rat) ^ (n + 1) / (2 * (n + 1) + 1)) := by rw?
 
 lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
