@@ -110,6 +110,15 @@ lemma range_add_one_eq_sup_self (n : Nat): Finset.range (n + 1) = Finset.range n
     }
   }
 
+lemma range_sup_eq_add (n : Nat) (f : Nat → Rat) :
+    ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
+  calc
+    ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n ∪ {n}, f i
+      := by rfl
+    _ = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
+      have : Disjoint (range n) {n} := by simp
+      exact sum_union this
+
 lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
   { simp [L, leibniz₂R] ; norm_num }
@@ -120,29 +129,22 @@ lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
     calc
       4 * ∑ i ∈ Finset.range (2 * (n0 + 1) + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1) =
         4 * ∑ i ∈ Finset.range (2 * n0 + 1 + 1 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-          := by rfl
+        := by rfl
       _ = 4 * ∑ i ∈ (Finset.range (2 * n0 + 1 + 1 + 1) ⊔ {2 * n0 + 1 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1) := by rw [range_add_one_eq_sup_self]
-        _ = 4 * ∑ i ∈ (Finset.range (2 * n0 + 1 + 1) ⊔ {2 * n0 + 1 + 1} ⊔ {2 * n0 + 1 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1)
-          := by rw [range_add_one_eq_sup_self]
+      _ = 4 * (∑ i ∈ Finset.range (2 * n0 + 1 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1) + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1)) := by rw [range_sup_eq_add]
+      _ = 4 * (∑ i ∈ (Finset.range (2 * n0 + 1 + 1) ⊔ {2 * n0 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1) + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1)) := by rw [range_add_one_eq_sup_self]
       _ = 4 * (
         ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + ∑ i ∈ {2 * n0 + 1 + 1} , (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + ∑ i ∈ {2 * n0 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1)
         + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1))
+        := by rw [range_sup_eq_add]
+      _ = 4 * (∑ i ∈ range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + (2 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3)))
           := by sorry
-       _ = 4 * (
-        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + (-1 : Rat) ^ (2 * n0 + 1 + 1) / (2 * ↑(2 * n0 + 1 + 1) + 1)
-        + (-1 : Rat) ^ (2 * n0 + 1 + 1 + 1) / (2 * ↑(2 * n0 + 1 + 1 + 1) + 1))
-          := by sorry
-      _ = 4 * (
-        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + (2 : Rat) / ((2 * ↑(2 * n0 + 1 + 1) + 1) * (2 * ↑(2 * n0 + 1 + 1 + 1) + 1)))
-          := by sorry
-      _ = 4 *
-        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + (8 : Rat) / ((2 * ↑(2 * n0 + 1 + 1) + 1) * (2 * ↑(2 * n0 + 1 + 1 + 1) + 1))
-          := by sorry
-      _ = 4 * ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + (8 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3))
-          := by sorry
+      _ = 4 * ∑ i ∈ range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + 4 * ((2 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3)))
+          := by rw [Rat.mul_add]
+      _ = 4 * ∑ i ∈ range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
+        + 4 * (2 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3))
+          := by rfl
   }
