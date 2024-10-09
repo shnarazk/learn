@@ -77,7 +77,7 @@ lemma they_are_identical (n : Nat) :
 #check Fin 10
 #eval ∑ x ∈ Finset.Iic 1, x
 
-def L (n : Nat) : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat)^ i / (2 * i + 1 :Rat))
+def L (n : Nat) : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat) ^ i / (2 * i + 1 :Rat))
 #eval (L 200).toFloat
 #eval L 1
 
@@ -123,28 +123,12 @@ lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
   { simp [L, leibniz₂R] ; norm_num }
   {
-    simp [leibniz₂R]
-    rw [←ih]
-    simp [L]
-    calc
-      4 * ∑ i ∈ Finset.range (2 * (n0 + 1) + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1) =
-        4 * ∑ i ∈ Finset.range (2 * n0 + 1 + 1 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        := by rfl
-      _ = 4 * ∑ i ∈ (Finset.range (2 * n0 + 1 + 1 + 1) ⊔ {2 * n0 + 1 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1) := by rw [range_add_one_eq_sup_self]
-      _ = 4 * (∑ i ∈ Finset.range (2 * n0 + 1 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1) + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1)) := by rw [range_sup_eq_add]
-      _ = 4 * (∑ i ∈ (Finset.range (2 * n0 + 1 + 1) ⊔ {2 * n0 + 1 + 1}), (-1 : Rat) ^ i / (2 * ↑i + 1) + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1)) := by rw [range_add_one_eq_sup_self]
-      _ = 4 * (
-        ∑ i ∈ Finset.range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + ∑ i ∈ {2 * n0 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + ∑ i ∈ {2 * n0 + 1 + 1 + 1}, (-1 : Rat) ^ i / (2 * ↑i + 1))
-        := by rw [range_sup_eq_add]
-      _ = 4 * (∑ i ∈ range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + (2 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3)))
-          := by sorry
-      _ = 4 * ∑ i ∈ range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + 4 * ((2 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3)))
-          := by rw [Rat.mul_add]
-      _ = 4 * ∑ i ∈ range (2 * n0 + 1 + 1), (-1 : Rat) ^ i / (2 * ↑i + 1)
-        + 4 * (2 : Rat) / (((↑n0 + 1) * 4 + 1) * ((↑n0 + 1) * 4 + 3))
-          := by rfl
+    let r1 : Rat := 1 / (2 * n0 + 5)
+    let r2 : Rat := (-1) / (2 * n0 + 7)
+    have L_rec : L (2 * (n0 + 1) + 1) = L (2 * n0 + 1) + r1 + r2 := by
+      sorry
+    have l₂_rec : leibniz₂R (n0 + 1) = leibniz₂R n0 + r1 + r2 := by
+      sorry
+    simp only [L_rec, l₂_rec]
+    rw [ih]
   }
