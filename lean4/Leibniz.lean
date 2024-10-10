@@ -80,7 +80,7 @@ lemma they_are_identical (n : Nat) :
 
 variable (n : Nat)
 
-lemma sum_def (n : Nat) (f : Nat → Rat) : ∑ i ∈ {n}, f i = f n := by
+lemma sum_def (f : Nat → Rat) : ∑ i ∈ {n}, f i = f n := by
   exact sum_singleton f n
 
 lemma range_add_one_eq_sup_self : Finset.range (n + 1) = Finset.range n ⊔ {n} := by
@@ -138,17 +138,14 @@ lemma nat_to_rad : (↑(n + 1) : Rat) = ((↑n + ↑1) : Rat) := by
 lemma L_rec : L (n + 1) = L n + 4 * (-1 : Rat) ^ (n + 1) / (2 * n + 3) := by
   calc
     L (n + 1) = 4 * ∑ i ∈ range (n + 1 + 1), (-1 : Rat) ^ i / (2 * i + 1) := by simp [L]
-    _ = 4 * ∑ i ∈ (range (n + 1) ⊔ {n + 1}), (-1 : Rat) ^ i / (2 * i + 1) := by rw [←
-      range_add_one_eq_sup_self]
+    _ = 4 * ∑ i ∈ (range (n + 1) ⊔ {n + 1}), (-1 : Rat) ^ i / (2 * i + 1) := by rw [← range_add_one_eq_sup_self]
     _ = 4 * (
       ∑ i ∈ range (n + 1), (-1 : Rat) ^ i / (2 * i + 1) + ∑ i ∈ {n + 1}, (-1 : Rat) ^ i / (2 * i + 1)) := by rw [range_sup_eq_add]
     _ = 4 * ∑ i ∈ range (n + 1), (-1 : Rat) ^ i / (2 * i + 1) + 4 * ∑ i ∈ {n + 1}, (-1 : Rat) ^ i / (2 * i + 1) := by rw [Rat.mul_add]
     _ = L n + 4 * (∑ i ∈ {n + 1}, (-1 : Rat) ^ i / (2 * i + 1)) := by rw [←L]
     _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * ↑(n + 1) + 1)) := by rw [sum_def]
-    _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * (↑n + ↑1) + 1))
-      := by rw [nat_to_rad]
-    _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * ↑n + 2 * ↑1 + 1))
-      := by simp [Rat.mul_add]
+    _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * (↑n + ↑1) + 1)) := by rw [nat_to_rad]
+    _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * ↑n + 2 * ↑1 + 1)) := by simp [Rat.mul_add]
     _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * ↑n + 2 + 1)) := by simp
     _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * ↑n + (2 + 1))) := by rw [Rat.add_assoc]
     _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * ↑n + 3)) := by norm_num
@@ -177,7 +174,7 @@ lemma l₂_rec : leibniz₂R (n + 1) = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 *
     _ = leibniz₂R n + 4 * 1 / (4 * (n + 1) + 1) - 4 * 1 / (4 * (n + 1) + 3) := by group
     _ = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 * 1 / (4 * n + 7) := by group
 
-lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
+lemma L_is_Leibniz₂ : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
   { simp [L, leibniz₂R] ; norm_num }
   {
@@ -188,8 +185,7 @@ lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
         L (2 * (n0 + 1) + 1)
           = L (2 * (n0 + 1)) + 4 * (-1 : Rat) ^ (2 * (n0 + 1) + 1) / (2 * (2 * (n0 + 1)) + 3)
           := by rw [L_rec (2 * (n0 + 1))] ; norm_num
-        _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) ^ (2 * (n0 + 1) + 1) / (4 * n0 + 7)
-          := by group
+        _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) ^ (2 * (n0 + 1) + 1) / (4 * n0 + 7) := by group
         _ = L (2 * (n0 + 1)) + 4 * (((-1 : Rat) ^ (2 * (n0 + 1)) * ((-1 : Rat) ^ 1))) / (4 * n0 + 7)
           := by rw [@npow_add]
         _ = L (2 * (n0 + 1)) + 4 * (1 * (-1 : Rat) ^ 1) / (4 * n0 + 7)
@@ -203,8 +199,7 @@ lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
         _ = L (2 * n0 + 1 + 1) + c2 := by group
         _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * n0 + 1 + 1) / (2 * (2 * n0 + 1) + 3) + c2
           := by rw [L_rec (2 * n0 + 1)] ; norm_num
-        _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * (n0 + 1)) / (2 * (2 * n0 + 1) + 3) + c2
-          := by group
+        _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * (n0 + 1)) / (2 * (2 * n0 + 1) + 3) + c2 := by group
         _ = L (2 * n0 + 1) + 4 * (1 : Rat) / (2 * (2 * n0 + 1) + 3) + c2
           := by
             have e : Even (2 * (n0 + 1)) := by exact even_two_mul (n0 + 1)
