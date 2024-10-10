@@ -37,6 +37,7 @@ def leibniz₂R : Nat → Rat
       let k : Rat := (succ n') * 4
       leibniz₂R n' + 8 / ((k + 1) * (k + 3))
 
+#eval (leibniz₂R 100).toFloat
 lemma leibniz₁R_sum (n : Nat) :
     ∀ sum : Rat, leibniz₁R n (4 * n) sum = leibniz₁R n (4 * n) 0 + sum := by
   induction' n with n0 ih
@@ -147,12 +148,34 @@ lemma L_rec : L (n + 1) = L n + 4 * (-1 : Rat) ^ (n + 1) / (2 * n + 3) := by
     _ = L n + 4 * ((-1 : Rat) ^ ↑(n + 1) / (2 * n + 3)) := by norm_num
     _ = L n + 4 * (-1 : Rat) ^ ↑(n + 1) / (2 * n + 3) := by rw [mul_div]
 
+lemma l₂_rec : leibniz₂R (n + 1) = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 * 1 / (4 * n + 7) := by
+  have non0 (k : Rat) (h : 0 < k) : (4 : Rat) * (↑n + 1) + k ≠ (0 : Rat) := by
+    have : (0 : Rat) < ↑n + 1 := by exact cast_add_one_pos n
+    have : (4 : Rat) * (↑n + 1) > (0 : Rat) := by refine Left.mul_pos rfl this
+    have : (4 : Rat) * (↑n + 1) + k > (0 : Rat) := by
+      exact Right.add_pos_of_pos_of_nonneg this (by exact le_of_lt h : 0 ≤ k)
+    exact Ne.symm (_root_.ne_of_lt this)
+  calc
+    leibniz₂R (n + 1) = leibniz₂R n + 8 / ((4 * (n + 1) + 1) * (4 * (n + 1) + 3))
+      := by rw [leibniz₂R, succ_eq_add_one, mul_comm _ 4, nat_to_rad, mul_comm]
+    _ = leibniz₂R n + 4 * 2 / ((4 * (n + 1) + 1) * (4 * (n + 1) + 3)) := by group
+    _ = leibniz₂R n + 4 * ((4 * (n + 1) + 3) - (4 * (n + 1) + 1))/ ((4 * (n + 1) + 1) * (4 * (n + 1) + 3)) := by group
+    _ = leibniz₂R n + 4 * ((4 * (n + 1) + 3) / ((4 * (n + 1) + 1) * (4 * (n + 1) + 3)) - (4 * (n + 1) + 1) / ((4 * (n + 1) + 1) * (4 * (n + 1) + 3))) := by group
+    _ = leibniz₂R n + 4 * (1 / ((4 * (n + 1) + 1) * 1) - 1 / (1 * (4 * (n + 1) + 3))) :=
+      by
+        rw [div_mul_cancel_left₀ (non0 1 rfl), Rat.mul_comm (4 * (↑n + 1) + 1) _, div_mul_cancel_left₀ (non0 3 rfl)]
+        rw [inv_eq_one_div]
+        group
+    _ = leibniz₂R n + 4 * (1 / (4 * (n + 1) + 1) - 1 / (4 * (n + 1) + 3)) := by group
+    _ = leibniz₂R n + 4 * 1 / (4 * (n + 1) + 1) - 4 * 1 / (4 * (n + 1) + 3) := by group
+    _ = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 * 1 / (4 * n + 7) := by group
+
 lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
   { simp [L, leibniz₂R] ; norm_num }
   {
-    set c1 : Rat := 4 * (-1) ^ (2 * (n0 + 1))     / (4 * n0 + 5) with ← C1
-    set c2 : Rat := 4 * (-1) ^ (2 * (n0 + 1) + 1) / (4 * n0 + 7) with ← C2
+    set c1 : Rat := 4 * 1  / (4 * n0 + 5) with ← C1
+    set c2 : Rat := 4 * -1 / (4 * n0 + 7) with ← C2
     have L' : L (2 * (n0 + 1) + 1) = L (2 * n0 + 1) + c1 + c2 := by
       calc
         L (2 * (n0 + 1) + 1)
@@ -160,14 +183,21 @@ lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
           := by rw [L_rec (2 * (n0 + 1))] ; norm_num
         _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) ^ (2 * (n0 + 1) + 1) / (4 * n0 + 7)
           := by group
+         _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) / (4 * n0 + 7)
+          := by sorry
         _ = L (2 * (n0 + 1)) + c2 := by rw [C2]
         _ = L (2 * n0 + 1 + 1) + c2 := by group
         _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * n0 + 1 + 1) / (2 * (2 * n0 + 1) + 3) + c2
           := by rw [L_rec (2 * n0 + 1)] ; norm_num
-        _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * (n0 + 1)) / (4 * n0 + 5) + c2 := by group
+        _ = L (2 * n0 + 1) + 4 * (1 : Rat) / (2 * (2 * n0 + 1) + 3) + c2
+          := by sorry
+        _ = L (2 * n0 + 1) + 4 * (1 : Rat) / (4 * n0 + 5) + c2 := by group
         _ = L (2 * n0 + 1) + c1 + c2 := by rw [C1]
     have l₂' : leibniz₂R (n0 + 1) = leibniz₂R n0 + c1 + c2 := by
-      sorry
+      calc
+        leibniz₂R (n0 + 1) = leibniz₂R n0 + 4 * 1 / (4 * n0 + 5) - 4 * 1 / (4 * n0 + 7) := by
+          exact l₂_rec n0
+        _ = leibniz₂R n0 + c1 + c2 := by group
     simp only [L', l₂']
     rw [ih]
   }
