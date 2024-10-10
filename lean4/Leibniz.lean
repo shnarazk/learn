@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-open Nat
+open Nat Finset Real
 
 -- the most efficient vaviant
 def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
@@ -13,8 +13,12 @@ def leibniz₂ : Nat → Float
       let k := (succ n').toFloat * 4
       leibniz₂ n' + 8 / ((k + 1) * (k + 3))
 
+-- def leibniz₃ := (fun k => ∑ i ∈ range k, (-1 : ℝ) ^ i / (2 * i + 1))
+-- partial def leibniz₃ (k : Nat) : Real := ∑ i ∈ range k, (-1 : Real) ^ i.toReal / (2 * i.toReal + 1)
+
 def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4) 0
 -- def leibniz (n : Nat) : Float := leibniz₂ n 0.0
+-- def leibniz (n : Nat) : Float := leibniz₃ (2 * n) |>.toFloat
 
 def leibnizIO (n : Nat) : IO Float := do return leibniz n
 
@@ -24,7 +28,7 @@ def leibnizIO (n : Nat) : IO Float := do return leibniz n
 -- This is the FUN part only on Lean4
 -/
 namespace this_is_pi_approximation
-open Rat Finset
+open Rat
 
 def leibniz₁R (n : Nat) (k: Rat) (sum : Rat) : Rat :=
   match n with
