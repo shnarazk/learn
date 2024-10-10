@@ -121,6 +121,13 @@ lemma range_sup_eq_add (f : Nat → Rat) :
       have : Disjoint (range n) {n} := by simp
       exact sum_union this
 
+/-
+https://github.com/leanprover-community/mathlib4/blob/6a2ce9480a312b180ac91c687d6686c6479c398b/Mathlib/Data/Real/Pi/Leibniz.lean#L17
+上記のリンク先で以下のLが円周率に収束することが示されているが定理には名前があっても
+数列に名前がついてないのでLと等しいことが言えない。見比べて同じと言うしかない。
+正確には上記のリンク先の数列は実数上に定義されている。
+まあ円周率は実数上にしか存在しないからなあ。
+-/
 def L : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat) ^ i / (2 * i + 1 :Rat))
 #eval (L 200).toFloat
 #eval L 1
