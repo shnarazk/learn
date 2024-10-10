@@ -183,14 +183,27 @@ lemma L_is_Leibniz₂ (n : Nat) : L (2 * n + 1) = leibniz₂R n := by
           := by rw [L_rec (2 * (n0 + 1))] ; norm_num
         _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) ^ (2 * (n0 + 1) + 1) / (4 * n0 + 7)
           := by group
-         _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) / (4 * n0 + 7)
-          := by sorry
+        _ = L (2 * (n0 + 1)) + 4 * (((-1 : Rat) ^ (2 * (n0 + 1)) * ((-1 : Rat) ^ 1))) / (4 * n0 + 7)
+          := by rw [@npow_add]
+        _ = L (2 * (n0 + 1)) + 4 * (1 * (-1 : Rat) ^ 1) / (4 * n0 + 7)
+          := by
+            have e : Even (2 * (n0 + 1)) := by exact even_two_mul (n0 + 1)
+            have p : (-1 : Rat) ≠ (1 : Rat) := by exact Ne.symm (ne_of_beq_false rfl)
+            rw [(neg_one_pow_eq_one_iff_even p).mpr]
+            exact e
+        _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) / (4 * n0 + 7) := by norm_num
         _ = L (2 * (n0 + 1)) + c2 := by rw [C2]
         _ = L (2 * n0 + 1 + 1) + c2 := by group
         _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * n0 + 1 + 1) / (2 * (2 * n0 + 1) + 3) + c2
           := by rw [L_rec (2 * n0 + 1)] ; norm_num
+        _ = L (2 * n0 + 1) + 4 * (-1 : Rat) ^ (2 * (n0 + 1)) / (2 * (2 * n0 + 1) + 3) + c2
+          := by group
         _ = L (2 * n0 + 1) + 4 * (1 : Rat) / (2 * (2 * n0 + 1) + 3) + c2
-          := by sorry
+          := by
+            have e : Even (2 * (n0 + 1)) := by exact even_two_mul (n0 + 1)
+            have p : (-1 : Rat) ≠ (1 : Rat) := by exact Ne.symm (ne_of_beq_false rfl)
+            rw [(neg_one_pow_eq_one_iff_even p).mpr]
+            exact e
         _ = L (2 * n0 + 1) + 4 * (1 : Rat) / (4 * n0 + 5) + c2 := by group
         _ = L (2 * n0 + 1) + c1 + c2 := by rw [C1]
     have l₂' : leibniz₂R (n0 + 1) = leibniz₂R n0 + c1 + c2 := by
