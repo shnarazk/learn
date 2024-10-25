@@ -42,7 +42,7 @@ impl App {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Min(5), Constraint::Min(5), Constraint::Min(5)])
-            .split(frame.size());
+            .split(frame.area());
         let d1: f64 = (self.start.elapsed().as_millis() % 10000u128) as f64 / 5000.0;
         let d2: f64 = if self.counter == 0 {
             1.0
@@ -122,7 +122,7 @@ impl App {
 }
 
 impl App {
-    fn bar_chart<'a>(&'a self) -> BarChart<'a> {
+    fn bar_chart(&self) -> BarChart {
         let b = vec![
             ("data0", 2),
             ("data1", 4),
@@ -188,22 +188,18 @@ impl Widget for &App {
     where
         Self: Sized,
     {
-        let title = Title::from(" Counter App Tutorial ".bold());
-        let instructions = Title::from(Line::from(vec![
+        let _title = Title::from(" Counter App Tutorial ".bold());
+        let instructions = Line::from(vec![
             " Decrement ".into(),
             "<Left>".blue().bold(),
             " Increment ".into(),
             "<Right>".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
-        ]));
+        ]);
         let block = Block::default()
-            .title(title.alignment(Alignment::Center))
-            .title(
-                instructions
-                    .alignment(Alignment::Center)
-                    .position(Position::Bottom),
-            )
+            .title_alignment(Alignment::Center)
+            .title_bottom(instructions)
             .borders(Borders::ALL)
             .border_set(border::THICK);
         let counter_text = Text::from(vec![Line::from(vec![
