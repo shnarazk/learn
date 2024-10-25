@@ -357,7 +357,7 @@ def iso₁ [Fintype G] (h : Disjoint H K) (h' : Nat.card G = Nat.card H * Nat.ca
   rw [@Nat.bijective_iff_injective_and_card]
   constructor
   {
-    rw [← ker_eq_bot_iff, (QuotientGroup.mk' H).ker_restrict K]
+    rw [←ker_eq_bot_iff, (QuotientGroup.mk' H).ker_restrict K]
     simp [Nat.card] at *
     intro a ak a1 a1K
     exact fun a_1 ↦ h ak a1 a_1
@@ -365,7 +365,23 @@ def iso₁ [Fintype G] (h : Disjoint H K) (h' : Nat.card G = Nat.card H * Nat.ca
   { exact Eq.symm (aux_card_eq h') }
 
 def iso₂ : G ≃* (G ⧸ K) × (G ⧸ H) := by
-  sorry
+  apply MulEquiv.ofBijective ((QuotientGroup.mk' K).prod (QuotientGroup.mk' H))
+  rw [Nat.bijective_iff_injective_and_card]
+  constructor
+  {
+    rw [←ker_eq_bot_iff]
+    rw [((QuotientGroup.mk' K).ker_prod (QuotientGroup.mk' H))]
+    simp [Nat.card]
+    exact disjoint_iff.mp (Disjoint.symm h)
+  }
+  {
+    rw [Nat.card_prod]
+    rw [aux_card_eq h']
+    rw [mul_comm] at h'
+    rw [aux_card_eq h']
+    rw [mul_comm]
+    exact h'
+  }
 
 #check MulEquiv.prodCongr
 
