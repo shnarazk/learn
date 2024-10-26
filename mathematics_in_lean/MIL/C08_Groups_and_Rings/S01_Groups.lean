@@ -385,5 +385,14 @@ def iso₂ : G ≃* (G ⧸ K) × (G ⧸ H) := by
 
 #check MulEquiv.prodCongr
 
-def finalIso : G ≃* H × K :=
-  sorry
+def finalIso : G ≃* H × K := by
+  have E1 : G ≃* (G ⧸ K) × (G ⧸ H) := by exact iso₂ h h'
+  have E2 : K ≃* G ⧸ H := by exact iso₁ h h'
+  rw [mul_comm] at h'
+  have tmp : H ≃* G ⧸ K := by exact iso₁ h.symm h'
+  have : G ⧸ H ≃* G ⧸ H := by exact QuotientGroup.quotientMulEquivOfEq rfl
+  have t2 : (G ⧸ K) × (G ⧸ H) ≃* H × (G ⧸ H) := by exact tmp.symm.prodCongr this
+  have E3 : G ≃* H × (G ⧸ H) := by exact E1.trans t2
+  apply MulEquiv.trans E3
+  have : ↥H ≃* ↥H := by exact MulEquiv.subgroupCongr rfl
+  refine (this.prodCongr E2).symm
