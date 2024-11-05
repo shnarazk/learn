@@ -41,7 +41,8 @@ def leibniz₂R : Nat → Rat
       let k : Rat := (succ n') * 4
       leibniz₂R n' + 8 / ((k + 1) * (k + 3))
 
-#eval (leibniz₂R 100).toFloat
+-- s#eval (leibniz₂R 3).toFloat
+
 lemma leibniz₁R_sum (n : Nat) :
     ∀ sum : Rat, leibniz₁R n (4 * n) sum = leibniz₁R n (4 * n) 0 + sum := by
   induction' n with n0 ih
@@ -133,8 +134,8 @@ https://github.com/leanprover-community/mathlib4/blob/6a2ce9480a312b180ac91c687d
 まあ円周率は実数上にしか存在しないからなあ。
 -/
 def L : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat) ^ i / (2 * i + 1 :Rat))
-#eval (L 200).toFloat
-#eval L 1
+-- #eval (L 200).toFloat
+-- #eval L 1
 
 lemma nat_to_rad : (↑(n + 1) : Rat) = ((↑n + ↑1) : Rat) := by
   exact Mathlib.Tactic.Ring.inv_add rfl rfl
