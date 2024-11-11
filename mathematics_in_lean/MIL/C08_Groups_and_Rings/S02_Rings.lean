@@ -149,11 +149,40 @@ lemma chineseMap_surj [Fintype ι] {I : ι → Ideal R}
   have key : ∀ i, ∃ e : R, mk (I i) e = 1 ∧ ∀ j, j ≠ i → mk (I j) e = 0 := by
     intro i
     have hI' : ∀ j ∈ ({i} : Finset ι)ᶜ, IsCoprime (I i) (I j) := by
+      simp at *
+      exact fun j a ↦ hI i j fun a_1 ↦ a (id (Eq.symm a_1))
+    rcases isCoprime_iff_exists.mp (isCoprime_Inf hI') with ⟨u, hu, e, he, hue⟩
+    replace he : ∀ j, j ≠ i → e ∈ I j := by simpa using he
+    -- refine ⟨e, ?is_one, ?is_zero⟩  -- useしてconstructorみたいなこと
+    use e
+    constructor
+    {
+      rw [eq_sub_of_add_eq' hue]
+      rw [map_sub]
+      rw [eq_zero_iff_mem.mpr hu]
+      rw [sub_zero]
+      rfl
+    }
+    · exact fun j hj ↦ eq_zero_iff_mem.mpr (he j hj)
+    /-
+    use f i
+    simp at *
+    constructor
+    {
+      rw [hf]
+
+    }
+    {
       sorry
-    sorry
+    }
+    -/
   choose e he using key
   use mk _ (∑ i, f i * e i)
-  sorry
+  ext i
+  rw [chineseMap_mk', map_sum, Fintype.sum_eq_single i]
+  { simp [(he i).left, hf] }
+  { intro x hx ; simp [(he x).right i hx.symm] }
+
 
 noncomputable def chineseIso [Fintype ι] (f : ι → Ideal R)
     (hf : ∀ i j, i ≠ j → IsCoprime (f i) (f j)) : (R ⧸ ⨅ i, f i) ≃+* Π i, R ⧸ f i :=
