@@ -96,7 +96,8 @@ lemma chineseMap_mk' (I : ι → Ideal R) (x : R) (i : ι) :
 #check injective_lift_iff
 
 lemma chineseMap_inj (I : ι → Ideal R) : Injective (chineseMap I) := by
-  sorry
+  simp [chineseMap]
+  exact quotientInfToPiQuotient_inj I
 
 #check IsCoprime
 #check isCoprime_iff_add
