@@ -119,10 +119,28 @@ theorem isCoprime_Inf {I : Ideal R} {J : ι → Ideal R} {s : Finset ι}
       rw [Finset.iInf_insert, inf_comm, one_eq_top, eq_top_iff, ← one_eq_top]
       set K := ⨅ j ∈ s, J j
       calc
-        1 = I + K                  := sorry
-        _ = I + K * (I + J i)      := sorry
-        _ = (1 + K) * I + K * J i  := sorry
-        _ ≤ I + K ⊓ J i            := sorry
+        1 = I + K                  := by
+          simp at *
+          rcases hf with ⟨hf₁, hf₂⟩
+          exact Eq.symm (sup_iInf_eq_top hf₂)
+        _ = I + K * (I + J i)      := by
+          have : K = K * 1 := by rw [@Submodule.mul_one]
+          nth_rewrite 1 [this]
+          simp at *
+          rcases hf with ⟨hf₁, hf₂⟩
+          rw [hf₁]
+          simp
+        _ = (1 + K) * I + K * J i  := by rw [mul_add, ←add_assoc] ; simp
+        _ ≤ I + K ⊓ J i            := by
+          have step1 : (1 + K) * I ≤ I := by
+            simp at hf
+            rcases hf with ⟨hf₁, hf₂⟩
+            exact mul_le_left
+          have step2 : K * J i ≤ K ⊓ J i := by exact mul_le_inf
+          calc
+            (1 + K) * I + K * J i ≤ I + K * J i := by exact add_le_add step1 fun ⦃x⦄ a ↦ a
+            _ ≤ I + K ⊓ J i := by exact add_le_add (fun ⦃x⦄ a ↦ a) step2
+
 lemma chineseMap_surj [Fintype ι] {I : ι → Ideal R}
     (hI : ∀ i j, i ≠ j → IsCoprime (I i) (I j)) : Surjective (chineseMap I) := by
   classical
