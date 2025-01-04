@@ -1,4 +1,4 @@
-import Mathlib.Data.Nat.Basic
+import Mathlib.Data.PNat.Basic
 #eval "Hello, World!"
 #eval Lean.versionString
 

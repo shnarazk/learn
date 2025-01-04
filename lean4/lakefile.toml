@@ -13,7 +13,7 @@ scope = "leanprover-community"
 [[require]]
 name = "aesop"
 scope = "leanprover-community"
-tag = "v4.14.0"
+tag = "v4.15.0"
 
 [[lean_lib]]
 name = "Combinator"
