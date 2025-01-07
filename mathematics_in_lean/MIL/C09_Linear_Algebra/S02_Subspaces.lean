@@ -30,18 +30,22 @@ noncomputable example : Submodule ℝ ℂ where
     use c*a
     simp
 
-
 def preimage {W : Type*} [AddCommGroup W] [Module K W] (φ : V →ₗ[K] W) (H : Submodule K W) :
     Submodule K V where
   carrier := φ ⁻¹' H
   zero_mem' := by
     dsimp
-    sorry
+    rw [Set.mem_preimage, map_zero]
+    exact zero_mem H
   add_mem' := by
-    sorry
+    rintro a b ha hb
+    rw [Set.mem_preimage, map_add]
+    exact add_mem ha hb
   smul_mem' := by
     dsimp
-    sorry
+    rintro a ha hb
+    rw [@Set.mem_preimage, map_smul]
+    exact H.smul_mem' a hb
 
 example (U : Submodule K V) : Module K U := inferInstance
 
