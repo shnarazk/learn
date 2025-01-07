@@ -13,7 +13,7 @@ section
 variable (f : α → β) (g : β → α)
 
 def sbAux : ℕ → Set α
-  | 0 => univ \ g '' univ
+  | 0 => univ  g '' univ
   | n + 1 => g '' (f '' sbAux n)
 
 def sbSet :=
@@ -74,7 +74,7 @@ theorem sb_injective (hf : Injective f) : Injective (sbFun f g) := by
     rw [if_pos x₁A, if_pos x₂A] at hxeq
     apply hf
     exact hxeq
-  push_neg  at xA
+  push_neg at xA
   rw [if_neg xA.right, if_neg xA.left] at hxeq
   have C : g (invFun g x₁) = g (invFun g x₂) := by rw [hxeq]
   rw [sb_right_inv f g xA.left, sb_right_inv f g xA.right] at C

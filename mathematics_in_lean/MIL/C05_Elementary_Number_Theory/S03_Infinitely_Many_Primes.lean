@@ -62,7 +62,7 @@ theorem primes_infinite : ∀ n, ∃ p > n, Nat.Prime p := by
   refine ⟨?h.left, pp⟩
   show p > n
   by_contra ple
-  push_neg  at ple
+  push_neg at ple
   have : p ∣ Nat.factorial (n + 1) := by
     have p_pos : 0 < p := by exact Nat.Prime.pos pp
     have ple1 : p ≤ n + 1 := by exact Nat.le_add_right_of_le ple
@@ -111,7 +111,7 @@ example : (r ∪ s) ∩ (r ∪ t) = r ∪ s ∩ t := by
   simp
   tauto
 
-example : (r \ s) \ t = r \ (s ∪ t) := by
+example : (r  s)  t = r  (s ∪ t) := by
   ext x
   simp
   tauto
