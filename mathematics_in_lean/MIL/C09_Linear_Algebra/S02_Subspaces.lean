@@ -116,9 +116,30 @@ example {S T : Submodule K V} {x : V} (h : x ∈ S ⊔ T) :
       { exact Submodule.zero_mem S }
       { use 0 ; simp }
   | add x y hx hy hx' hy' =>
-      sorry
+      rcases hx' with ⟨s', hs', ⟨t', ht', st'⟩⟩
+      rcases hy' with ⟨s'', hs'', ⟨t'', ht'', st''⟩⟩
+      use s' + s''
+      constructor
+      { exact (Submodule.add_mem_iff_right S hs').mpr hs'' }
+      {
+        use t' + t''
+        constructor
+        { exact (Submodule.add_mem_iff_right T ht').mpr ht'' }
+        { simp [st', st''] ; exact add_add_add_comm s' t' s'' t'' }
+      }
   | smul a x hx hx' =>
-      sorry
+      rcases hx' with ⟨s', hs', ⟨t', ht', st⟩⟩
+      rw [st]
+      simp
+      use a • s'
+      constructor
+      { exact Submodule.smul_mem S a hs' }
+      {
+        use a • t'
+        constructor
+        { exact Submodule.smul_mem T a ht' }
+        { rfl }
+      }
 
 section
 
