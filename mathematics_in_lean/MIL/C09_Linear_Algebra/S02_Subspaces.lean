@@ -194,7 +194,19 @@ open Submodule
 #check Submodule.comap_map_eq
 
 example : Submodule K (V ⧸ E) ≃ { F : Submodule K V // E ≤ F } where
-  toFun := sorry
-  invFun := sorry
-  left_inv := sorry
-  right_inv := sorry
+  toFun := fun x ↦ ⟨comap E.mkQ x, by exact le_comap_mkQ E x⟩
+  invFun := fun x ↦ map E.mkQ x
+  left_inv := fun x ↦ by
+    dsimp
+    rw [Submodule.map_comap_eq]
+    rw [@range_mkQ]
+    exact top_inf_eq x
+  right_inv := fun x ↦ by
+    dsimp
+    ext y
+    dsimp only
+    rw [Submodule.comap_map_eq]
+    rw [E.ker_mkQ, sup_of_le_left]
+    rcases x with ⟨kv, ekv⟩
+    dsimp
+    exact ekv
