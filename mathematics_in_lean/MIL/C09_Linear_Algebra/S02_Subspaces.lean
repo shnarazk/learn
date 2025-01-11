@@ -82,7 +82,7 @@ example (U : ι → Submodule K V) (h : DirectSum.IsInternal U) :
 -- If subspaces are in direct sum then they pairwise intersect only at zero.
 example {ι : Type*} [DecidableEq ι] (U : ι → Submodule K V) (h : DirectSum.IsInternal U)
     {i j : ι} (hij : i ≠ j) : U i ⊓ U j = ⊥ :=
-  (h.submodule_independent.pairwiseDisjoint hij).eq_bot
+  (h.submodule_iSupIndep.pairwiseDisjoint hij).eq_bot
 
 -- Those conditions characterize direct sums.
 #check DirectSum.isInternal_submodule_iff_independent_and_iSup_eq_top
@@ -106,9 +106,15 @@ example {S T : Submodule K V} {x : V} (h : x ∈ S ⊔ T) :
   rw [← S.span_eq, ← T.span_eq, ← Submodule.span_union] at h
   induction h using Submodule.span_induction with
   | mem y h =>
-      sorry
+    rw [@Set.mem_union] at h
+    rcases h with yS | yT
+    { use y ; simp ; exact yS }
+    { use 0 ; simp ; exact yT }
   | zero =>
-      sorry
+      use 0
+      refine ⟨?_, ?_⟩
+      { exact Submodule.zero_mem S }
+      { use 0 ; simp }
   | add x y hx hy hx' hy' =>
       sorry
   | smul a x hx hx' =>
