@@ -169,7 +169,7 @@ example : Surjective φ ↔ range φ = ⊤ := range_eq_top.symm
 
 example (E : Submodule K V) (F : Submodule K W) :
     Submodule.map φ E ≤ F ↔ E ≤ Submodule.comap φ F := by
-  sorry
+  exact Submodule.map_le_iff_le_comap
 
 variable (E : Submodule K V)
 
