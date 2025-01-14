@@ -43,7 +43,31 @@ example (P Q : K[X]) (h : IsCoprime P Q) (φ : End K V) : ker (aeval φ P) ⊓ k
 
 example (P Q : K[X]) (h : IsCoprime P Q) (φ : End K V) :
     ker (aeval φ P) ⊔ ker (aeval φ Q) = ker (aeval φ (P*Q)) := by
-  sorry
+  apply le_antisymm
+  {
+    apply sup_le
+    {
+      rw [mul_comm, map_mul]
+      intro h hx
+      rw [mem_ker] at *
+      simp [hx]
+    }
+    {
+      rw [map_mul]
+      intro h hx
+      rw [mem_ker] at *
+      simp [hx]
+    }
+  }
+  {
+    intro x hx
+    rcases h with ⟨P1, Q1, hPQ⟩
+    have key : x = aeval φ (P1*P) x + aeval φ (Q1*Q) x := by simpa using congr((aeval φ) $hPQ.symm x)
+    rw [key, add_comm]
+    apply Submodule.add_mem_sup <;> rw [mem_ker] at *
+    { rw [← mul_apply, ← map_mul, show P*(Q1*Q) = Q1*(P*Q) by ring, map_mul, mul_apply, hx, map_zero] }
+    { rw [← mul_apply, ← map_mul, show Q*(P1*P) = P1*(P*Q) by ring, map_mul, mul_apply, hx, map_zero] }
+  }
 
 example (φ : End K V) (a : K) : φ.eigenspace a = LinearMap.ker (φ - a • 1) :=
   End.eigenspace_def
