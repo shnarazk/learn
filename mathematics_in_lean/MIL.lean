@@ -27,8 +27,8 @@
 -- import MIL.C08_Groups_and_Rings.S02_Rings
 -- import MIL.C09_Linear_Algebra.S01_Vector_Spaces
 -- import MIL.C09_Linear_Algebra.S02_Subspaces
-import MIL.C09_Linear_Algebra.S03_Endomorphisms
--- import MIL.C09_Linear_Algebra.S04_Bases
+-- import MIL.C09_Linear_Algebra.S03_Endomorphisms
+import MIL.C09_Linear_Algebra.S04_Bases
 -- import MIL.C10_Topology.S01_Filters
 -- import MIL.C10_Topology.S02_Metric_Spaces
 -- import MIL.C10_Topology.S03_Topological_Spaces
