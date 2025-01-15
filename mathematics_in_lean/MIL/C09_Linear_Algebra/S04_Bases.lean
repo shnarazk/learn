@@ -5,7 +5,6 @@ import Mathlib.Data.Complex.FiniteDimensional
 
 import MIL.Common
 
-
 section matrices
 
 -- Adding vectors
@@ -43,8 +42,6 @@ open Matrix
 -- trace
 #eval !![(1 : ℤ), 2; 3, 4].trace -- `5`
 
-
-
 #simp !![(1 : ℝ), 2; 3, 4].det -- `4 - 2*3`
 
 #norm_num !![(1 : ℝ), 2; 3, 4].det -- `-2`
@@ -54,9 +51,7 @@ open Matrix
 variable (a b c d : ℝ) in
 #simp !![a, b; c, d].det -- `a * d – b * c`
 
-
 #norm_num [Matrix.inv_def] !![(1 : ℝ), 2; 3, 4]⁻¹ -- !![-2, 1; 3 / 2, -(1 / 2)]
-
 
 example : !![(1 : ℝ), 2; 3, 4]⁻¹ * !![(1 : ℝ), 2; 3, 4] = 1 := by
   have : Invertible !![(1 : ℝ), 2; 3, 4] := by
@@ -122,16 +117,11 @@ example : Finsupp.basisSingleOne.repr = LinearEquiv.refl K (ι →₀ K) :=
 example (i : ι) : Finsupp.basisSingleOne i = Finsupp.single i 1 :=
   rfl
 
-
 example [Finite ι] (x : ι → K) (i : ι) : (Pi.basisFun K ι).repr x i = x i := by
   simp
 
-
 example [Fintype ι] : ∑ i : ι, B.repr v i • (B i) = v :=
   B.sum_repr v
-
-
-
 
 example (c : ι →₀ K) (f : ι → V) (s : Finset ι) (h : c.support ⊆ s) :
     Finsupp.linearCombination K f c = ∑ i ∈ s, c i • f i :=
@@ -141,10 +131,10 @@ example : Finsupp.linearCombination K B (B.repr v) = v :=
   B.linearCombination_repr v
 variable (f : ι → V) in
 #check (Finsupp.linearCombination K f : (ι →₀ K) →ₗ[K] V)
+
 section
 
-variable {W : Type*} [AddCommGroup W] [Module K W]
-         (φ : V →ₗ[K] W) (u : ι → W)
+variable {W : Type*} [AddCommGroup W] [Module K W] (φ : V →ₗ[K] W) (u : ι → W)
 
 #check (B.constr K : (ι → W) ≃ₗ[K] (V →ₗ[K] W))
 
@@ -155,9 +145,6 @@ example (i : ι) : B.constr K u (B i) = u i :=
 
 example (φ ψ : V →ₗ[K] W) (h : ∀ i, φ (B i) = ψ (B i)) : φ = ψ :=
   B.ext h
-
-
-
 
 variable {ι' : Type*} (B' : Basis ι' K W) [Fintype ι] [DecidableEq ι] [Fintype ι'] [DecidableEq ι']
 
@@ -170,14 +157,12 @@ open Matrix -- get access to the ``*ᵥ`` notation for multiplication between ma
 example (φ : V →ₗ[K] W) (v : V) : (toMatrix B B' φ) *ᵥ (B.repr v) = B'.repr (φ v) :=
   toMatrix_mulVec_repr B B' φ v
 
-
 variable {ι'' : Type*} (B'' : Basis ι'' K W) [Fintype ι''] [DecidableEq ι'']
 
 example (φ : V →ₗ[K] W) : (toMatrix B B'' φ) = (toMatrix B' B'' .id) * (toMatrix B B' φ) := by
   simp
 
 end
-
 
 open Module LinearMap Matrix
 
@@ -208,17 +193,13 @@ example (n : ℕ) : Module.finrank K (Fin n → K) = n :=
   Module.finrank_fin_fun K
 
 -- Seen as a vector space over itself, `ℂ` has dimension one.
-example : Module.finrank ℂ ℂ = 1 :=
-  Module.finrank_self ℂ
+example : Module.finrank ℂ ℂ = 1 := Module.finrank_self ℂ
 
 -- But as a real vector space it has dimension two.
-example : Module.finrank ℝ ℂ = 2 :=
-  Complex.finrank_real_complex
-
+example : Module.finrank ℝ ℂ = 2 := Complex.finrank_real_complex
 
 example [FiniteDimensional K V] : 0 < Module.finrank K V ↔ Nontrivial V  :=
   Module.finrank_pos_iff
-
 
 example [FiniteDimensional K V] (h : 0 < Module.finrank K V) : Nontrivial V := by
   apply (Module.finrank_pos_iff (R := K)).1
@@ -249,7 +230,6 @@ end
 
 #check V -- Type u_2
 #check Module.rank K V -- Cardinal.{u_2}
-
 
 universe u v -- `u` and `v` will denote universe levels
 
