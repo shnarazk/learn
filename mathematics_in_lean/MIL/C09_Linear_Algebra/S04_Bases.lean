@@ -182,7 +182,16 @@ example [Fintype ι] (B' : Basis ι K V) (φ : End K V) :
   set M' := toMatrix B' B' φ
   set P := (toMatrix B B') LinearMap.id
   set P' := (toMatrix B' B) LinearMap.id
-  sorry
+  have F : M = P' * M' * P := by
+    rw [← toMatrix_comp, ← toMatrix_comp, id_comp, comp_id]
+  have F' : P' * P = 1 := by
+    rw [← toMatrix_comp, id_comp, toMatrix_id]
+  rw [F, Matrix.det_mul, Matrix.det_mul]
+  have : P'.det * M'.det * P.det = P'.det * P.det * M'.det := by
+    ring
+  rw [this]
+  rw [← Matrix.det_mul, F']
+  simp
 end
 
 section
