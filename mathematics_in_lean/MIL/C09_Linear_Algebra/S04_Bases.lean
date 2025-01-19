@@ -232,9 +232,18 @@ example : finrank K (E ⊔ F : Submodule K V) + finrank K (E ⊓ F : Submodule K
   Submodule.finrank_sup_add_finrank_inf_eq E F
 
 example : finrank K E ≤ finrank K V := Submodule.finrank_le E
+
 example (h : finrank K V < finrank K E + finrank K F) :
     Nontrivial (E ⊓ F : Submodule K V) := by
-  sorry
+  rw [← finrank_pos_iff (R := K)]
+  have s1 := Submodule.finrank_sup_add_finrank_inf_eq E F
+  have s2 := Submodule.finrank_le E
+  have s3 := Submodule.finrank_le F
+  have s4 := Submodule.finrank_le (E ⊔ F)
+  apply lt_of_le_of_lt s4 at h
+  rw [← s1] at h
+  apply Nat.lt_add_right_iff_pos.mp at h
+  exact h
 end
 
 #check V -- Type u_2
