@@ -57,8 +57,12 @@ example {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :
     ∀ {α β γ} {f : Filter α} {m : α → β} {m' : β → γ}, map m' (map m f) = map (m' ∘ m) f)
 
 example {X Y Z : Type*} {F : Filter X} {G : Filter Y} {H : Filter Z} {f : X → Y} {g : Y → Z}
-    (hf : Tendsto₁ f F G) (hg : Tendsto₁ g G H) : Tendsto₁ (g ∘ f) F H :=
-  sorry
+    (hf : Tendsto₁ f F G) (hg : Tendsto₁ g G H) : Tendsto₁ (g ∘ f) F H := by
+  simp [Tendsto₁] at *
+  intro V₀ V₀h
+  rcases (hg V₀) V₀h with hg'
+  rcases (hf (g⁻¹' V₀)) hg' with hf'
+  exact hf'
 
 variable (f : ℝ → ℝ) (x₀ y₀ : ℝ)
 
