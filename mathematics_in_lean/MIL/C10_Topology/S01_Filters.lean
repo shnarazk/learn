@@ -136,5 +136,22 @@ example (P Q R : ℕ → Prop) (hP : ∀ᶠ n in atTop, P n) (hQ : ∀ᶠ n in a
 #check neBot_of_le
 
 example (u : ℕ → ℝ) (M : Set ℝ) (x : ℝ) (hux : Tendsto u atTop (𝓝 x))
-    (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M :=
-  sorry
+    (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M := by
+  set r := le_principal_iff.mpr huM
+  -- なぜか `set q := le_inf hux r` では動かない。unificationのタイミングの問題だろうか
+  -- set q := le_inf hux r
+  set q := le_inf hux (le_principal_iff.mpr huM)
+  set p := neBot_of_le q
+  exact mem_closure_iff_clusterPt.mpr p
+
+variable (u : ℕ → ℝ)
+variable (M : Set ℝ)
+variable (x : ℝ)
+variable (hux : Tendsto u atTop (𝓝 x))
+variable (huM : ∀ᶠ n in atTop, u n ∈ M)
+variable (r := le_principal_iff.mpr huM)
+
+#check le_principal_iff.mpr huM
+#check r
+#check le_inf r
+#check le_inf (le_principal_iff.mpr huM)
