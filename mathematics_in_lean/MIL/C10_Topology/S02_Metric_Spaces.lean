@@ -48,8 +48,10 @@ example {X Y : Type*} [MetricSpace X] [MetricSpace Y] {f : X → Y} (hf : Contin
     Continuous fun p : X × X ↦ dist (f p.1) (f p.2) :=
   hf.fst'.dist hf.snd'
 
-example {f : ℝ → X} (hf : Continuous f) : Continuous fun x : ℝ ↦ f (x ^ 2 + x) :=
-  sorry
+example {f : ℝ → X} (hf : Continuous f) : Continuous fun x : ℝ ↦ f (x ^ 2 + x) := by
+  have p2 : Continuous fun x : ℝ ↦ x ^ 2 := by exact continuous_pow 2
+  have p : Continuous fun x : ℝ ↦ x ^ 2 + x := by exact Continuous.add p2 continuous_id
+  exact hf.comp p
 
 example {X Y : Type*} [MetricSpace X] [MetricSpace Y] (f : X → Y) (a : X) :
     ContinuousAt f a ↔ ∀ ε > 0, ∃ δ > 0, ∀ {x}, dist x a < δ → dist (f x) (f a) < ε :=
@@ -204,4 +206,3 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
   have I : ∀ n, ∀ m ≥ n, closedBall (c m) (r m) ⊆ closedBall (c n) (r n) := by sorry
   have yball : ∀ n, y ∈ closedBall (c n) (r n) := by sorry
   sorry
-
