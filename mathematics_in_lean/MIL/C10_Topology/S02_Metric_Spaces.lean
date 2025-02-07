@@ -85,8 +85,18 @@ example {s : Set X} : a ∈ closure s ↔ ∀ ε > 0, ∃ b ∈ s, a ∈ Metric.
   Metric.mem_closure_iff
 
 example {u : ℕ → X} (hu : Tendsto u atTop (𝓝 a)) {s : Set X} (hs : ∀ n, u n ∈ s) :
-    a ∈ closure s :=
-  sorry
+    a ∈ closure s := by
+  rw [Metric.tendsto_atTop] at hu
+  rw [Metric.mem_closure_iff]
+  intro ε₁ ε₁h
+  rcases hu ε₁ ε₁h with ⟨N, hN⟩
+  use (u N)
+  constructor
+  { exact hs N }
+  {
+    rcases hN N (Nat.le_refl N) with hh
+    exact Metric.mem_ball'.mp (hN N (Nat.le_refl N))
+  }
 
 example {x : X} {s : Set X} : s ∈ 𝓝 x ↔ ∃ ε > 0, Metric.ball x ε ⊆ s :=
   Metric.nhds_basis_ball.mem_iff
