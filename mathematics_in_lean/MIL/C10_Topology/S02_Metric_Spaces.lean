@@ -136,8 +136,41 @@ example {X : Type*} [MetricSpace X] {Y : Type*} [MetricSpace Y] {f : X → Y} :
 
 example {X : Type*} [MetricSpace X] [CompactSpace X]
       {Y : Type*} [MetricSpace Y] {f : X → Y}
-    (hf : Continuous f) : UniformContinuous f :=
-  sorry
+    (hf : Continuous f) : UniformContinuous f := by
+  rw [Metric.uniformContinuous_iff]
+  intro ε ε_pos
+  let Φ : X × X → ℝ := fun p ↦ dist (f p.1) (f p.2)
+  have Φ_cont : Continuous Φ := hf.fst'.dist hf.snd'
+  let K := { p : X × X | ε ≤ Φ p }
+  have K_closed : IsClosed K := isClosed_le continuous_const Φ_cont
+  have K_compact : IsCompact K := K_closed.isCompact
+  rcases eq_empty_or_nonempty K with hK | hK
+  {
+    use 1
+    simp [norm_num]
+    intro x y xy1
+    have : (x, y) ∉ K := by simp [hK]
+    simp [K]
+    exact lt_of_not_ge this
+  }
+  {
+    rcases K_compact.exists_isMinOn hK continuous_dist.continuousOn with ⟨⟨x₀, x₁⟩, xx_in, H⟩
+    use dist x₀ x₁
+    constructor
+    {
+      change _ < _
+      rw [dist_pos]
+      intro h
+      have : ε ≤ 0 := by simpa [K, Φ, *] using xx_in
+      linarith
+    }
+    {
+      intro x x'
+      contrapose!
+      intro (hxx' : ⟨x, x'⟩ ∈ K)
+      exact le_of_le_of_eq (H hxx') rfl
+    }
+  }
 
 example (u : ℕ → X) :
     CauchySeq u ↔ ∀ ε > 0, ∃ N : ℕ, ∀ m ≥ N, ∀ n ≥ N, dist (u m) (u n) < ε :=
