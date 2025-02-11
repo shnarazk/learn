@@ -192,26 +192,37 @@ theorem cauchySeq_of_le_geometric_two' {u : ℕ → X}
     (hu : ∀ n : ℕ, dist (u n) (u (n + 1)) ≤ (1 / 2) ^ n) : CauchySeq u := by
   rw [Metric.cauchySeq_iff']
   intro ε ε_pos
-  obtain ⟨N, hN⟩ : ∃ N : ℕ, 1 / 2 ^ N * 2 < ε := by sorry
+  obtain ⟨N, hN⟩ : ∃ N : ℕ, 1 / 2 ^ N * 2 < ε := by
+    have : Tendsto (fun N : ℕ ↦ (1 / 2 ^ N * 2 : ℝ)) atTop (𝓝 0) := by
+      rw [← zero_mul (2 : ℝ)]
+      apply Tendsto.mul
+      {
+        simp_rw [← one_div_pow (2 : ℝ)]
+        apply tendsto_pow_atTop_nhds_zero_of_lt_one <;> linarith
+      }
+      {
+        exact tendsto_const_nhds
+      }
+    rcases (atTop_basis.tendsto_iff (nhds_basis_Ioo_pos (0 : ℝ))).mp this ε ε_pos with ⟨N, _, hN⟩
+    exact ⟨N, by simpa using (hN N left_mem_Ici).2⟩
   use N
   intro n hn
   obtain ⟨k, rfl : n = N + k⟩ := le_iff_exists_add.mp hn
   calc
-    dist (u (N + k)) (u N) = dist (u (N + 0)) (u (N + k)) := sorry
-    _ ≤ ∑ i in range k, dist (u (N + i)) (u (N + (i + 1))) := sorry
-    _ ≤ ∑ i in range k, (1 / 2 : ℝ) ^ (N + i) := sorry
-    _ = 1 / 2 ^ N * ∑ i in range k, (1 / 2 : ℝ) ^ i := sorry
-    _ ≤ 1 / 2 ^ N * 2 := sorry
-    _ < ε := sorry
-
+    dist (u (N + k)) (u N) = dist (u (N + 0)) (u (N + k)) := by rw [dist_comm, add_zero]
+    _ ≤ ∑ i in range k, dist (u (N + i)) (u (N + (i + 1))) := (dist_le_range_sum_dist (fun i ↦ u (N + i)) k)
+    _ ≤ ∑ i in range k, (1 / 2 : ℝ) ^ (N + i) := (sum_le_sum fun i _ ↦ hu <| N + i)
+    _ = 1 / 2 ^ N * ∑ i in range k, (1 / 2 : ℝ) ^ i := by simp_rw [← one_div_pow, pow_add, ← mul_sum]
+    _ ≤ 1 / 2 ^ N * 2 := (mul_le_mul_of_nonneg_left (sum_geometric_two_le _)
+        (one_div_nonneg.mpr (pow_nonneg (zero_le_two : (0 : ℝ) ≤ 2) _)))
+  exact hN
 
 open Metric
 
 example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : ∀ n, Dense (f n)) :
     Dense (⋂ n, f n) := by
   let B : ℕ → ℝ := fun n ↦ (1 / 2) ^ n
-  have Bpos : ∀ n, 0 < B n
-  sorry
+  have Bpos : ∀ n, 0 < B n := fun n ↦ pow_pos (by exact one_half_pos) n
   /- Translate the density assumption into two functions `center` and `radius` associating
     to any n, x, δ, δpos a center and a positive radius such that
     `closedBall center radius` is included both in `f n` and in `closedBall x δ`.
@@ -219,7 +230,33 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
   have :
     ∀ (n : ℕ) (x : X),
       ∀ δ > 0, ∃ y : X, ∃ r > 0, r ≤ B (n + 1) ∧ closedBall y r ⊆ closedBall x δ ∩ f n :=
-    by sorry
+    by
+      intro n x δ δpos
+      have : x ∈ closure (f n) := hd n x
+      rcases Metric.mem_closure_iff.1 this (δ / 2) (half_pos δpos) with ⟨y, ys, xy⟩
+      rw [dist_comm] at xy
+      obtain ⟨r, rpos, hr⟩ : ∃ r > 0, closedBall y r ⊆ f n :=
+      nhds_basis_closedBall.mem_iff.1 (isOpen_iff_mem_nhds.1 (ho n) y ys)
+      refine ⟨y, min (min (δ / 2) r) (B (n + 1)), ?_, ?_, fun z hz ↦ ⟨?_, ?_⟩⟩
+      show 0 < min (min (δ / 2) r) (B (n + 1))
+      exact lt_min (lt_min (half_pos δpos) rpos) (Bpos (n + 1))
+      show min (min (δ / 2) r) (B (n + 1)) ≤ B (n + 1)
+      exact min_le_right _ _
+      show z ∈ closedBall x δ
+      exact
+      calc
+        dist z x ≤ dist z y + dist y x := dist_triangle _ _ _
+        _ ≤ min (min (δ / 2) r) (B (n + 1)) + δ / 2 := (add_le_add hz xy.le)
+        _ ≤ δ / 2 + δ / 2 := (add_le_add_right ((min_le_left _ _).trans (min_le_left _ _)) _)
+        _ = δ := add_halves δ
+
+      show z ∈ f n
+      exact
+        hr
+          (calc
+            dist z y ≤ min (min (δ / 2) r) (B (n + 1)) := hz
+            _ ≤ r := (min_le_left _ _).trans (min_le_right _ _)
+            )
   choose! center radius Hpos HB Hball using this
   intro x
   rw [mem_closure_iff_nhds_basis nhds_basis_closedBall]
@@ -235,17 +272,52 @@ example [CompleteSpace X] (f : ℕ → Set X) (ho : ∀ n, IsOpen (f n)) (hd : �
       fun n p ↦ Prod.mk (center n p.1 p.2) (radius n p.1 p.2)
   let c : ℕ → X := fun n ↦ (F n).1
   let r : ℕ → ℝ := fun n ↦ (F n).2
-  have rpos : ∀ n, 0 < r n := by sorry
-  have rB : ∀ n, r n ≤ B n := by sorry
-  have incl : ∀ n, closedBall (c (n + 1)) (r (n + 1)) ⊆ closedBall (c n) (r n) ∩ f n := by
-    sorry
-  have cdist : ∀ n, dist (c n) (c (n + 1)) ≤ B n := by sorry
+  have rpos : ∀ n, 0 < r n := by
+    intro n
+    induction' n with n hn
+    exact lt_min εpos (Bpos 0)
+    exact Hpos n (c n) (r n) hn
+  have rB : ∀ n, r n ≤ B n := by
+    intro n
+    induction' n with n hn
+    exact min_le_right _ _
+    exact HB n (c n) (r n) (rpos n)
+  have incl : ∀ n, closedBall (c (n + 1)) (r (n + 1)) ⊆ closedBall (c n) (r n) ∩ f n :=
+    fun n ↦ Hball n (c n) (r n) (rpos n)
+  have cdist : ∀ n, dist (c n) (c (n + 1)) ≤ B n := by
+    intro n
+    rw [dist_comm]
+    have A : c (n + 1) ∈ closedBall (c (n + 1)) (r (n + 1)) :=
+      mem_closedBall_self (rpos <| n + 1).le
+    have I :=
+      calc
+        closedBall (c (n + 1)) (r (n + 1)) ⊆ closedBall (c n) (r n) :=
+          (incl n).trans Set.inter_subset_left
+        _ ⊆ closedBall (c n) (B n) := closedBall_subset_closedBall (rB n)
+
+    exact I A
   have : CauchySeq c := cauchySeq_of_le_geometric_two' cdist
   -- as the sequence `c n` is Cauchy in a complete space, it converges to a limit `y`.
   rcases cauchySeq_tendsto_of_complete this with ⟨y, ylim⟩
   -- this point `y` will be the desired point. We will check that it belongs to all
   -- `f n` and to `ball x ε`.
   use y
-  have I : ∀ n, ∀ m ≥ n, closedBall (c m) (r m) ⊆ closedBall (c n) (r n) := by sorry
-  have yball : ∀ n, y ∈ closedBall (c n) (r n) := by sorry
-  sorry
+  have I : ∀ n, ∀ m ≥ n, closedBall (c m) (r m) ⊆ closedBall (c n) (r n) := by
+    intro n
+    refine Nat.le_induction ?_ fun m hnm h ↦ ?_
+    · exact Subset.rfl
+    · exact (incl m).trans (Set.inter_subset_left.trans h)
+  have yball : ∀ n, y ∈ closedBall (c n) (r n) := by
+    intro n
+    refine isClosed_ball.mem_of_tendsto ylim ?_
+    refine (Filter.eventually_ge_atTop n).mono fun m hm ↦ ?_
+    exact I n m hm (mem_closedBall_self (rpos _).le)
+  constructor
+  · suffices ∀ n, y ∈ f n by rwa [Set.mem_iInter]
+    intro n
+    have : closedBall (c (n + 1)) (r (n + 1)) ⊆ f n :=
+      Subset.trans (incl n) Set.inter_subset_right
+    exact this (yball (n + 1))
+  calc
+    dist y x ≤ r 0 := yball 0
+    _ ≤ ε := min_le_left _ _
