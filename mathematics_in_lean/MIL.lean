@@ -30,10 +30,10 @@
 -- import MIL.C09_Linear_Algebra.S03_Endomorphisms
 -- import MIL.C09_Linear_Algebra.S04_Bases
 -- import MIL.C10_Topology.S01_Filters
-import MIL.C10_Topology.S02_Metric_Spaces
+-- import MIL.C10_Topology.S02_Metric_Spaces
 -- import MIL.C10_Topology.S03_Topological_Spaces
--- import MIL.C11_Differential_Calculus.S01_Elementary_Differential_Calculus
--- import MIL.C11_Differential_Calculus.S02_Differential_Calculus_in_Normed_Spaces
+import MIL.C11_Differential_Calculus.S01_Elementary_Differential_Calculus
+import MIL.C11_Differential_Calculus.S02_Differential_Calculus_in_Normed_Spaces
 -- import MIL.C12_Integration_and_Measure_Theory.S01_Elementary_Integration
 -- import MIL.C12_Integration_and_Measure_Theory.S02_Measure_Theory
 -- import MIL.C12_Integration_and_Measure_Theory.S03_Integration
