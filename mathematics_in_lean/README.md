@@ -1,5 +1,26 @@
 # Study [Mathematics in Lean](https://github.com/leanprover-community/mathematics_in_lean)
 
+## 6
+- The `@[ext]` annotation tells Lean to automatically generate theorems that can be used
+    to prove that two instances of a structure are equal when their components are equal,
+    a property known as extensionality.
+- we use the `protected` keyword so that the name of the theorem is Point.add_comm,
+    even when the namespace is open.
+- nontrivial types are types with at least two distinct elements.
+- A nonzero element a is said to be **irreducible** if it cannot be written in the
+    form a = bc where neither b nor c is a unit.
+- 集合 S とその上の二項演算 • : S × S → S の対 (S, • ) が結合律（結合法則）を満たすとき、
+    これを半群という。S を半群 (S, •) の台集合とよぶ。
+- `whatsnew` command
+
+## 7
+- But the diamond we created with modules is definitely bad. The offending piece is the
+    smul field which is data, not a proof, and we have two constructions that are not
+    definitionally equal. The robust way of fixing this issue is to make sure that going
+    from a rich structure to a poor structure is always done by forgetting data, not by
+    defining data. This well-known pattern as been named "**forgetful inheritance**” and
+    extensively discussed in https://inria.hal.science/hal-02463336.
+
 ## 8
 - The type of morphisms between monoids M and N is called `MonoidHom M N` and written `M →* N`.
 - `inferInstance`
