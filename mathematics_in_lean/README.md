@@ -1,4 +1,37 @@
 # Study [Mathematics in Lean](https://github.com/leanprover-community/mathematics_in_lean)
+## 3
+
+- The pattern of unpacking an equation inside an existential quantifier and then using it to rewrite an expression in the goal comes up often, so much so that the rcases tactic provides an abbreviation: if you use the keyword rfl in place of a new identifier, rcases does the rewriting automatically (this trick doesn’t work with pattern-matching lambdas).
+- field_simp
+- It is often tedious to work with compound statements with a negation in front, and it is a common mathematical pattern to replace such statements with equivalent forms in which the negation has been pushed inward. To facilitate this, Mathlib offers a push_neg tactic, which restates the goal in this way.
+- we use dsimp to expand the definitions of FnHasUb and FnUb. (We need to use dsimp rather
+than rw to expand FnUb, because it appears in the scope of a quantifier.)
+- Using contrapose! instead of contrapose applies push_neg to the goal and the relevant hypothesis as well.
+- The `exfalso` tactic replaces the current goal with the goal of proving False. Given h : P and h' : ¬ P, the term absurd h h' establishes any proposition.
+- the `contradiction` tactic tries to close a goal by finding a contradiction in the hypotheses, such as a pair of the form h : P and h' : ¬ P.
+- the `assumption` tactic tells Lean to find an assumption that will solve the goal.
+- To prove an if-and-only-if statement, you can use `constructor` or angle brackets, just as you would if you were proving a conjunction.
+- Sometimes in a proof we want to split on cases depending on whether some statement is true or not. For any proposition P, we can use `em P : P ∨ ¬ P`. The name em is short for “excluded middle.”
+- The `ext` tactic enables us to prove an equation between functions by proving that their values are the same at all the values of their arguments.
+- the `congr` tactic allows us to prove an equation between two expressions by reconciling the parts that are different:
+- the `convert` tactic is used to apply a theorem to a goal when the conclusion of the theorem doesn’t quite match.
+
+## 4
+- If f : α → β is a function and p is a set of elements of type β, the library defines preimage f p, written `f ¹' p`, to be {x | f x ∈ p}.
+- `wlog` tactic
+
+## 5
+- Another strategy is to use the tactic `interval_cases`, which automatically splits the goal into cases when the variable in question is contained in an interval of natural numbers or integers.
+- `decide` tactic
+- `revert` tactic
+- Here, ordinary induction isn’t enough. We want to use strong induction, which allows us to prove that every natural number n has a property P by showing that for every number n, if P holds of all values less than n, it holds at n as well. In Lean, this principle is called `Nat.strong_induction_on`, and we can use the `using` keyword to tell the induction tactic to use it.
+- `by_cases np : n.Prime` -- n.Primeが成立する場合としない場合に分割
+- `refine'` tactic
+- Reasoning about finite sets computationally requires having a procedure to test equality
+on α, which is why the snippet below includes the assumption `[DecidableEq α]`.
+- the `tauto` tactic (and a strengthened version, `tauto!`, which uses classical logic) can be
+used to dispense with propositional tautologies.
+- `m | n` -- nがmで割れるかどうか
 
 ## 6
 - The `@[ext]` annotation tells Lean to automatically generate theorems that can be used
@@ -28,13 +61,13 @@
 - `suffices` ?
 
 ## 9
-- `eaval` tactics?
+- `eaval` tactic?
 - `![,]` -- concrete vector
 - `!![,;]` -- concrete matrix
-- `fin_cases` tactics
+- `fin_cases` tactic
 
 ## 10
-- `choose` tactics
+- `choose` tactic
 - When both X and Y are R, `Tendsto f (N x₀0) (N y₀0)` is equivalent to the
 familiar notion $$lim_{x→x_0} f(x) = y_0$$.
 
