@@ -1,5 +1,24 @@
 # Study [Mathematics in Lean](https://github.com/leanprover-community/mathematics_in_lean)
 
+## 8
+- The type of morphisms between monoids M and N is called `MonoidHom M N` and written `M →* N`.
+- `inferInstance`
+- `trivial`
+- `suffices` ?
+
+## 9
+- `eaval` tactics?
+- `![,]` -- concrete vector
+- `!![,;]` -- concrete matrix
+- `fin_cases` tactics
+
+## 10
+- `choose` tactics
+- When both X and Y are R, `Tendsto f (N x₀0) (N y₀0)` is equivalent to the
+familiar notion $$lim_{x→x_0} f(x) = y_0$$.
+
+
+---
 # patches to the repository
 
 ## 4.10rc2 against [df66203](https://github.com/leanprover-community/mathematics_in_lean/commit/df662034d2d23aa6aaf61dfd9ef53f7a852096cf)
