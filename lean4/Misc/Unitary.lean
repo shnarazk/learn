@@ -1,15 +1,37 @@
 import Mathlib.Tactic
+/-
+https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Matrix/Basic.lean
+ - 基本属性、転置など
+-/
 import Mathlib.Data.Matrix.Basic
-import Mathlib.LinearAlgebra.Matrix.Basis
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
--- import Mathlib.LinearAlgebra.Matrix.Unitary
+
+/- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Matrix/ConjTranspose.lean
+- 随伴行列
+ -/
 import Mathlib.Data.Matrix.ConjTranspose
+
+/- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/Basis.lean
+- ベクトルと行列の関係など
+-/
+import Mathlib.LinearAlgebra.Matrix.Basis
+
+/-- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean
+- 逆行列A⁻¹の定義
+-/
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+
+-- 存在していない
+-- import Mathlib.LinearAlgebra.Matrix.Unitary
+
+/-- ユニタリ群の定義 -/
 import Mathlib.LinearAlgebra.UnitaryGroup
+
+/-- Real as Cauchy sequence -/
 import Mathlib.Data.Real.Basic
 
 -- open Nat Finset Real
 
-/- !がベクターの、!!が配列の即値形式 -/
+/- `!`がベクターの、`!!`が配列の即値形式 -/
 def m1 :=!![(0.0 : ℝ), 1, 0; 1, 1, 0; 0, 0, 1]
 #check m1.det.cauchy.unquot.val
 #eval m1.det.cauchy.unquot.val 10
