@@ -15,10 +15,15 @@ import Mathlib.Data.Matrix.ConjTranspose
 -/
 import Mathlib.LinearAlgebra.Matrix.Basis
 
-/-- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean
+/- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean
 - 逆行列A⁻¹の定義
 -/
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+
+/- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/Determinant/Basic.lean
+- 行列式の定義
+-/
+import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 -- 存在していない
 -- import Mathlib.LinearAlgebra.Matrix.Unitary
