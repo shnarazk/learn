@@ -28,10 +28,10 @@ import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 -- 存在していない
 -- import Mathlib.LinearAlgebra.Matrix.Unitary
 
-/-- ユニタリ群の定義 -/
+/- ユニタリ群の定義 -/
 import Mathlib.LinearAlgebra.UnitaryGroup
 
-/-- Real as Cauchy sequence -/
+/- Real as Cauchy sequence -/
 import Mathlib.Data.Real.Basic
 
 -- open Nat Finset Real
