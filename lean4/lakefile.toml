@@ -22,10 +22,10 @@ tag = "v4.16.0"
 name = "Combinator"
 
 [[lean_lib]]
-name = "Leibniz"
+name = "Misc"
 
 [[lean_lib]]
-name = "Misc"
+name = "old"
 
 [[lean_exe]]
 name = "leibniz"

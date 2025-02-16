@@ -1,7 +1,7 @@
 import Aesop
 import Mathlib.Data.Real.Basic
 -- import Mathlib.Data.Nat.Basic
-import Leibniz
+import Math.Leibniz
 -- import «Le»
 -- import «Combinator»
 
