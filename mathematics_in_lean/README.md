@@ -7,7 +7,7 @@
 - we use dsimp to expand the definitions of FnHasUb and FnUb. (We need to use dsimp rather
 than rw to expand FnUb, because it appears in the scope of a quantifier.)
 - Using contrapose! instead of contrapose applies push_neg to the goal and the relevant hypothesis as well.
-- The `exfalso` tactic replaces the current goal with the goal of proving False. Given h : P and h' : ¬ P, the term absurd h h' establishes any proposition.
+- The [`exfalso`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#exfalso) tactic replaces the current goal with the goal of proving False. Given h : P and h' : ¬ P, the term absurd h h' establishes any proposition.
 - the `contradiction` tactic tries to close a goal by finding a contradiction in the hypotheses, such as a pair of the form h : P and h' : ¬ P.
 - the `assumption` tactic tells Lean to find an assumption that will solve the goal.
 - To prove an if-and-only-if statement, you can use `constructor` or angle brackets, just as you would if you were proving a conjunction.
@@ -26,7 +26,7 @@ than rw to expand FnUb, because it appears in the scope of a quantifier.)
 - `revert` tactic
 - Here, ordinary induction isn’t enough. We want to use strong induction, which allows us to prove that every natural number n has a property P by showing that for every number n, if P holds of all values less than n, it holds at n as well. In Lean, this principle is called `Nat.strong_induction_on`, and we can use the `using` keyword to tell the induction tactic to use it.
 - `by_cases np : n.Prime` -- n.Primeが成立する場合としない場合に分割
-- `refine'` tactic
+- [`refine'`](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#refine___) tactic
 - Reasoning about finite sets computationally requires having a procedure to test equality
 on α, which is why the snippet below includes the assumption `[DecidableEq α]`.
 - the `tauto` tactic (and a strengthened version, `tauto!`, which uses classical logic) can be

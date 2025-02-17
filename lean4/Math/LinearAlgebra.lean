@@ -9,8 +9,8 @@ import Mathlib.Tactic
     - 加法に関する群(閉包、結合法則、単位減、逆元)である
     - 交換法則を満たす(= アーベル群, Abelian group)
     - 単位元、逆元
-- Module K V (加群): 環R, アーベル群Vに対して
-    - R • V → V が以下を満たす: Rに関する分配法則、Vに関する分配法則、結合法則, Rの単位元は(•)の単位元
+- Module K V (加群): 環K, アーベル群Vに対して
+    - K • V → V が以下を満たす: Rに関する分配法則、Vに関する分配法則、結合法則, Rの単位元は(•)の単位元
 -/
 variable {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V]
 
