@@ -35,12 +35,16 @@ import Mathlib.LinearAlgebra.UnitaryGroup
 import Mathlib.Data.Real.Basic
 
 -- open Nat Finset Real
+open Matrix
 
 /- `!`がベクターの、`!!`が配列の即値形式 -/
 def m1 :=!![(0.0 : ℝ), 1, 0; 1, 1, 0; 0, 0, 1]
 #check m1.det.cauchy.unquot.val
 #eval m1.det.cauchy.unquot.val 10
 -- #eval (repr (0 : ℝ)).cauchy
+#norm_num m1.det
+#norm_num !![(3 : ℝ), 1, 0; 6, -2, 1; 3, 1, 2].det
+#norm_num !![(1 : ℝ), 2; 3, 4].det
 
 -- def m0 := Matrix.zero -- Matrix.of (fun _ _ ↦ 0)
 
@@ -57,6 +61,7 @@ def m0 := m - m -- Matrix.of (fun _ _ ↦ 0)
 #eval m (0 : Fin 2) (1 : Fin 2) |>.cauchy.unquot.val 10
 
 #eval m.det
+#norm_num m.det
 
 open Matrix
 
