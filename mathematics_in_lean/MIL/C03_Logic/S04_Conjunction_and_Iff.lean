@@ -73,7 +73,6 @@ example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
     have h2' : ¬m = n := h2
     exact absurd mn h2'
   }
-  done
 
 example : ∃ x : ℝ, 2 < x ∧ x < 4 :=
   ⟨5 / 2, by norm_num, by norm_num⟩
@@ -132,11 +131,12 @@ example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
       exact absurd xy r'
     }
   }
-  done
 
 theorem aux {x y : ℝ} (h : x ^ 2 + y ^ 2 = 0) : x = 0 :=
   have h' : x ^ 2 = 0 := by
-    rw [add_eq_zero_iff' (pow_two_nonneg x) (pow_two_nonneg y)] at h
+    have h1 : 0 ≤ x ^ 2 := pow_two_nonneg x
+    have h2 : 0 ≤ y ^ 2 := pow_two_nonneg y
+    rw [add_eq_zero_iff_of_nonneg h1  h2] at h
     exact h.left
   pow_eq_zero h'
 
