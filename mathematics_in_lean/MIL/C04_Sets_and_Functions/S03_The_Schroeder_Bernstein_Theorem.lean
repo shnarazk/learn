@@ -13,7 +13,7 @@ section
 variable (f : α → β) (g : β → α)
 
 def sbAux : ℕ → Set α
-  | 0 => univ  g '' univ
+  | 0 => univ \ g '' univ
   | n + 1 => g '' (f '' sbAux n)
 
 def sbSet :=
@@ -97,6 +97,9 @@ theorem sb_surjective (hg : Injective g) : Surjective (sbFun f g) := by
       rw [A_def, sbSet, mem_iUnion]
       exact ⟨n, xmem⟩
     simp only [h_def, sbFun, if_pos this]
+    have : x ∈ sbSet f g := by
+      exact this
+    simp [this]
     exact hg hx
   {
     use g y
