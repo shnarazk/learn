@@ -2,7 +2,7 @@ import Mathlib.RingTheory.Ideal.Quotient.Operations
 import Mathlib.RingTheory.Localization.Basic
 import Mathlib.RingTheory.DedekindDomain.Ideal
 import Mathlib.Analysis.Complex.Polynomial.Basic
-import Mathlib.Data.ZMod.Quotient
+import Mathlib.Data.ZMod.QuotientRing
 import MIL.Common
 
 noncomputable section
@@ -130,7 +130,7 @@ theorem isCoprime_Inf {I : Ideal R} {J : ι → Ideal R} {s : Finset ι}
           rcases hf with ⟨hf₁, hf₂⟩
           rw [hf₁]
           simp
-        _ = (1 + K) * I + K * J i  := by rw [mul_add, ←add_assoc] ; simp
+        _ = (1 + K) * I + K * J i  := by rw [mul_add, ←add_assoc] ; ring
         _ ≤ I + K ⊓ J i            := by
           have step1 : (1 + K) * I ≤ I := by
             simp at hf
