@@ -100,7 +100,7 @@ class SubgroupClass₁ (S : Type) (G : Type) [Group G] [SetLike S G] : Prop wher
   -- inv_mem {a} {s : S} : a ∈ s → a⁻¹ ∈ s
   inv_mem : ∀ (a : G) (s : S), a ∈ s → a⁻¹ ∈ s
 
-instance [Monoid M] : Inf (Submonoid₁ M) :=
+instance [Monoid M] : Min (Submonoid₁ M) :=
   ⟨fun S₁ S₂ ↦
     { carrier := S₁ ∩ S₂
       one_mem := ⟨S₁.one_mem, S₂.one_mem⟩

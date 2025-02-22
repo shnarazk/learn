@@ -110,7 +110,7 @@ example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prime) : m ^ 2 ≠
   -- have step5 : ¬p = 1 := by exact (Nat.Prime.ne_one prime_p)
   exact absurd this (by exact (Nat.Prime.ne_one prime_p) : ¬p = 1)
 
-#check Nat.factors
+-- #check Nat.factors
 #check Nat.prime_of_mem_primeFactorsList
 #check Nat.prod_primeFactorsList
 #check Nat.primeFactorsList_unique

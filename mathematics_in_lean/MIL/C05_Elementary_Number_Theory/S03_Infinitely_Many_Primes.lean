@@ -111,7 +111,7 @@ example : (r ∪ s) ∩ (r ∪ t) = r ∪ s ∩ t := by
   simp
   tauto
 
-example : (r  s)  t = r  (s ∪ t) := by
+example : (r \ s) \ t = r \ (s ∪ t) := by
   ext x
   simp
   tauto
