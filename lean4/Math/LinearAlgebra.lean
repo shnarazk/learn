@@ -30,10 +30,57 @@ open Matrix
 #check ![(3 : ℝ), 2, 2] --  (![(0 : ℤ), 1] + ![1, 2])
 #check (!![1, 2; 3, 4] *ᵥ ![1, 1])
 
-example (a : ℝ) (u v : Fin 2 → ℝ) : a • (u + v) = a • u + a • v := by
-  exact smul_add a u v
+section RnAsLS1
+
+variable {n : ℕ}
 
 -- ℝⁿ が線型空間であることを証明するのは簡単 --
 noncomputable example : Field ℝ := inferInstance
-noncomputable example : AddCommGroup (Fin 2 → ℝ) := inferInstance
-noncomputable example : Module ℝ (Fin 2 → ℝ) := inferInstance
+noncomputable example : AddCommGroup (Fin n → ℝ) := inferInstance
+noncomputable example : Module ℝ (Fin n → ℝ) := inferInstance
+
+section sec_1_1
+
+example (a b c : Fin n → ℝ) : (a + b) + c = a + (b + c) := by
+  exact add_assoc a b c
+
+example (a b : Fin n → ℝ) : a + b = b + a := by
+  exact add_comm a b
+
+example (a : Fin n → ℝ) : a + 0 = a := by
+  exact add_zero a
+
+end sec_1_1
+
+section sec_1_2
+
+example (c : ℝ) (a b : Fin n → ℝ) : c • (a + b) = c • a + c • b := by
+  exact smul_add c a b
+
+example (c d : ℝ) (a : Fin n → ℝ) : (c + d) • a = c • a + d • a := by
+  exact add_smul c d a
+
+example (c d : ℝ) (a : Fin n → ℝ) : (c * d) • a = c • (d • a) := by
+  exact mul_smul c d a
+
+end sec_1_2
+
+section sec_1_3
+
+/-
+ユークリッド空間が想定されていたようだ。
+-/
+
+example (a : EuclideanSpace ℝ (Fin 2)) : ‖a‖ = ((a 0)^2 + (a 1)^2).sqrt := by
+  have zle (x y : ℝ) : 0 ≤ x^2 + y^2 := add_nonneg (sq_nonneg x) (sq_nonneg y)
+  have (x : ℝ) (h: 0 ≤ x) : x ^ (2 : ℝ)⁻¹ = √x := by
+    have h₁ (a b : ℝ): a = b → x ^ a = x ^ b := congrArg (HPow.hPow x)
+    rw [h₁ 2⁻¹ (1/2), Eq.symm (Real.sqrt_eq_rpow x)]
+    simp
+  have h : ‖a‖ = dist a 0 := Eq.symm (dist_zero_right a)
+  simp [h, dist]
+  rw [this (a 0 ^ 2 + a 1 ^ 2) (zle (a 0) (a 1))]
+
+end sec_1_3
+
+end RnAsLS1
