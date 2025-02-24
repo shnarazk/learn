@@ -22,6 +22,9 @@ tag = "v4.16.0"
 name = "Combinator"
 
 [[lean_lib]]
+name = "Math"
+
+[[lean_lib]]
 name = "Misc"
 
 [[lean_lib]]
