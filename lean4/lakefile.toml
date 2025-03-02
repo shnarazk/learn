@@ -28,6 +28,9 @@ name = "Math"
 name = "Misc"
 
 [[lean_lib]]
+name = "Program"
+
+[[lean_lib]]
 name = "old"
 
 [[lean_exe]]
