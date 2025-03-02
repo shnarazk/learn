@@ -6,19 +6,29 @@ import Std.Data.HashSet
 open Nat Finset Real
 open Std
 
-theorem size_of_hash_with_zero {α : Type} (l : HashMap Nat α) :
-    l.contains 0 → NeZero l.size := by
-  intro h
-  have h₁ : 0 ∈ l := by exact h
-  have size_erase : (l.erase 0).size = if 0 ∈ l then l.size - 1 else l.size := by
-    exact HashMap.size_erase
-  simp [h₁] at size_erase
-  have : (l.erase 0).size + 1 = l.size := by
-    sorry
-  have size_ge_zero : ∀ h : HashMap Nat α, 0 ≤ h.size := by
-    exact fun h ↦ Nat.zero_le h.size
-  rcases size_ge_zero (l.erase 0) with l'_size
-  have : 0 ≤ l.size - 1 := by exact Nat.zero_le (l.size - 1)
-  have : 0 ≠ l.size := by
-    sorry
-  exact { out := id (Ne.symm this) }
+namespace Hash
+
+universe u v
+
+variable {α : Type u} {β : Type v} {_ : BEq α} {_ : Hashable α}
+
+theorem nonempty_hash {h : HashMap ℕ β} : h.contains 0 → ¬h.isEmpty := by
+  rintro h₁
+  have : ∃ a : ℕ, a ∈ h := by
+    exact Exists.intro 0 h₁
+  have : h.isEmpty = false := by
+    exact HashMap.isEmpty_eq_false_iff_exists_mem.mpr this
+  exact ne_true_of_eq_false this
+
+theorem nonempty_hash_size {h : HashMap ℕ β} : ¬h.isEmpty → NeZero h.size := by
+  have h₁ : h.isEmpty = (h.size == 0) := by exact rfl
+  have h₃ : ¬NeZero h.size ↔ h.size = 0 := by exact not_neZero
+  contrapose!
+  simp [h₃]
+  simp [h₁]
+
+theorem hash_with_zero_size {h : HashMap ℕ β} : h.contains 0 → NeZero h.size := by
+  rintro h₁
+  exact nonempty_hash_size (nonempty_hash h₁)
+
+end Hash
