@@ -15,13 +15,54 @@ variable {γ : Type v} [Inhabited γ]
 
 def base : HashMap ℕ ℕ := HashMap.ofList [(0, 10), (1, 20)]
 
-theorem base_is_bounded : ∀ k ∈ base, k < base.size := by
+theorem base_hash_has_zero : 0 ∈ base := by
+  rw [base]
+  simp
+
+theorem base_hash_has_one : 1 ∈ base := by
+  rw [base]
+  simp
+
+theorem base_hash_has_only_them : ∀ k > 1, k ∉ base := by
+  rw [base]
+  simp
+  rintro k h
+  omega
+
+theorem zero_gt_eq_NeZero (n : Nat) (h : 0 < n) : NeZero n := by
+  have : n ≠ 0 := by omega
+  exact { out := this }
+
+@[simp]
+theorem base_hash_size_eq_two : base.size = 2 := by
+  apply HashMap.size_ofList
+  simp
+
+theorem base_hash_has_no_hole : ∀ k < base.size, k ∈ base := by
+  simp
+  intro n h
+  have : n = 0 ∨ n = 1 := by omega
+  rcases this with h0 | h1
+  {rw [h0] ; exact base_hash_has_zero}
+  {rw [h1] ; exact base_hash_has_one}
+
+theorem base_hash_is_bounded : ∀ k ∈ base, k < base.size := by
   intro k h
-  have : base.size = 2 := by
+  have h₁ : base.size = 2 := by
     apply HashMap.size_ofList
     simp
-  have : k = 0 ∨ k = 1 := by sorry
-  rcases this with k0 | k1 <;> { omega }
+  rw [h₁]
+  have : k ∈ base → k ≤ 1 := by
+    simp [h]
+    have : k ∈ base → k ≤ 1 := by
+      have : ∀ k > 1, k ∉ base := by exact base_hash_has_only_them
+      contrapose
+      simp
+      exact fun a ↦ this k a
+    rcases this h with h₁
+    exact h₁
+  rcases this h with h₀
+  omega
 
 theorem nonempty_hash {h : HashMap ℕ β} : h.contains 0 → ¬h.isEmpty := by
   rintro h₁
