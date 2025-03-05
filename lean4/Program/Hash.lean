@@ -11,6 +11,17 @@ namespace Hash
 universe u v
 
 variable {α : Type u} {β : Type v} {_ : BEq α} {_ : Hashable α}
+variable {γ : Type v} [Inhabited γ]
+
+def base : HashMap ℕ ℕ := HashMap.ofList [(0, 10), (1, 20)]
+
+theorem base_is_bounded : ∀ k ∈ base, k < base.size := by
+  intro k h
+  have : base.size = 2 := by
+    apply HashMap.size_ofList
+    simp
+  have : k = 0 ∨ k = 1 := by sorry
+  rcases this with k0 | k1 <;> { omega }
 
 theorem nonempty_hash {h : HashMap ℕ β} : h.contains 0 → ¬h.isEmpty := by
   rintro h₁
