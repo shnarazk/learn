@@ -213,11 +213,19 @@ lemma L_is_Leibniz₂ : L (2 * n + 1) = leibniz₂R n := by
             exact e
         _ = L (2 * n0 + 1) + 4 * (1 : Rat) / (4 * n0 + 5) + c2 := by group
         _ = L (2 * n0 + 1) + c1 + c2 := by rw [C1]
+    have C2' : 4 * 1 / (4 * ↑n0 + 7) = -c2 := by
+      rw [← C2]
+      group
     have l₂' : leibniz₂R (n0 + 1) = leibniz₂R n0 + c1 + c2 := by
       calc
-        leibniz₂R (n0 + 1) = leibniz₂R n0 + 4 * 1 / (4 * n0 + 5) - 4 * 1 / (4 * n0 + 7) := by
-          exact l₂_rec n0
-        _ = leibniz₂R n0 + c1 + c2 := by group
+        leibniz₂R (n0 + 1) = leibniz₂R n0 + 4 * 1 / (4 * n0 + 5) - 4 * 1 / (4 * n0 + 7) := by exact l₂_rec n0
+        _ = L (2 * n0 + 1) + 4 * 1 / (4 * n0 + 5) - 4 * 1 / (4 * n0 + 7) := by rw [ih]
+        _ = L (2 * n0 + 1) + c1 - 4 * 1 / (4 * n0 + 7) := by exact rfl
+        _ = L (2 * n0 + 1) + c1 - (4 * 1 / (4 * n0 + 7)) := by exact rfl
+        _ = L (2 * n0 + 1) + c1 - (- c2) := by rw [C2']
+        _ = L (2 * n0 + 1) + c1 + c2 := by exact sub_neg_eq_add (L (2 * n0 + 1) + c1) c2
+        _ = leibniz₂R n0 + c1 + c2 := by
+          exact congrFun (congrArg HAdd.hAdd (congrFun (congrArg HAdd.hAdd ih) c1)) c2
     simp only [L', l₂']
     rw [ih]
   }
