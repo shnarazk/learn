@@ -7,6 +7,12 @@ import Math.Leibniz
 
 universe u
 
+/--
+  Measures the execution time of a monadic computation.
+  
+  Given a monadic computation, this function returns both the result of the computation
+  and the time it took to execute in nanoseconds.
+-/
 @[inline]
 def elapsedTime {α : Type} {m : Type → Type u} [Monad m] [MonadLiftT BaseIO m] (x : m α) : m (α × Nat) := do
   let beg ← IO.monoNanosNow
@@ -14,6 +20,12 @@ def elapsedTime {α : Type} {m : Type → Type u} [Monad m] [MonadLiftT BaseIO m
   let fin ← IO.monoNanosNow
   return (val, fin - beg)
 
+/--
+  Main entry point of the program.
+  
+  Calculates an approximation of π using the Leibniz formula with different numbers
+  of terms and displays the results along with computation times.
+-/
 def main : IO Unit := do
   let pairs : Nat := 10 * 1000 * 1000
   let (result, time) ← elapsedTime <| leibnizIO pairs
