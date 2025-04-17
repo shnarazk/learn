@@ -7,15 +7,8 @@ namespace C03S01
 
 #check ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε
 
-theorem my_lemma : ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
-  intro x y ze _ zo xz yz
-  rw [abs_mul]
-  have Y: |y| ≤ ze := by linarith
-  have X: 0 ≤ |x| := by apply abs_nonneg
-  calc
-    |x| * |y| ≤ |x| * ze := by apply mul_le_mul_of_nonneg_left Y X
-    _ < ze := by exact mul_lt_of_lt_of_le_one_of_nonneg xz zo X
-  done
+theorem my_lemma : ∀ x y ε : ℝ, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε :=
+  sorry
 
 section
 variable (a b δ : ℝ)
@@ -28,14 +21,8 @@ variable (ha : |a| < δ) (hb : |b| < δ)
 
 end
 
-theorem my_lemma2 : ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
-  intro x y ε ze zo xe ye
-  apply my_lemma
-  { exact ze }
-  { exact zo }
-  { exact xe }
-  { exact ye }
-  done
+theorem my_lemma2 : ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε :=
+  sorry
 
 section
 variable (a b δ : ℝ)
@@ -49,29 +36,16 @@ end
 theorem my_lemma3 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
-  use my_lemma x y ε epos ele1 xlt ylt
+  sorry
 
--- by using abs_mul, mul_le_mul, abs_nonneg, mul_lt_mul_right, and one_mul,
--- prove the below
-#check abs_mul
-#check mul_le_mul
-#check abs_nonneg
-#check mul_lt_mul_right
-#check one_mul
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
   calc
-    |x * y| = |x| * |y| := abs_mul x y
-    _ ≤ |x| * ε := by
-      apply mul_le_mul;
-      linarith;
-      linarith;
-      apply abs_nonneg;
-      apply abs_nonneg
-    _ < 1 * ε := by rw [mul_lt_mul_right ]; linarith; exact epos
-    _ = ε := one_mul ε
-
+    |x * y| = |x| * |y| := sorry
+    _ ≤ |x| * ε := sorry
+    _ < 1 * ε := sorry
+    _ = ε := sorry
 
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
   ∀ x, f x ≤ a
@@ -89,32 +63,16 @@ example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) :
   apply hfa
   apply hgb
 
-example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) := by
-  intro x
-  dsimp
-  apply add_le_add
-  apply hfa
-  apply hgb
-  done
+example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) :=
+  sorry
 
-example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
-  intro x
-  dsimp
-  apply mul_nonneg
-  { apply nnf }
-  { apply nng }
-  done
+example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 :=
+  sorry
 
 example (hfa : FnUb f a) (hgb : FnUb g b) (nng : FnLb g 0) (nna : 0 ≤ a) :
-    FnUb (fun x ↦ f x * g x) (a * b) := by
-      intro x
-      dsimp
-      apply mul_le_mul
-      { apply hfa }
-      { apply hgb }
-      { apply nng }
-      { exact nna }
-      done
+    FnUb (fun x ↦ f x * g x) (a * b) :=
+  sorry
+
 end
 
 section
@@ -143,18 +101,13 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x := by
   apply mg aleb
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
-  fun _ _ aleb ↦ add_le_add (mf aleb) (mg aleb)
+  fun a b aleb ↦ add_le_add (mf aleb) (mg aleb)
 
-example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x := by
-  intro a b aleb
-  apply mul_le_mul_of_nonneg_left
-  { apply  mf aleb }
-  { exact nnc }
-  done
+example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
+  sorry
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
-  fun _ _ aleb ↦ mf (mg aleb)
-  -- by intro a b aleb; exact mf (mg aleb)
+  sorry
 
 def FnEven (f : ℝ → ℝ) : Prop :=
   ∀ x, f x = f (-x)
@@ -170,30 +123,14 @@ example (ef : FnEven f) (eg : FnEven g) : FnEven fun x ↦ f x + g x := by
 
 
 example (of : FnOdd f) (og : FnOdd g) : FnEven fun x ↦ f x * g x := by
-  intro x
-  calc
-    (fun x ↦ f x * g x) x = f x * g x := rfl
-    _ = -f (-x) * -g (-x) := by rw [of, og]
-    _ = f (-x) * g (-x) := by linarith
-    _ = (fun x ↦ f x * g x) (-x) := by simp
-  done
+  sorry
 
 example (ef : FnEven f) (og : FnOdd g) : FnOdd fun x ↦ f x * g x := by
-  intro x
-  calc
-    (fun x ↦ f x * g x) x = f x * g x := by rfl
-    _ = f (-x) * -g (-x) := by rw [ef, og]
-    _ = -f (-x) * g (-x) := by linarith
-    _ = -((fun (x) ↦ f x * g x) (-x)) := by simp
-  done
+  sorry
 
 example (ef : FnEven f) (og : FnOdd g) : FnEven fun x ↦ f (g x) := by
-  intro x
-  calc
-    (fun x ↦ f (g x)) x = f (g x) := by simp
-    _ = f (- g (-x)) := by rw [← og]
-    _ = f (g (-x)) := by rw [← ef]
-  done
+  sorry
+
 end
 
 section
@@ -204,12 +141,11 @@ example : s ⊆ s := by
   intro x xs
   exact xs
 
-theorem Subset.refl : s ⊆ s := fun _ xs ↦ xs
+theorem Subset.refl : s ⊆ s := fun x xs ↦ xs
 
 theorem Subset.trans : r ⊆ s → s ⊆ t → r ⊆ t := by
-  intro rs st
-  intro x X
-  exact st (rs X)
+  sorry
+
 end
 
 section
@@ -219,11 +155,8 @@ variable (s : Set α) (a b : α)
 def SetUb (s : Set α) (a : α) :=
   ∀ x, x ∈ s → x ≤ a
 
-example (h : SetUb s a) (h' : a ≤ b) : SetUb s b := by
-  intro x xs
-  have xa : x ≤ a := by apply h x; exact xs
-  apply le_trans xa h'
-  done
+example (h : SetUb s a) (h' : a ≤ b) : SetUb s b :=
+  sorry
 
 end
 
@@ -236,16 +169,12 @@ example (c : ℝ) : Injective fun x ↦ x + c := by
   exact (add_left_inj c).mp h'
 
 example {c : ℝ} (h : c ≠ 0) : Injective fun x ↦ c * x := by
-  intro x₁ x₂ h'
-  exact (mul_right_inj' h).mp h'
-  done
+  sorry
 
 variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 example (injg : Injective g) (injf : Injective f) : Injective fun x ↦ g (f x) := by
-  intro x y h'
-  exact injf (injg h')
-  done
+  sorry
 
 end

@@ -7,11 +7,11 @@ def ConvergesTo (s : ℕ → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
 example : (fun x y : ℝ ↦ (x + y) ^ 2) = fun x y : ℝ ↦ x ^ 2 + 2 * x * y + y ^ 2 := by
-  ext  -- congrにはできない
+  ext
   ring
 
 example (a b : ℝ) : |a| = |a - b + b| := by
-  congr  -- extにはできない, extは関数を「展開」するもの
+  congr
   ring
 
 example {a : ℝ} (h : 1 < a) : a < a * a := by
@@ -19,20 +19,13 @@ example {a : ℝ} (h : 1 < a) : a < a * a := by
   · rw [one_mul]
   exact lt_trans zero_lt_one h
 
-theorem convergesTo_const (a : ℝ) : ConvergesTo (fun _x : ℕ ↦ a) a := by
+theorem convergesTo_const (a : ℝ) : ConvergesTo (fun x : ℕ ↦ a) a := by
   intro ε εpos
   use 0
-  intro n _nge
+  intro n nge
   rw [sub_self, abs_zero]
   apply εpos
 
-/-
-  use:
-   - le_of_max_le_left: max a b ≤ c → a ≤ c
-   - le_of_max_le_right: max a b ≤ c → b ≤ c
-   - norm_num to convert ε / 2 + ε / 2 = ε
-   - congr to convert |s n + t n - (a + b)|
--/
 theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
       (cs : ConvergesTo s a) (ct : ConvergesTo t b) :
     ConvergesTo (fun n ↦ s n + t n) (a + b) := by
@@ -42,21 +35,7 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   rcases cs (ε / 2) ε2pos with ⟨Ns, hs⟩
   rcases ct (ε / 2) ε2pos with ⟨Nt, ht⟩
   use max Ns Nt
-  intro Nst P
-  have P' : max Ns Nt ≤ Nst := P
-  have hs0 : |s Nst - a| < ε / 2 := hs Nst (le_of_max_le_left P')
-  have ht0 : |t Nst - b| < ε / 2 := ht Nst (le_of_max_le_right P')
-  have Q : |s Nst + t Nst - (a + b)| ≤ |s Nst - a| + |t Nst - b| := by
-    calc
-      |s Nst + t Nst - (a + b)| = |s Nst + t Nst - a - b| := by ring_nf
-      _ = |(s Nst - a) + (t Nst - b)| := by ring_nf
-      _ ≤ |s Nst - a| + |t Nst - b| := abs_add (s Nst - a) (t Nst - b)
-  have R :|s Nst - a| + |t Nst - b| < ε := by
-    calc
-     |s Nst - a| + |t Nst - b| < ε / 2 + ε / 2 := by apply add_lt_add hs0 ht0
-      _ = ε := by linarith
-  exact lt_of_le_of_lt Q R
-
+  sorry
 
 theorem convergesTo_mul_const {s : ℕ → ℝ} {a : ℝ} (c : ℝ) (cs : ConvergesTo s a) :
     ConvergesTo (fun n ↦ c * s n) (c * a) := by
@@ -67,33 +46,13 @@ theorem convergesTo_mul_const {s : ℕ → ℝ} {a : ℝ} (c : ℝ) (cs : Conver
     rw [h]
     ring
   have acpos : 0 < |c| := abs_pos.mpr h
-  intro ε P
-  dsimp
-  have E0 : ε / |c| > 0 := by exact div_pos P acpos
-  rcases cs (ε / |c|) E0 with ⟨N0, h1⟩
-  use N0
-  intro N NP
-  rw [← mul_sub c _ _, abs_mul]
-  apply (lt_div_iff' acpos).mp
-  exact h1 N NP
-
+  sorry
 
 theorem exists_abs_le_of_convergesTo {s : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) :
     ∃ N b, ∀ n, N ≤ n → |s n| < b := by
   rcases cs 1 zero_lt_one with ⟨N, h⟩
   use N, |a| + 1
-  intro n Nn
-  have Q : |s n| ≤ |-a| + |- a + s n| := abs_add' (s n) (-a)
-  calc
-    |s n| ≤ |-a| + |-a + s n| := Q
-    _ = |-a + s n| + |-a| := by rw [add_comm]
-    _ = |s n + - a| + |-a| := by rw [add_comm (-a) (s n)]
-    _ = |s n - a| + |-a| := by rw [@Mathlib.Tactic.RingNF.add_neg]
-    _ = |s n - a| + |a| := by rw [abs_neg]
-    _ < 1 + |a| := by exact (add_lt_add_iff_right |a|).mpr (h n Nn)
-    _ = |a| + 1 := by rw [add_comm]
-  done
-
+  sorry
 
 theorem aux {s t : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) (ct : ConvergesTo t 0) :
     ConvergesTo (fun n ↦ s n * t n) 0 := by
@@ -103,20 +62,7 @@ theorem aux {s t : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) (ct : Converges
   have Bpos : 0 < B := lt_of_le_of_lt (abs_nonneg _) (h₀ N₀ (le_refl _))
   have pos₀ : ε / B > 0 := div_pos εpos Bpos
   rcases ct _ pos₀ with ⟨N₁, h₁⟩
-  use max N₀ N₁
-  intro N NN
-  have Nl : N₀ ≤ N := le_of_max_le_left NN
-  have Nr : N₁ ≤ N := le_of_max_le_right NN
-  have P : |s N| < B := h₀ N Nl
-  have Q : |t N - 0| < ε / B := h₁ N Nr
-  have Bnn : B ≠ 0 := by exact Ne.symm (ne_of_lt Bpos)
-  calc
-    |s N * t N - 0| = |s N * t N| := by rw [sub_zero (s N * t N)]
-    _ ≤ |s N| * |t N| := by rw [abs_mul]
-    _ = |s N| * |t N - 0| := by rw [sub_zero (t N)]
-    _ < B * (ε / B) := by refine mul_lt_mul'' P Q (abs_nonneg _) (abs_nonneg _)
-    _ = ε := mul_div_cancel₀ ε Bnn
-  done
+  sorry
 
 theorem convergesTo_mul {s t : ℕ → ℝ} {a b : ℝ}
       (cs : ConvergesTo s a) (ct : ConvergesTo t b) :
@@ -134,7 +80,7 @@ theorem convergesTo_unique {s : ℕ → ℝ} {a b : ℝ}
       (sa : ConvergesTo s a) (sb : ConvergesTo s b) :
     a = b := by
   by_contra abne
-  have : |a - b| > 0 := by apply abs_pos.mpr (sub_ne_zero_of_ne abne)
+  have : |a - b| > 0 := by sorry
   let ε := |a - b| / 2
   have εpos : ε > 0 := by
     change |a - b| / 2 > 0
@@ -142,49 +88,9 @@ theorem convergesTo_unique {s : ℕ → ℝ} {a b : ℝ}
   rcases sa ε εpos with ⟨Na, hNa⟩
   rcases sb ε εpos with ⟨Nb, hNb⟩
   let N := max Na Nb
-  have absa : |s N - a| < ε := by
-    rcases le_or_gt Na Nb with C1 | C1
-    {
-      have : max Na Nb = Nb := max_eq_right_iff.mpr C1
-      have : N = Nb := by rw [← this]
-      rw [← this] at C1
-      exact hNa N C1
-    }
-    {
-      have : max Na Nb = Na := by exact max_eq_left_of_lt C1
-      have : N = Na := by rw [← this]
-      have : N ≥ Na := by exact Nat.le_max_left Na Nb
-      exact hNa N this
-    }
-  have absb : |s N - b| < ε := by
-    rcases le_or_gt Nb Na with C1 | C1
-    {
-      have : max Na Nb = Na := max_eq_left_iff.mpr C1
-      have : N = Na := by rw [← this]
-      rw [← this] at C1
-      exact hNb N C1
-      done
-    }
-    {
-      have : max Na Nb = Nb := by exact max_eq_right_of_lt C1
-      have : N = Nb := by rw [← this]
-      have : N ≥ Nb := by exact Nat.le_max_right Na Nb
-      exact hNb N this
-    }
-  have : |a - b| < |a - b| := by
-    have sub1 : |a - b| = 2 * ε := by ring
-    have sub2 : |a - b| < 2 * ε := by
-      calc
-        |a - b| = |a - b + 0| := by rw [add_zero (a - b)]
-        _ = |a - b + (s N - s N)| := by rw [← sub_self (s N)]
-        _ = |s N - b - (s N - a)| := by ring_nf
-        _ ≤ |s N - b| + |s N - a| := abs_sub (s N - b) (s N - a)
-        _ < ε + ε := by exact add_lt_add absb absa
-        _ = 2 * ε := by ring
-      done
-    rw [← sub1] at sub2
-    exact sub2
-    done
+  have absa : |s N - a| < ε := by sorry
+  have absb : |s N - b| < ε := by sorry
+  have : |a - b| < |a - b| := by sorry
   exact lt_irrefl _ this
 
 section
@@ -194,3 +100,4 @@ def ConvergesTo' (s : α → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
 end
+

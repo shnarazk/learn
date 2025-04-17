@@ -49,68 +49,27 @@ example (a b c : Nat) (h : a * b = a * c) (h' : a ≠ 0) : b = c :=
   -- apply? suggests the following:
   (mul_right_inj' h').mp h
 
-/-
-  Use `even_of_even_sqr` and `Nat.dvd_gcd`
-  - `even_of_even_sqr : 2 ∣ m ^ 2 = 2 ∣ m`
--/
 example {m n : ℕ} (coprime_mn : m.Coprime n) : m ^ 2 ≠ 2 * n ^ 2 := by
   intro sqr_eq
-  have step1 : 2 ∣ m := by
-    have tmp : 2 ∣ 2 * n ^ 2 := by exact Nat.dvd_mul_right 2 (n ^ 2)
-    rw [← sqr_eq] at tmp
-    apply Nat.Prime.dvd_of_dvd_pow Nat.prime_two tmp
-  obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp step1
-  have step2 : 2 * (2 * k ^ 2) = 2 * n ^ 2 := by
+  have : 2 ∣ m := by
+    sorry
+  obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp this
+  have : 2 * (2 * k ^ 2) = 2 * n ^ 2 := by
     rw [← sqr_eq, meq]
     ring
-  have step3 : 2 * k ^ 2 = n ^ 2 := by
-    have two_neq_zero : 2 ≠ 0 := by exact Ne.symm (Nat.zero_ne_add_one 1)
-    rw [meq] at sqr_eq
-    apply (mul_right_inj' two_neq_zero).mp at step2
-    exact step2
-  have step4 : 2 ∣ n := by
-    have tmp : 2 ∣ 2 * k ^ 2 := Nat.dvd_mul_right 2 (k ^ 2)
-    rw [step3] at tmp
-    exact even_of_even_sqr tmp
-  have step5 : 2 ∣ m.gcd n := by
-    exact Nat.dvd_gcd step1 step4
+  have : 2 * k ^ 2 = n ^ 2 :=
+    sorry
+  have : 2 ∣ n := by
+    sorry
+  have : 2 ∣ m.gcd n := by
+    sorry
   have : 2 ∣ 1 := by
-    have tmp : m.gcd n = 1 := coprime_mn
-    rw [tmp] at step5
-    exact step5
+    sorry
   norm_num at this
 
 example {m n p : ℕ} (coprime_mn : m.Coprime n) (prime_p : p.Prime) : m ^ 2 ≠ p * n ^ 2 := by
-  intro sqr_eq
-  have step1 : p ∣ m := by
-    have tmp1 : p ∣ p * n ^ 2 := by exact Nat.dvd_mul_right p (n ^ 2)
-    rw [← sqr_eq] at tmp1
-    apply Nat.Prime.dvd_of_dvd_pow prime_p tmp1
-  obtain ⟨k, meq⟩ := dvd_iff_exists_eq_mul_left.mp step1
-  have step2 : p * (p * k ^ 2) = p * n ^ 2 := by
-    rw [← sqr_eq, meq]
-    ring
-  have step2 : p * k ^ 2 = n ^ 2 := by
-    have p_neq_zero : p ≠ 0 := by exact Nat.Prime.ne_zero prime_p
-    rw [meq] at sqr_eq
-    apply (mul_right_inj' p_neq_zero).mp at step2
-    exact step2
-  have step3 : p ∣ n := by
-    have tmp : p ∣ p * k ^ 2 := Nat.dvd_mul_right p (k ^ 2)
-    rw [step2] at tmp
-    exact Nat.Prime.dvd_of_dvd_pow prime_p tmp
-  have step4 : p ∣ m.gcd n := by
-    exact Nat.dvd_gcd step1 step3
-  have : p ∣ 1 := by
-    --have tmp : m.gcd n = 1 := coprime_mn
-    -- rw [tmp] at step4
-    rw [(coprime_mn : m.gcd n = 1)] at step4
-    exact step4
-  norm_num at this
-  -- have step5 : ¬p = 1 := by exact (Nat.Prime.ne_one prime_p)
-  exact absurd this (by exact (Nat.Prime.ne_one prime_p) : ¬p = 1)
-
--- #check Nat.factors
+  sorry
+#check Nat.primeFactorsList
 #check Nat.prime_of_mem_primeFactorsList
 #check Nat.prod_primeFactorsList
 #check Nat.primeFactorsList_unique
@@ -134,11 +93,9 @@ example {m n p : ℕ} (nnz : n ≠ 0) (prime_p : p.Prime) : m ^ 2 ≠ p * n ^ 2 
   intro sqr_eq
   have nsqr_nez : n ^ 2 ≠ 0 := by simpa
   have eq1 : Nat.factorization (m ^ 2) p = 2 * m.factorization p := by
-    exact factorization_pow' m 2 p
+    sorry
   have eq2 : (p * n ^ 2).factorization p = 2 * n.factorization p + 1 := by
-    rw [factorization_mul' (Nat.Prime.ne_zero prime_p) nsqr_nez p]
-    rw [Nat.Prime.factorization' prime_p, factorization_pow' n 2 p]
-    exact Nat.add_comm 1 _
+    sorry
   have : 2 * m.factorization p % 2 = (2 * n.factorization p + 1) % 2 := by
     rw [← eq1, sqr_eq, eq2]
   rw [add_comm, Nat.add_mul_mod_self_left, Nat.mul_mod_right] at this
@@ -150,33 +107,14 @@ example {m n k r : ℕ} (nnz : n ≠ 0) (pow_eq : m ^ k = r * n ^ k) {p : ℕ} :
   · simp
   have npow_nz : n ^ k ≠ 0 := fun npowz ↦ nnz (pow_eq_zero npowz)
   have eq1 : (m ^ k).factorization p = k * m.factorization p := by
-    rw [factorization_pow' m _ _]
+    sorry
   have eq2 : ((r + 1) * n ^ k).factorization p =
       k * n.factorization p + (r + 1).factorization p := by
-    rw [factorization_mul' (Ne.symm (Nat.zero_ne_add_one r)) _ _]
-    rw [factorization_pow' n k _]
-    -- rw [Nat.succ_eq_add_one]
-    rw [add_comm ((r + 1).factorization p) (k * n.factorization p)]
-    exact npow_nz
+    sorry
   have : r.succ.factorization p = k * m.factorization p - k * n.factorization p := by
     rw [← eq1, pow_eq, eq2, add_comm, Nat.add_sub_cancel]
   rw [this]
-  /-
-    Use below here
-    - `Nat.dvd_sub (_ : m ≤ n) (_ : k ∣ m) (_ : k ∣ n) : k ∣ m - n`
-    - `Nat.dvd_mul_right (a b : ℕ) : a ∣ a * b`
-    この時点でeq1, eq2も使っている
-  -/
-  apply Nat.dvd_sub
-  rw [← factorization_pow' n k p, ← factorization_pow' m k p]
-  rw [pow_eq]
-  rw [factorization_mul']
-  simp
-  -- have : r.succ ≠ 0 := by exact Nat.succ_ne_zero r
-  rw [← Nat.succ_eq_add_one]
-  . exact (by exact Nat.succ_ne_zero r : r.succ ≠ 0)
-  . exact npow_nz
-  . exact Nat.dvd_mul_right k (m.factorization p)
-  . exact Nat.dvd_mul_right k (n.factorization p)
+  sorry
 
 #check multiplicity
+

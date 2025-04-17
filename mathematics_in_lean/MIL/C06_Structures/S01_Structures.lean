@@ -1,5 +1,5 @@
 import MIL.Common
-import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.BigOperators.Ring.List
 import Mathlib.Data.Real.Basic
 
 namespace C06S01
@@ -81,18 +81,14 @@ theorem addAlt_comm (a b : Point) : addAlt a b = addAlt b a := by
   repeat' apply add_comm
 
 protected theorem add_assoc (a b c : Point) : (a.add b).add c = a.add (b.add c) := by
-  simp [add]
-  repeat' constructor
-  repeat' apply add_assoc
+  sorry
 
 def smul (r : ℝ) (a : Point) : Point :=
-  ⟨r * a.x, r * a.y, r * a.z⟩
+  sorry
 
 theorem smul_distrib (r : ℝ) (a b : Point) :
     (smul r a).add (smul r b) = smul r (a.add b) := by
-  simp [add, smul]
-  repeat' constructor
-  repeat' rw [mul_add r]
+  sorry
 
 end Point
 
@@ -129,52 +125,9 @@ def midpoint (a b : StandardTwoSimplex) : StandardTwoSimplex
   z_nonneg := div_nonneg (add_nonneg a.z_nonneg b.z_nonneg) (by norm_num)
   sum_eq := by field_simp; linarith [a.sum_eq, b.sum_eq]
 
--- with stupid repetition!
 def weightedAverage (lambda : Real) (lambda_nonneg : 0 ≤ lambda) (lambda_le : lambda ≤ 1)
     (a b : StandardTwoSimplex) : StandardTwoSimplex :=
-  ⟨
-    lambda * a.x + (1 - lambda) * b.x,
-    lambda * a.y + (1 - lambda) * b.y,
-    lambda * a.z + (1 - lambda) * b.z,
-    by
-      have mul_nonneg₁ (a b : ℝ) (a_nonneg : 0 ≤ a) (b_nonneg : 0 ≤ b) :
-        0 ≤ a * b := by exact Left.mul_nonneg a_nonneg b_nonneg
-      have mul_nonneg₂ (a b : ℝ) (a_le_one : a ≤ 1) (b_nonneg : 0 ≤ b) :
-        0 <= (1 - a) * b := by
-        have a_nonneg : 0 ≤ 1 - a := by exact sub_nonneg_of_le a_le_one
-        exact Left.mul_nonneg a_nonneg b_nonneg
-      exact add_nonneg
-        (mul_nonneg₁ lambda a.x lambda_nonneg a.x_nonneg)
-        (mul_nonneg₂ lambda b.x lambda_le b.x_nonneg)
-      ,
-   by
-      have mul_nonneg₁ (a b : ℝ) (a_nonneg : 0 ≤ a) (b_nonneg : 0 ≤ b) :
-        0 ≤ a * b := by exact Left.mul_nonneg a_nonneg b_nonneg
-      have mul_nonneg₂ (a b : ℝ) (a_le_one : a ≤ 1) (b_nonneg : 0 ≤ b) :
-        0 <= (1 - a) * b := by
-        have a_nonneg : 0 ≤ 1 - a := by exact sub_nonneg_of_le a_le_one
-        exact Left.mul_nonneg a_nonneg b_nonneg
-      exact add_nonneg
-        (mul_nonneg₁ lambda a.y lambda_nonneg a.y_nonneg)
-        (mul_nonneg₂ lambda b.y lambda_le b.y_nonneg)
-      ,
-    by
-      have mul_nonneg₁ (a b : ℝ) (a_nonneg : 0 ≤ a) (b_nonneg : 0 ≤ b) :
-        0 ≤ a * b := by exact Left.mul_nonneg a_nonneg b_nonneg
-      have mul_nonneg₂ (a b : ℝ) (a_le_one : a ≤ 1) (b_nonneg : 0 ≤ b) :
-        0 <= (1 - a) * b := by
-        have a_nonneg : 0 ≤ 1 - a := by exact sub_nonneg_of_le a_le_one
-        exact Left.mul_nonneg a_nonneg b_nonneg
-      exact add_nonneg
-        (mul_nonneg₁ lambda a.z lambda_nonneg a.z_nonneg)
-        (mul_nonneg₂ lambda b.z lambda_le b.z_nonneg)
-      ,
-    by
-      calc
-        lambda * a.x + (1 - lambda) * b.x + (lambda * a.y + (1 - lambda) * b.y) + (lambda * a.z + (1 - lambda) * b.z) = lambda * (a.x + a.y + a.z) + (1 - lambda) * (b.x + b.y + b.z) := by linarith
-        _ = lambda * 1 + (1 - lambda) * 1 := by rw [a.sum_eq, b.sum_eq]
-        _ = 1 := by linarith
-  ⟩
+  sorry
 
 end
 
@@ -253,3 +206,4 @@ variable (s : StdSimplex)
 #check s.2
 
 end
+

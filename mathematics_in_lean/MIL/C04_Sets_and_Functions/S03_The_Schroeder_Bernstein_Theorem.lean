@@ -22,27 +22,16 @@ def sbSet :=
 def sbFun (x : α) : β :=
   if x ∈ sbSet f g then f x else invFun g x
 
-/-
-You will need to use `invFun_eq` at the end.
-Notice that rewriting with `sbAux` here replaces `sbAux f g 0`
-with the right-hand side of the corresponding defining equation.
--/
 theorem sb_right_inv {x : α} (hx : x ∉ sbSet f g) : g (invFun g x) = x := by
   have : x ∈ g '' univ := by
     contrapose! hx
     rw [sbSet, mem_iUnion]
     use 0
     rw [sbAux, mem_diff]
-    constructor
-    simp
-    exact hx
-  -- 名前がないものを定義するのだからここで使うんじゃない？
+    sorry
   have : ∃ y, g y = x := by
-    contrapose! this
-    simp
-    exact fun x ↦ this x
-  apply invFun_eq
-  exact this
+    sorry
+  sorry
 
 theorem sb_injective (hf : Injective f) : Injective (sbFun f g) := by
   set A := sbSet f g with A_def
@@ -61,25 +50,15 @@ theorem sb_injective (hf : Injective f) : Injective (sbFun f g) := by
       rw [if_pos x₁A, if_neg x₂nA] at hxeq
       rw [A_def, sbSet, mem_iUnion] at x₁A
       have x₂eq : x₂ = g (f x₁) := by
-        -- sb_right_invを使うはず
-        rw [hxeq]
-        symm
-        rw [A_def] at x₂nA
-        apply sb_right_inv f g x₂nA
+        sorry
       rcases x₁A with ⟨n, hn⟩
       rw [A_def, sbSet, mem_iUnion]
       use n + 1
       simp [sbAux]
       exact ⟨x₁, hn, x₂eq.symm⟩
-    rw [if_pos x₁A, if_pos x₂A] at hxeq
-    apply hf
-    exact hxeq
+    sorry
   push_neg at xA
-  rw [if_neg xA.right, if_neg xA.left] at hxeq
-  have C : g (invFun g x₁) = g (invFun g x₂) := by rw [hxeq]
-  rw [sb_right_inv f g xA.left, sb_right_inv f g xA.right] at C
-  exact C
-
+  sorry
 
 theorem sb_surjective (hg : Injective g) : Surjective (sbFun f g) := by
   set A := sbSet f g with A_def
@@ -96,19 +75,10 @@ theorem sb_surjective (hg : Injective g) : Surjective (sbFun f g) := by
     have : x ∈ A := by
       rw [A_def, sbSet, mem_iUnion]
       exact ⟨n, xmem⟩
-    simp only [h_def, sbFun, if_pos this]
-    have : x ∈ sbSet f g := by
-      exact this
-    simp [this]
-    exact hg hx
-  {
-    use g y
-    rw [A_def] at gyA
-    simp only [h_def, sbFun, if_neg gyA]
-    apply hg
-    apply invFun_eq
-    use y
-  }
+    rw [h_def, sbFun, if_pos this]
+    apply hg hx
+
+  sorry
 
 end
 

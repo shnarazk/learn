@@ -21,7 +21,7 @@ end
 example (x y z : ℝ) (h₀ : x ≤ y) (h₁ : y ≤ z) : x ≤ z := by
   apply le_trans
   · apply h₀
-  . apply h₁
+  · apply h₁
 
 example (x y z : ℝ) (h₀ : x ≤ y) (h₁ : y ≤ z) : x ≤ z := by
   apply le_trans h₀
@@ -44,10 +44,7 @@ example (x : ℝ) : x ≤ x :=
 
 -- Try this.
 example (h₀ : a ≤ b) (h₁ : b < c) (h₂ : c ≤ d) (h₃ : d < e) : a < e := by
-  apply lt_of_le_of_lt h₀
-  apply lt_trans h₁
-  apply lt_of_le_of_lt h₂
-  exact h₃
+  sorry
 
 example (h₀ : a ≤ b) (h₁ : b < c) (h₂ : c ≤ d) (h₃ : d < e) : a < e := by
   linarith
@@ -89,74 +86,42 @@ example (h₀ : a ≤ b) (h₁ : c < d) : a + exp c + e < b + exp d + e := by
     apply exp_lt_exp.mpr h₁
   apply le_refl
 
-example (h₀ : d ≤ e) : c + exp (a + d) ≤ c + exp (a + e) := by
- apply add_le_add
- . apply le_refl
- . rw [exp_le_exp]
-   apply add_le_add
-   apply le_refl
-   exact h₀
+example (h₀ : d ≤ e) : c + exp (a + d) ≤ c + exp (a + e) := by sorry
 
 example : (0 : ℝ) < 1 := by norm_num
 
 example (h : a ≤ b) : log (1 + exp a) ≤ log (1 + exp b) := by
-  have h₀ : 0 < 1 + exp a := by
-    apply add_pos
-    . norm_num
-    . apply exp_pos
+  have h₀ : 0 < 1 + exp a := by sorry
   apply log_le_log h₀
-  apply add_le_add
-  . apply le_refl
-  . rw [exp_le_exp]
-    exact h
+  sorry
 
 example : 0 ≤ a ^ 2 := by
   -- apply?
   exact sq_nonneg a
 
 example (h : a ≤ b) : c - exp b ≤ c - exp a := by
-  -- apply?
-  rw [sub_le_sub_iff_left c]
-  exact exp_le_exp.mpr h
+  sorry
 
-example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
-  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2
+example : 2*a*b ≤ a^2 + b^2 := by
+  have h : 0 ≤ a^2 - 2*a*b + b^2
   calc
-    a ^ 2 - 2 * a * b + b ^ 2 = (a - b) ^ 2 := by ring
+    a^2 - 2*a*b + b^2 = (a - b)^2 := by ring
     _ ≥ 0 := by apply pow_two_nonneg
 
   calc
-    2 * a * b = 2 * a * b + 0 := by ring
-    _ ≤ 2 * a * b + (a ^ 2 - 2 * a * b + b ^ 2) := add_le_add (le_refl _) h
-    _ = a ^ 2 + b ^ 2 := by ring
+    2*a*b = 2*a*b + 0 := by ring
+    _ ≤ 2*a*b + (a^2 - 2*a*b + b^2) := add_le_add (le_refl _) h
+    _ = a^2 + b^2 := by ring
 
-example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
-  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2
+example : 2*a*b ≤ a^2 + b^2 := by
+  have h : 0 ≤ a^2 - 2*a*b + b^2
   calc
-    a ^ 2 - 2 * a * b + b ^ 2 = (a - b) ^ 2 := by ring
+    a^2 - 2*a*b + b^2 = (a - b)^2 := by ring
     _ ≥ 0 := by apply pow_two_nonneg
   linarith
 
-example : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
-  have Sm : 0 ≤ (a - b) ^ 2 := by
-    let z := a - b
-    exact sq_nonneg z
-  have Sp : 0 ≤ (a + b) ^ 2 := by
-    let z := a + b
-    exact sq_nonneg z
-  rw [abs_le']
-  have NotZero : (0 : ℝ) < 2 := by linarith
-  constructor
-  . have Sq : (a - b) ^ 2 = a ^ 2 + b ^ 2 - a * b * 2 := by linarith
-    rw [le_div_iff NotZero]
-    apply sub_nonneg.mp
-    rw [← Sq]
-    exact Sm
-  . have Sq : (a + b) ^ 2 = a ^ 2 + b ^ 2 + a * b * 2 := by linarith
-    rw [le_div_iff NotZero]
-    apply sub_nonneg.mp
-    simp
-    rw [← Sq]
-    exact Sp
+example : |a*b| ≤ (a^2 + b^2)/2 := by
+  sorry
 
 #check abs_le'.mpr
+

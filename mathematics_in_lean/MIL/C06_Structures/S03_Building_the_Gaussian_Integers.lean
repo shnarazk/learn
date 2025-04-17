@@ -179,36 +179,7 @@ end Int
 
 theorem sq_add_sq_eq_zero {α : Type*} [LinearOrderedRing α] (x y : α) :
     x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
-  constructor
-  {
-    have y2nonneg : 0 ≤ y ^ 2 := sq_nonneg y
-    by_cases xx : x = 0
-    {
-      by_cases yy : y = 0
-      { intro ; exact ⟨xx, yy⟩ }
-      {
-        intro hxy
-        simp [xx]
-        simp [xx] at hxy
-        exact absurd hxy yy
-      }
-    }
-    {
-      simp [xx]
-      have x2_pos : 0 < x ^ 2 := by exact pow_two_pos_of_ne_zero xx
-      by_cases yy : y = 0
-      { simp [yy] ; exact xx }
-      {
-        have : 0 < x ^ 2 + y ^ 2 := by exact Right.add_pos_of_pos_of_nonneg x2_pos y2nonneg
-        exact ne_of_gt this
-      }
-    }
-  }
-  {
-    intro ⟨a, b⟩
-    simp [a, b]
-  }
-
+  sorry
 namespace GaussInt
 
 def norm (x : GaussInt) :=
@@ -216,45 +187,13 @@ def norm (x : GaussInt) :=
 
 @[simp]
 theorem norm_nonneg (x : GaussInt) : 0 ≤ norm x := by
-  simp [norm]
-  have (a b : ℝ) (a_nonneg : 0 ≤ a) (b_nonneg : 0 ≤ b) : 0 ≤ a + b := by
-    exact Left.add_nonneg a_nonneg b_nonneg
-  exact Left.add_nonneg (pow_two_nonneg x.re) (pow_two_nonneg x.im)
-
+  sorry
 theorem norm_eq_zero (x : GaussInt) : norm x = 0 ↔ x = 0 := by
-  simp [norm, GaussInt.zero_def]
-  constructor
-  {
-    intro z
-    have : x.re = 0 ∧ x.im = 0 := by exact (sq_add_sq_eq_zero x.re x.im).mp z
-    exact GaussInt.ext_iff.mpr this
-  }
-  {
-    intro x_def
-    apply (sq_add_sq_eq_zero x.re x.im).mpr
-    constructor <;> exact by simp [x_def]
-  }
-
+  sorry
 theorem norm_pos (x : GaussInt) : 0 < norm x ↔ x ≠ 0 := by
-  constructor
-  {
-    contrapose!
-    intro Z
-    apply (norm_eq_zero x).mpr at Z
-    exact Int.le_of_eq Z
-  }
-  {
-    intro xnez
-    contrapose! xnez
-    have : 0 ≤ x.norm := by exact norm_nonneg x
-    have : x.norm = 0 := by exact Eq.symm (Int.le_antisymm this xnez)
-    exact (norm_eq_zero x).mp this
-  }
-
+  sorry
 theorem norm_mul (x y : GaussInt) : norm (x * y) = norm x * norm y := by
-  simp [norm]
-  ring_nf
-
+  sorry
 def conj (x : GaussInt) : GaussInt :=
   ⟨x.re, -x.im⟩
 
