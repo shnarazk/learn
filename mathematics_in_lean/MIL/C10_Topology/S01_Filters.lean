@@ -6,39 +6,15 @@ open Set Filter Topology
 def principal {α : Type*} (s : Set α) : Filter α
     where
   sets := { t | s ⊆ t }
-  univ_sets := subset_univ s
-  sets_of_superset := Subset.trans
-  inter_sets := subset_inter
+  univ_sets := sorry
+  sets_of_superset := sorry
+  inter_sets := sorry
 
 example : Filter ℕ :=
   { sets := { s | ∃ a, ∀ b, a ≤ b → b ∈ s }
-    univ_sets := by
-      simp
-    sets_of_superset := by
-      dsimp
-      intro x y ⟨b, hb⟩ xy
-      use b
-      intro b₁ bb₁
-      rcases hb b₁ bb₁ with hb'
-      exact xy (hb b₁ bb₁)
-    inter_sets := by
-      dsimp
-      intro x y
-      simp
-      intro x₁ hx y₁ hy
-      use (max x₁ y₁)
-
-      have (b : ℕ) : x₁ ⊔ y₁ ≤ b → x₁ ≤ b := by exact le_of_max_le_left
-      have hx' : ∀ (b : ℕ), x₁ ⊔ y₁ ≤ b → b ∈ x := by
-        exact fun b a ↦ hx b (this b a)
-      have (b : ℕ) : x₁ ⊔ y₁ ≤ b → y₁ ≤ b := by exact le_of_max_le_right
-      have hy' : ∀ (b : ℕ), x₁ ⊔ y₁ ≤ b → b ∈ y := by
-        exact fun b a ↦ hy b (this b a)
-      intro b bh
-      rcases hx' b bh with hx''
-      rcases hy' b bh with hy''
-      exact ⟨hx'', hy''⟩
-  }
+    univ_sets := sorry
+    sets_of_superset := sorry
+    inter_sets := sorry }
 
 def Tendsto₁ {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :=
   ∀ V ∈ G, f ⁻¹' V ∈ F
@@ -57,12 +33,8 @@ example {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :
     ∀ {α β γ} {f : Filter α} {m : α → β} {m' : β → γ}, map m' (map m f) = map (m' ∘ m) f)
 
 example {X Y Z : Type*} {F : Filter X} {G : Filter Y} {H : Filter Z} {f : X → Y} {g : Y → Z}
-    (hf : Tendsto₁ f F G) (hg : Tendsto₁ g G H) : Tendsto₁ (g ∘ f) F H := by
-  simp [Tendsto₁] at *
-  intro V₀ V₀h
-  rcases (hg V₀) V₀h with hg'
-  rcases (hf (g⁻¹' V₀)) hg' with hf'
-  exact hf'
+    (hf : Tendsto₁ f F G) (hg : Tendsto₁ g G H) : Tendsto₁ (g ∘ f) F H :=
+  sorry
 
 variable (f : ℝ → ℝ) (x₀ y₀ : ℝ)
 
@@ -84,16 +56,8 @@ example : 𝓝 (x₀, y₀) = 𝓝 x₀ ×ˢ 𝓝 y₀ :=
 
 example (f : ℕ → ℝ × ℝ) (x₀ y₀ : ℝ) :
     Tendsto f atTop (𝓝 (x₀, y₀)) ↔
-      Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) := by
-  calc
-    Tendsto f atTop (𝓝 (x₀, y₀)) ↔ map f atTop ≤ 𝓝 (x₀, y₀) := Iff.rfl
-    _ ↔ map f atTop ≤ 𝓝 x₀ ×ˢ 𝓝 y₀ := by rw [nhds_prod_eq]
-    _ ↔ map f atTop ≤ comap Prod.fst (𝓝 x₀) ⊓ comap Prod.snd (𝓝 y₀) := Iff.rfl
-    _ ↔ map f atTop ≤ comap Prod.fst (𝓝 x₀) ∧ map f atTop ≤ comap Prod.snd (𝓝 y₀) := le_inf_iff
-    _ ↔ map Prod.fst (map f atTop) ≤ 𝓝 x₀ ∧ map Prod.snd (map f atTop) ≤ 𝓝 y₀ := by
-      rw [← map_le_iff_le_comap, ← map_le_iff_le_comap]
-    _ ↔ map (Prod.fst ∘ f) atTop ≤ 𝓝 x₀ ∧ map (Prod.snd ∘ f) atTop ≤ 𝓝 y₀ := by
-      rw [map_map, map_map]
+      Tendsto (Prod.fst ∘ f) atTop (𝓝 x₀) ∧ Tendsto (Prod.snd ∘ f) atTop (𝓝 y₀) :=
+  sorry
 
 example (x₀ : ℝ) : HasBasis (𝓝 x₀) (fun ε : ℝ ↦ 0 < ε) fun ε ↦ Ioo (x₀ - ε) (x₀ + ε) :=
   nhds_basis_Ioo_pos x₀
@@ -136,22 +100,6 @@ example (P Q R : ℕ → Prop) (hP : ∀ᶠ n in atTop, P n) (hQ : ∀ᶠ n in a
 #check neBot_of_le
 
 example (u : ℕ → ℝ) (M : Set ℝ) (x : ℝ) (hux : Tendsto u atTop (𝓝 x))
-    (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M := by
-  set r := le_principal_iff.mpr huM
-  -- なぜか `set q := le_inf hux r` では動かない。unificationのタイミングの問題だろうか
-  -- set q := le_inf hux r
-  set q := le_inf hux (le_principal_iff.mpr huM)
-  set p := neBot_of_le q
-  exact mem_closure_iff_clusterPt.mpr p
+    (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M :=
+  sorry
 
-variable (u : ℕ → ℝ)
-variable (M : Set ℝ)
-variable (x : ℝ)
-variable (hux : Tendsto u atTop (𝓝 x))
-variable (huM : ∀ᶠ n in atTop, u n ∈ M)
-variable (r := le_principal_iff.mpr huM)
-
-#check le_principal_iff.mpr huM
-#check r
-#check le_inf r
-#check le_inf (le_principal_iff.mpr huM)

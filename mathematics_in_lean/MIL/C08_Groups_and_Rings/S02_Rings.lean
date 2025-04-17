@@ -82,22 +82,21 @@ open Ideal Quotient Function
 
 /-- The homomorphism from ``R ⧸ ⨅ i, I i`` to ``Π i, R ⧸ I i`` featured in the Chinese
   Remainder Theorem. -/
-def chineseMap (I : ι → Ideal R) : (R ⧸ ⨅ i, I i) →+* Π i, R ⧸ I i := by
-  exact quotientInfToPiQuotient I
+def chineseMap (I : ι → Ideal R) : (R ⧸ ⨅ i, I i) →+* Π i, R ⧸ I i :=
+  sorry
 
 lemma chineseMap_mk (I : ι → Ideal R) (x : R) :
-    chineseMap I (Quotient.mk _ x) = fun i : ι ↦ Ideal.Quotient.mk (I i) x := by
-  exact rfl
+    chineseMap I (Quotient.mk _ x) = fun i : ι ↦ Ideal.Quotient.mk (I i) x :=
+  sorry
 
 lemma chineseMap_mk' (I : ι → Ideal R) (x : R) (i : ι) :
-    chineseMap I (mk _ x) i = mk (I i) x := by
-  exact rfl
+    chineseMap I (mk _ x) i = mk (I i) x :=
+  sorry
 
 #check injective_lift_iff
 
 lemma chineseMap_inj (I : ι → Ideal R) : Injective (chineseMap I) := by
-  simp [chineseMap]
-  exact quotientInfToPiQuotient_inj I
+  sorry
 
 #check IsCoprime
 #check isCoprime_iff_add
@@ -119,28 +118,10 @@ theorem isCoprime_Inf {I : Ideal R} {J : ι → Ideal R} {s : Finset ι}
       rw [Finset.iInf_insert, inf_comm, one_eq_top, eq_top_iff, ← one_eq_top]
       set K := ⨅ j ∈ s, J j
       calc
-        1 = I + K                  := by
-          simp at *
-          rcases hf with ⟨hf₁, hf₂⟩
-          exact Eq.symm (sup_iInf_eq_top hf₂)
-        _ = I + K * (I + J i)      := by
-          have : K = K * 1 := by rw [@Submodule.mul_one]
-          nth_rewrite 1 [this]
-          simp at *
-          rcases hf with ⟨hf₁, hf₂⟩
-          rw [hf₁]
-          simp
-        _ = (1 + K) * I + K * J i  := by rw [mul_add, ←add_assoc] ; ring
-        _ ≤ I + K ⊓ J i            := by
-          have step1 : (1 + K) * I ≤ I := by
-            simp at hf
-            rcases hf with ⟨hf₁, hf₂⟩
-            exact mul_le_left
-          have step2 : K * J i ≤ K ⊓ J i := by exact mul_le_inf
-          calc
-            (1 + K) * I + K * J i ≤ I + K * J i := by exact add_le_add step1 fun ⦃x⦄ a ↦ a
-            _ ≤ I + K ⊓ J i := by exact add_le_add (fun ⦃x⦄ a ↦ a) step2
-
+        1 = I + K                  := sorry
+        _ = I + K * (I + J i)      := sorry
+        _ = (1 + K) * I + K * J i  := sorry
+        _ ≤ I + K ⊓ J i            := sorry
 lemma chineseMap_surj [Fintype ι] {I : ι → Ideal R}
     (hI : ∀ i j, i ≠ j → IsCoprime (I i) (I j)) : Surjective (chineseMap I) := by
   classical
@@ -149,40 +130,11 @@ lemma chineseMap_surj [Fintype ι] {I : ι → Ideal R}
   have key : ∀ i, ∃ e : R, mk (I i) e = 1 ∧ ∀ j, j ≠ i → mk (I j) e = 0 := by
     intro i
     have hI' : ∀ j ∈ ({i} : Finset ι)ᶜ, IsCoprime (I i) (I j) := by
-      simp at *
-      exact fun j a ↦ hI i j fun a_1 ↦ a (id (Eq.symm a_1))
-    rcases isCoprime_iff_exists.mp (isCoprime_Inf hI') with ⟨u, hu, e, he, hue⟩
-    replace he : ∀ j, j ≠ i → e ∈ I j := by simpa using he
-    -- refine ⟨e, ?is_one, ?is_zero⟩  -- useしてconstructorみたいなこと
-    use e
-    constructor
-    {
-      rw [eq_sub_of_add_eq' hue]
-      rw [map_sub]
-      rw [eq_zero_iff_mem.mpr hu]
-      rw [sub_zero]
-      rfl
-    }
-    · exact fun j hj ↦ eq_zero_iff_mem.mpr (he j hj)
-    /-
-    use f i
-    simp at *
-    constructor
-    {
-      rw [hf]
-
-    }
-    {
       sorry
-    }
-    -/
+    sorry
   choose e he using key
   use mk _ (∑ i, f i * e i)
-  ext i
-  rw [chineseMap_mk', map_sum, Fintype.sum_eq_single i]
-  { simp [(he i).left, hf] }
-  { intro x hx ; simp [(he x).right i hx.symm] }
-
+  sorry
 
 noncomputable def chineseIso [Fintype ι] (f : ι → Ideal R)
     (hf : ∀ i j, i ≠ j → IsCoprime (f i) (f j)) : (R ⧸ ⨅ i, f i) ≃+* Π i, R ⧸ f i :=
@@ -267,6 +219,6 @@ open MvPolynomial
 
 def circleEquation : MvPolynomial (Fin 2) ℝ := X 0 ^ 2 + X 1 ^ 2 - 1
 
-example : MvPolynomial.eval ![0, 1] circleEquation = 0 := by simp [circleEquation]
+example : MvPolynomial.eval ![1, 0] circleEquation = 0 := by simp [circleEquation]
 
 end Polynomials

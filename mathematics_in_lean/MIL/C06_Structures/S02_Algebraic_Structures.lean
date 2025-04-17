@@ -12,7 +12,7 @@ structure Group₁ (α : Type*) where
   one_mul : ∀ x : α, mul one x = x
   inv_mul_cancel : ∀ x : α, mul (inv x) x = one
 
-structure Group₁Cat where
+structure Grp₁ where
   α : Type*
   str : Group₁ α
 
@@ -48,7 +48,7 @@ def permGroup {α : Type*} : Group₁ (Equiv.Perm α)
   mul f g := Equiv.trans g f
   one := Equiv.refl α
   inv := Equiv.symm
-  mul_assoc _f _g _h := (Equiv.trans_assoc _ _ _).symm
+  mul_assoc f g h := (Equiv.trans_assoc _ _ _).symm
   one_mul := Equiv.trans_refl
   mul_one := Equiv.refl_trans
   inv_mul_cancel := Equiv.self_trans_symm
@@ -56,13 +56,6 @@ def permGroup {α : Type*} : Group₁ (Equiv.Perm α)
 structure AddGroup₁ (α : Type*) where
   (add : α → α → α)
   -- fill in the rest
-  (zero : α)
-  (neg : α → α)
-  add_assoc : ∀ x y z : α, add (add x y) z = add x (add y z)
-  add_zero : ∀ x : α, add x zero = x
-  zero_add : ∀ x : α, add zero x = x
-  neg_add_cancel : ∀ x : α, add (neg x) x = zero
-
 @[ext]
 structure Point where
   x : ℝ
@@ -74,22 +67,11 @@ namespace Point
 def add (a b : Point) : Point :=
   ⟨a.x + b.x, a.y + b.y, a.z + b.z⟩
 
-def neg (a : Point) : Point :=
-  ⟨-a.x, -a.y, -a.z⟩
+def neg (a : Point) : Point := sorry
 
-def zero : Point :=
-  ⟨0, 0, 0⟩
+def zero : Point := sorry
 
-def addGroupPoint : AddGroup₁ Point :=
-  ⟨
-    Point.add,
-    Point.zero,
-    Point.neg,
-    by simp [Point.add, add_assoc],
-    by simp [Point.add, Point.zero],
-    by simp [Point.add, Point.zero],
-    by simp [Point.add, Point.neg, Point.zero]
-  ⟩
+def addGroupPoint : AddGroup₁ Point := sorry
 
 end Point
 
@@ -125,7 +107,7 @@ instance {α : Type*} : Group₂ (Equiv.Perm α) where
   mul f g := Equiv.trans g f
   one := Equiv.refl α
   inv := Equiv.symm
-  mul_assoc _f _g _h := (Equiv.trans_assoc _ _ _).symm
+  mul_assoc f g h := (Equiv.trans_assoc _ _ _).symm
   one_mul := Equiv.trans_refl
   mul_one := Equiv.refl_trans
   inv_mul_cancel := Equiv.self_trans_symm
@@ -167,13 +149,13 @@ example : x + y = Point.add x y :=
 
 end
 
-instance hasMulGroup₂ {α : Type*} [Group₂ α] : Mul α :=
+instance {α : Type*} [Group₂ α] : Mul α :=
   ⟨Group₂.mul⟩
 
-instance hasOneGroup₂ {α : Type*} [Group₂ α] : One α :=
+instance {α : Type*} [Group₂ α] : One α :=
   ⟨Group₂.one⟩
 
-instance hasInvGroup₂ {α : Type*} [Group₂ α] : Inv α :=
+instance {α : Type*} [Group₂ α] : Inv α :=
   ⟨Group₂.inv⟩
 
 section
@@ -189,18 +171,3 @@ end
 class AddGroup₂ (α : Type*) where
   add : α → α → α
   -- fill in the rest
-  neg : α → α
-  zero : α
-  add_assoc : ∀ x y z : α, add (add x y) z = add x (add y z)
-  add_zero : ∀ x : α, add x zero = x
-  zero_add : ∀ x : α, add zero x = x
-  neg_add_cancel : ∀ x : α, add x (neg x) = zero
-
-instance : AddGroup₂ Point where
-  add := Point.add
-  neg := Point.neg
-  zero := Point.zero
-  add_assoc := by simp [Point.add, add_assoc]
-  add_zero := by simp [Point.add, Point.zero]
-  zero_add := by simp [Point.add, Point.zero]
-  neg_add_cancel := by simp [Point.add, Point.neg, Point.zero]

@@ -5,16 +5,17 @@ import Mathlib.Data.Complex.FiniteDimensional
 
 import MIL.Common
 
+
 section matrices
 
 -- Adding vectors
-#eval !![1, 2] + !![3, 4]  -- !![4, 6]
+#eval ![1, 2] + ![3, 4]  -- ![4, 6]
 
 -- Adding matrices
 #eval !![1, 2; 3, 4] + !![3, 4; 5, 6]  -- !![4, 6; 8, 10]
 
 -- Multiplying matrices
-#eval !![1, 2; 3, 4] * !![3, 4; 5, 6]  -- !![4, 6; 8, 10]
+#eval !![1, 2; 3, 4] * !![3, 4; 5, 6]  -- !![13, 16; 29, 36]
 
 open Matrix
 
@@ -42,6 +43,8 @@ open Matrix
 -- trace
 #eval !![(1 : ℤ), 2; 3, 4].trace -- `5`
 
+
+
 #simp !![(1 : ℝ), 2; 3, 4].det -- `4 - 2*3`
 
 #norm_num !![(1 : ℝ), 2; 3, 4].det -- `-2`
@@ -51,7 +54,9 @@ open Matrix
 variable (a b c d : ℝ) in
 #simp !![a, b; c, d].det -- `a * d – b * c`
 
+
 #norm_num [Matrix.inv_def] !![(1 : ℝ), 2; 3, 4]⁻¹ -- !![-2, 1; 3 / 2, -(1 / 2)]
+
 
 example : !![(1 : ℝ), 2; 3, 4]⁻¹ * !![(1 : ℝ), 2; 3, 4] = 1 := by
   have : Invertible !![(1 : ℝ), 2; 3, 4] := by
@@ -117,11 +122,16 @@ example : Finsupp.basisSingleOne.repr = LinearEquiv.refl K (ι →₀ K) :=
 example (i : ι) : Finsupp.basisSingleOne i = Finsupp.single i 1 :=
   rfl
 
+
 example [Finite ι] (x : ι → K) (i : ι) : (Pi.basisFun K ι).repr x i = x i := by
   simp
 
+
 example [Fintype ι] : ∑ i : ι, B.repr v i • (B i) = v :=
   B.sum_repr v
+
+
+
 
 example (c : ι →₀ K) (f : ι → V) (s : Finset ι) (h : c.support ⊆ s) :
     Finsupp.linearCombination K f c = ∑ i ∈ s, c i • f i :=
@@ -134,7 +144,8 @@ variable (f : ι → V) in
 
 section
 
-variable {W : Type*} [AddCommGroup W] [Module K W] (φ : V →ₗ[K] W) (u : ι → W)
+variable {W : Type*} [AddCommGroup W] [Module K W]
+         (φ : V →ₗ[K] W) (u : ι → W)
 
 #check (B.constr K : (ι → W) ≃ₗ[K] (V →ₗ[K] W))
 
@@ -145,6 +156,9 @@ example (i : ι) : B.constr K u (B i) = u i :=
 
 example (φ ψ : V →ₗ[K] W) (h : ∀ i, φ (B i) = ψ (B i)) : φ = ψ :=
   B.ext h
+
+
+
 
 variable {ι' : Type*} (B' : Basis ι' K W) [Fintype ι] [DecidableEq ι] [Fintype ι'] [DecidableEq ι']
 
@@ -157,12 +171,14 @@ open Matrix -- get access to the ``*ᵥ`` notation for multiplication between ma
 example (φ : V →ₗ[K] W) (v : V) : (toMatrix B B' φ) *ᵥ (B.repr v) = B'.repr (φ v) :=
   toMatrix_mulVec_repr B B' φ v
 
+
 variable {ι'' : Type*} (B'' : Basis ι'' K W) [Fintype ι''] [DecidableEq ι'']
 
 example (φ : V →ₗ[K] W) : (toMatrix B B'' φ) = (toMatrix B' B'' .id) * (toMatrix B B' φ) := by
   simp
 
 end
+
 
 open Module LinearMap Matrix
 
@@ -182,16 +198,7 @@ example [Fintype ι] (B' : Basis ι K V) (φ : End K V) :
   set M' := toMatrix B' B' φ
   set P := (toMatrix B B') LinearMap.id
   set P' := (toMatrix B' B) LinearMap.id
-  have F : M = P' * M' * P := by
-    rw [← toMatrix_comp, ← toMatrix_comp, id_comp, comp_id]
-  have F' : P' * P = 1 := by
-    rw [← toMatrix_comp, id_comp, toMatrix_id]
-  rw [F, Matrix.det_mul, Matrix.det_mul]
-  have : P'.det * M'.det * P.det = P'.det * P.det * M'.det := by
-    ring
-  rw [this]
-  rw [← Matrix.det_mul, F']
-  simp
+  sorry
 end
 
 section
@@ -202,13 +209,17 @@ example (n : ℕ) : Module.finrank K (Fin n → K) = n :=
   Module.finrank_fin_fun K
 
 -- Seen as a vector space over itself, `ℂ` has dimension one.
-example : Module.finrank ℂ ℂ = 1 := Module.finrank_self ℂ
+example : Module.finrank ℂ ℂ = 1 :=
+  Module.finrank_self ℂ
 
 -- But as a real vector space it has dimension two.
-example : Module.finrank ℝ ℂ = 2 := Complex.finrank_real_complex
+example : Module.finrank ℝ ℂ = 2 :=
+  Complex.finrank_real_complex
+
 
 example [FiniteDimensional K V] : 0 < Module.finrank K V ↔ Nontrivial V  :=
   Module.finrank_pos_iff
+
 
 example [FiniteDimensional K V] (h : 0 < Module.finrank K V) : Nontrivial V := by
   apply (Module.finrank_pos_iff (R := K)).1
@@ -232,22 +243,14 @@ example : finrank K (E ⊔ F : Submodule K V) + finrank K (E ⊓ F : Submodule K
   Submodule.finrank_sup_add_finrank_inf_eq E F
 
 example : finrank K E ≤ finrank K V := Submodule.finrank_le E
-
 example (h : finrank K V < finrank K E + finrank K F) :
     Nontrivial (E ⊓ F : Submodule K V) := by
-  rw [← finrank_pos_iff (R := K)]
-  have s1 := Submodule.finrank_sup_add_finrank_inf_eq E F
-  have s2 := Submodule.finrank_le E
-  have s3 := Submodule.finrank_le F
-  have s4 := Submodule.finrank_le (E ⊔ F)
-  apply lt_of_le_of_lt s4 at h
-  rw [← s1] at h
-  apply Nat.lt_add_right_iff_pos.mp at h
-  exact h
+  sorry
 end
 
 #check V -- Type u_2
 #check Module.rank K V -- Cardinal.{u_2}
+
 
 universe u v -- `u` and `v` will denote universe levels
 

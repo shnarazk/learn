@@ -52,53 +52,6 @@ instance [Monoid M] : SubmonoidClass₁ (Submonoid₁ M) M where
   mul_mem := Submonoid₁.mul_mem
   one_mem := Submonoid₁.one_mem
 
-/-!
-As an exercise you should define a Subgroup1 structure, endow it with a SetLike
-instance and a SubmonoidClass1 instance, put a Group instance on the subtype
-associated to a Subgroup1 and define a SubgroupClass1 class.
-
-Here are the key characteristics of a subgroup:
-
-1.  **Closure**: The result of combining any two elements from the subset using
-the group operation must also be in the subset.
-2.  **Identity**: The subset must contain the identity element of the original
-group.
-3.  **Inverse**: For each element in the subset, its inverse (i.e., the result of
-applying the group operation to itself) must also be in the subset.
-4.  **Associativity**: The group operation on the elements within the subset must
-still satisfy associativity.
--/
-@[ext]
--- structure Subgroup₁ (G : Type) [Monoid G] [Inv G] extends Submonoid₁ G where
-structure Subgroup₁ (G : Type) [Group G] extends Submonoid₁ G where
-  -- inv
-  -- inv {a} : ∃ b ∈ carrier, a * b = 1
-  inv_mem {a} : a ∈ carrier → a⁻¹ ∈ carrier
-
-/-- Subgroups in `G` can be seen as sets in `G`. -/
-instance [Group G] : SetLike (Subgroup₁ G) G where
-  coe := fun self ↦ self.toSubmonoid₁.carrier
-  coe_injective' _ _ := Subgroup₁.ext
-
-/-- 何を要求されているのか? --/
-instance [Group G] : SubmonoidClass₁ (Subgroup₁ G) G where
-  mul_mem := fun self ↦ self.toSubmonoid₁.mul_mem
-  one_mem := fun self ↦ self.toSubmonoid₁.one_mem
-
-/-- 何を要求されているのか? --/
-instance [Group G] (H : Subgroup₁ G) : Group H where
-  mul := fun ⟨x, hx⟩ ⟨y, hy⟩ ↦ ⟨x*y, H.mul_mem hx hy⟩
-  mul_assoc := fun ⟨x, _⟩ ⟨y, _⟩ ⟨z, _⟩ ↦ SetCoe.ext (mul_assoc x y z)
-  one := ⟨1, H.one_mem⟩
-  one_mul := fun ⟨x, _⟩ ↦ SetCoe.ext (one_mul x)
-  mul_one := fun ⟨x, _⟩ ↦ SetCoe.ext (mul_one x)
-  inv := fun ⟨x, hx⟩ ↦ ⟨x⁻¹, H.inv_mem hx⟩
-  inv_mul_cancel := fun ⟨x, hx⟩ ↦ SetCoe.ext (inv_mul_cancel x)
-
-/-- define a SubgroupClass1 class. --/
-class SubgroupClass₁ (S : Type) (G : Type) [Group G] [SetLike S G] : Prop where
-  -- inv_mem {a} {s : S} : a ∈ s → a⁻¹ ∈ s
-  inv_mem : ∀ (a : G) (s : S), a ∈ s → a⁻¹ ∈ s
 
 instance [Monoid M] : Min (Submonoid₁ M) :=
   ⟨fun S₁ S₂ ↦
@@ -116,31 +69,7 @@ def Submonoid.Setoid [CommMonoid M] (N : Submonoid M) : Setoid M  where
     refl := fun x ↦ ⟨1, N.one_mem, 1, N.one_mem, rfl⟩
     symm := fun ⟨w, hw, z, hz, h⟩ ↦ ⟨z, hz, w, hw, h.symm⟩
     trans := by
-      intro x y z
-      intro xy
-      rcases xy with ⟨a, A, xy⟩
-      rcases xy with ⟨b, B, xy⟩
-      intro yz
-      rcases yz with ⟨c, C, yz⟩
-      rcases yz with ⟨d, D, yz⟩
-      have left : x * c * a = y * b * c := by
-        calc
-          x * c * a = x * a * c := by exact mul_right_comm x c a
-          _ = y * b * c := by rw [xy]
-      have right : y * b * c = z * d * b := by
-        calc
-          y * b * c = y * c * b := by rw [@mul_right_comm]
-          _ = z * d * b := by rw [yz]
-      have : x * c * a = z * d * b := by
-        calc
-          x * c * a = y * b * c := by exact left
-          _ = z * d * b := by rw [right]
-      use c * a
-      simp [by exact Submonoid.mul_mem N C A]
-      use d * b
-      simp [by exact Submonoid.mul_mem N D B]
-      rw [←mul_assoc, ←mul_assoc]
-      exact this
+      sorry
   }
 
 instance [CommMonoid M] : HasQuotient M (Submonoid M) where
@@ -148,59 +77,14 @@ instance [CommMonoid M] : HasQuotient M (Submonoid M) where
 
 def QuotientMonoid.mk [CommMonoid M] (N : Submonoid M) : M → M ⧸ N := Quotient.mk N.Setoid
 
-/- In the last example, you can use Setoid.refl but it won’t automatically pick up
-the relevant Setoid structure. You can fix this issue by providing all arguments
-using the @ syntax, as in @Setoid.refl M N.Setoid.
--/
 instance [CommMonoid M] (N : Submonoid M) : Monoid (M ⧸ N) where
-  mul := Quotient.map₂' (· * ·) (by
-      -- r := fun x y ↦ ∃ w ∈ N, ∃ z ∈ N, x * w = y * z
-      rintro a b ⟨x, X, w, W, axbw⟩
-      rintro c d ⟨y, Y, z, Z, cydz⟩
-      have sigma : a * x * c * y = b * w * d * z := by
-        calc
-          a * x * c * y = b * w * c * y := by exact congrFun (congrArg HMul.hMul (congrFun (congrArg HMul.hMul axbw) c)) y
-          _ = b * w * (c * y) := by rw [Semigroup.mul_assoc]
-          _ = b * w * (d * z) := by rw [cydz]
-          _ = b * w * d * z := by rw [←Semigroup.mul_assoc]
-      dsimp
-      use x * y
-      simp [by exact Submonoid.mul_mem N X Y]
-      use w * z
-      simp [by exact Submonoid.mul_mem N W Z]
-      have : a * c * (x * y) = b * d * (w * z) := by
-        calc
-          a * c * (x * y) = a * (c * (x * y)) := by exact mul_assoc a c (x * y)
-          _ = a * ((c * x) * y) := by rw [←mul_assoc c]
-          _ = a * (c * x) * y := by rw [←mul_assoc]
-          _ = a * (x * c) * y := by rw [CommMonoid.mul_comm x]
-          _ = a * x * c * y := by rw [←mul_assoc]
-          _ = b * w * d * z := by rw [sigma]
-          _ = b * w * (d * z) := by rw [mul_assoc (b * w)]
-          _ = b * (w * (d * z)) := by rw [mul_assoc]
-          _ = b * (w * d * z) := by rw [mul_assoc]
-          _ = b * (d * w * z) := by rw [CommMonoid.mul_comm w]
-          _ = b * (d * (w * z)) := by rw [←mul_assoc d]
-          _ = b * d * (w * z) := by rw [mul_assoc]
-      exact this
+  mul := Quotient.map₂ (· * ·) (by
+      sorry
         )
   mul_assoc := by
-      rintro ⟨a⟩ ⟨b⟩ ⟨c⟩
-      apply Quotient.sound
-      simp
-      rw [Semigroup.mul_assoc]
-      exact @Setoid.refl M N.Setoid (a * (b * c))
+      sorry
   one := QuotientMonoid.mk N 1
   one_mul := by
-      -- intro q
-      rintro ⟨q⟩
-      -- have Q : ∀ (m : M ⧸ N), (m : M) := by sorry
-      -- rw [@Monoid.one_mul (M ⧸ N) q]
-      apply Quotient.sound
-      simp
-      exact @Setoid.refl M N.Setoid q
+      sorry
   mul_one := by
-      rintro ⟨q⟩
-      apply Quotient.sound
-      simp
-      exact @Setoid.refl M N.Setoid q
+      sorry

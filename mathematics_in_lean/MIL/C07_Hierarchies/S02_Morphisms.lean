@@ -1,5 +1,5 @@
 import MIL.Common
--- import Mathlib.Topology.Instances.Real
+import Mathlib.Topology.Instances.Real.Defs
 
 set_option autoImplicit true
 
@@ -112,32 +112,6 @@ instance (α β : Type) [LE α] [LE β] : OrderPresHomClass (OrderPresHom α β)
 instance (α β : Type) [LE α] [Monoid α] [LE β] [Monoid β] :
     OrderPresHomClass (OrderPresMonoidHom α β) α β where
 
-/-
-@[ext]
-structure OrderPresHom (α β : Type) [LE α] [LE β] where
-  toFun : α → β
-  le_of_le : ∀ a a', a ≤ a' → toFun a ≤ toFun a'
-
-@[ext]
-structure MonoidHom₁ (G H : Type) [Monoid G] [Monoid H]  where
-  toFun : G → H
-  map_one : toFun 1 = 1
-  map_mul : ∀ g g', toFun (g * g') = toFun g * toFun g'
-
-@[ext]
-structure OrderPresMonoidHom (M N : Type) [Monoid M] [LE M] [Monoid N] [LE N] extends
-MonoidHom₁ M N, OrderPresHom M N
-
-class MonoidHomClass₃ (F : Type) (M N : outParam Type) [Monoid M] [Monoid N] extends
-    DFunLike F M (fun _ ↦ N) where
-  map_one : ∀ f : F, f 1 = 1
-  map_mul : ∀ (f : F) g g', f (g * g') = f g * f g'
-  -/
 instance (α β : Type) [LE α] [Monoid α] [LE β] [Monoid β] :
     MonoidHomClass₃ (OrderPresMonoidHom α β) α β
-  -- := by
-  where
-    coe := fun self ↦ self.toMonoidHom₁
-    coe_injective' _ _ := OrderPresMonoidHom.ext
-    map_one := fun self ↦ self.toMonoidHom₁.map_one
-    map_mul := fun self ↦ self.toMonoidHom₁.map_mul
+  := sorry
