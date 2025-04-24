@@ -1,13 +1,18 @@
-import MIL.Common
+import MIL_func.Common
 import Mathlib.Data.Real.Basic
+
 -- An example.
 example (a b c : ℝ) : a * b * c = b * (a * c) := by
   rw [mul_comm a b]
   rw [mul_assoc b a c]
 
+-- GPT-4.1 taught this
+example (a b c : ℝ) : a * b * c = b * (a * c) :=
+  Eq.trans (mul_comm a b ▸ rfl) (mul_assoc b a c)
+
 -- Try these.
-example (a b c : ℝ) : c * b * a = b * (a * c) := by
-  sorry
+example (a b c : ℝ) : c * b * a = b * (a * c) :=
+  mul_comm a c ▸ Eq.trans (mul_comm c b ▸ rfl) (mul_assoc b c a)
 
 example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
   sorry
