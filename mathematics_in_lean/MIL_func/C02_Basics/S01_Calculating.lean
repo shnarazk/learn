@@ -6,7 +6,7 @@ example (a b c : ℝ) : a * b * c = b * (a * c) := by
   rw [mul_comm a b]
   rw [mul_assoc b a c]
 
--- GPT-4.1 taught this
+-- GPT-4.1 taught me this solution
 example (a b c : ℝ) : a * b * c = b * (a * c) :=
   Eq.trans (mul_comm a b ▸ rfl) (mul_assoc b a c)
 
