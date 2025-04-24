@@ -1,3 +1,18 @@
+
+# install without npm
+
+.lake/packages/proofwidgets/lakefile.lean
+
+```Lean
+@[default_target]
+lean_lib ProofWidgets where
+  extraDepTargets := #[]
+
+lean_lib ProofWidgets.Demos where
+  globs := #[.submodules `ProofWidgets.Demos]
+  extraDepTargets := #[]
+```
+
 # Study [Mathematics in Lean](https://github.com/leanprover-community/mathematics_in_lean)
 ## 3
 
