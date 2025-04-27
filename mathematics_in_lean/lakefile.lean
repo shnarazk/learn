@@ -7,6 +7,8 @@ package mil where
     ⟨`autoImplicit, false⟩,
     ⟨`relaxedAutoImplicit, false⟩]
 
+lean_lib MIL where
+
 @[default_target]
 lean_lib MIL_func where
 

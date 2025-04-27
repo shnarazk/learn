@@ -1,4 +1,4 @@
-import MIL_func.Common
+import MIL.Common
 import Mathlib.Data.Real.Basic
 
 -- An example.

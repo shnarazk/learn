@@ -37,4 +37,4 @@ import MIL_func.C02_Basics.S05_Proving_Facts_about_Algebraic_Structures
 -- import MIL_func.C12_Integration_and_Measure_Theory.S01_Elementary_Integration
 -- import MIL_func.C12_Integration_and_Measure_Theory.S02_Measure_Theory
 -- import MIL_func.C12_Integration_and_Measure_Theory.S03_Integration
-import MIL_func.Common
+import MIL.Common
