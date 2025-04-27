@@ -14,8 +14,8 @@ example (a b c : ℝ) : a * b * c = b * (a * c) :=
 example (a b c : ℝ) : c * b * a = b * (a * c) :=
   mul_comm a c ▸ Eq.trans (mul_comm c b ▸ rfl) (mul_assoc b c a)
 
-example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
-  sorry
+example (a b c : ℝ) : a * (b * c) = b * (a * c) :=
+  Eq.trans (Eq.symm (mul_assoc a b c)) (mul_comm b a ▸ mul_assoc b a c)
 
 -- An example.
 example (a b c : ℝ) : a * b * c = b * c * a := by
