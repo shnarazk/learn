@@ -1,5 +1,6 @@
 name = "Leibniz"
-defaultTargets = ["leibniz"]
+defaultTargets = ["Math"]
+# defaultTargets = ["leibniz"]
 
 [leanOptions]
 pp.unicode.fun = true
