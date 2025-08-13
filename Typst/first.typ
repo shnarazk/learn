@@ -1,9 +1,11 @@
 #import "@preview/cetz:0.4.1": canvas, draw, tree
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 #set page(paper: "a4", numbering: "1")
-// #set text(font: ("Monaspace Argon", "Hiragino Maru Gothic Pro"))
 #set par(justify: true)
-#set text(font: ("New Computer Modern", "Hiragino Mincho Pro"))
+#set text(font: (
+  (name: "New Computer Modern", covers: "latin-in-cjk"),
+  "Hiragino Mincho Pro"
+))
 // #show raw: set text(font: "New Computer Modern Mono")
 #set heading(numbering: "1.")
 
@@ -25,12 +27,6 @@ behaviour of these natural structures.
   if it.block [ #block(width: 98%, inset: 8pt, radius: 2pt, fill: luma(245), it) ] else [ #it ]
 }
 
-#figure(caption: "Main goal")[
-```lean
--- a sample code
-theorem luby_is_const : Constant Luby.eval := by sorry
-```
-]<t1>
 
 This is a #highlight(fill: green, extent: 5pt, text(fill:red, [`code`])) . This is another one: #("foo(1, #baz)")
 
@@ -48,7 +44,7 @@ $
 == An efficient implementation
 
 #figure(caption: [Generating Luby state], gap: 16pt)[
-#diagram(cell-size: 15mm, {
+#diagram(cell-size: 12mm, {
   node((1, 0), $n$)
   edge((1, 0), (1, 2),  $O(log(n))$, label-pos: 25%, bend: -30deg, "-straight")
   edge((1, 0), (1, 1), "<-->")
@@ -61,7 +57,7 @@ $
   edge((1, 1), (2, 1), $O(1)$, "->")
   edge((1, 1), (1, 2), $O(1)$, label-side: left, "-straight")
   node((2, 1), $S_(n + 1)$)
-  edge((2, 1), (2, 2), $O(1)$, "-straight")
+  edge((2, 1), (2, 2), $O(1)$, label-side: right, "-straight")
 	node((1, 2), $L u b y(n)$)
 	node((2, 2), $L u b y(n + 1)$)
 })]
@@ -74,43 +70,57 @@ $
 
   set-style(content: (padding: 0.5em))
   tree.tree(
-    ([Expression #encircle($5$)], (
-        [Expression #encircle($3$)],
-        ([Expression #encircle($1$)], `Int(1)`),
-        `Plus`,
-        ([Expression #encircle($2$)], `Int(2)`),
+    ([ 6 = b110 #encircle($1$)],
+      (
+        [ 2 = b010 #encircle($1$)],
+        ([ 0 = b000 #encircle($0$)]),
+        ([ 1 = b001 #encircle($1$)]),
       ),
-      `Lt`,
-      ([Expression #encircle($4$)], `Int(4)`),
+      (
+        [ 5 = b101 #encircle($1$)],
+        ([ 3 = b011 #encircle($0$)]),
+        ([ 4 = b100 #encircle($1$)]),
+      ),
     ))
 })
 
-```latex
-\begin{tikzcd}
-n \arrow[ddr, bend right, "O(\log(n))" description]
-% \arrow[dr, dotted, "{(x,y)}" description]
-& S_{1} \arrow[d, "O(1)^{n-1}"]
-&
-& n + 1
-% \arrow[dl, bend left, "O(1)"]
-\arrow[ddl, bend left, "O(\log(n))" description]
-\\
-& S_{n} \arrow[r, "O(1)"] \arrow[d, "O(1)"]
-& S_{n + 1} \arrow[d, "O(1)"]
-&
-\\
-& Luby(n)
-& Luby(n+1)
-&
-\end{tikzcd}
-```
+#figure(caption: [Binary tree starting at one], gap: 16pt)[
+#canvas({
+  import draw: *
+  let encircle(i) = {
+    std.box(baseline: 2pt, std.circle(stroke: .5pt, radius: .5em)[#move(dx: -0.36em, dy: -1.1em, $#i$)])
+  }
 
-```latex
-\begin{equation}
-  Luby_1(k \ge 1) =
-  \begin{cases}
-    2^{i-1}, & \text{if } k = 2^i - 1 \text{ for some } i \geq 1, \\
-    Luby_1\left(k - 2^{i-1} + 1\right), & \text{if } 2^{i-1} \leq k < 2^i - 1
-  \end{cases}
-\end{equation}
+  set-style(content: (padding: 0.5em))
+  tree.tree(
+    ([ 7 = b111 #encircle($1$)],
+      (
+        [ 3 = b011 #encircle($1$)],
+        ([ 1 = b001 #encircle($1$)]),
+        ([ 2 = b010 #encircle($1$)]),
+      ),
+      (
+        [ 6 = b110 #encircle($1$)],
+        ([ 4 = b100 #encircle($0$)]),
+        ([ 5 = b101 #encircle($1$)]),
+      ),
+    ))
+})]
+
+#figure(caption: "S")[
+  #align(left)[
+```lean
+structure S where
+  cycle : Nat
+  segment : Nat
 ```
+]]<def_S>
+
+#figure(caption: "Main goal")[
+#align(left)[
+```lean
+-- a sample code
+theorem S_is_luby : \all n >= 1, ( n : S).luby = Luby n := by
+    sorry
+```
+]]<t1>
