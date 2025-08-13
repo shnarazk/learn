@@ -7,6 +7,7 @@
   "Hiragino Mincho Pro"
 ))
 // #show raw: set text(font: "New Computer Modern Mono")
+#show raw: set text(font: "Monaspace Argon")
 #set heading(numbering: "1.")
 
 = Introduction, 導入のこと<p>
@@ -33,6 +34,8 @@ This is a #highlight(fill: green, extent: 5pt, text(fill:red, [`code`])) . This 
 See #ref(<p>, form: "normal"), #ref(<p>, form: "page")
 
 See #ref(<t1>, form: "normal"), #ref(<t1>, form: "page")
+
+$1, 1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8, 1, 1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8, 16, 1, dots.h.c $
 
 $
   L u b y_1(k >= 1) = cases(
@@ -107,20 +110,43 @@ $
     ))
 })]
 
-#figure(caption: "S")[
+#figure(caption: [The definition of Luby Status `S`])[
   #align(left)[
 ```lean
 structure S where
-  cycle : Nat
-  segment : Nat
+  segIx : Nat  -- 単調増加部分数列(segment)の何番目か(0-based)
+  locIx : Nat　-- 現在のsegment内で何番目(local index)か(0-based)
+
+def S.next (self : S) : S := ...
+def S.luby (self : S) : Nat = 2 ^ self.locIx
 ```
 ]]<def_S>
+
+=== segments
+
+#let segs = (
+  (1,), (1, 2), (1,), (1, 2, 4), (1,), (1, 2), (1,), (1, 2, 4, 8),
+  (1,), (1, 2), (1,), (1, 2, 4), (1,), (1, 2), (1,), (1, 2, 4, 8, 16)
+)
+// | 1 | 1 2 | 1 | 1 2 4 | 1 | 1 2 | 1 | 1 2 4 8 16 | 1 )
+#let even = true
+#for seg in segs {
+  let clr = if even { red } else { blue }
+  even = not even
+  text(fill: clr, seg.map(str).join(", ") + ", ")
+  // for l in seg {
+  //   text(fill: clr, str(l))
+  // }
+}
+
 
 #figure(caption: "Main goal")[
 #align(left)[
 ```lean
--- a sample code
-theorem S_is_luby : \all n >= 1, ( n : S).luby = Luby n := by
+-- the main goal
+theorem S_is_luby : ∀ n ≥ 1, (↑ n : S).luby = Luby n := by
     sorry
 ```
 ]]<t1>
+
+??
