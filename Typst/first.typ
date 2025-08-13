@@ -45,20 +45,26 @@ $
   )
 $
 
-```latex
-\begin{equation}
-  Luby_1(k \ge 1) =
-  \begin{cases}
-    2^{i-1}, & \text{if } k = 2^i - 1 \text{ for some } i \geq 1, \\
-    Luby_1\left(k - 2^{i-1} + 1\right), & \text{if } 2^{i-1} \leq k < 2^i - 1
-  \end{cases}
-\end{equation}
-```
+== An efficient implementation
 
-#diagram(cell-size: 15mm, $
-	G edge(f, ->) edge("d", pi, ->>) & im(f) \
-	G slash ker(f) edge("ur", tilde(f), "hook-->")
-$)
+#figure(caption: [Generating Luby state], gap: 16pt)[
+#diagram(cell-size: 15mm, {
+  node((1, 0), $n$)
+  edge((1, 0), (1, 2),  $O(log(n))$, label-pos: 25%, bend: -30deg, "-straight")
+  edge((1, 0), (1, 1), "<-->")
+  node((0, 1), $S_0$)
+  edge((0, 1), (1, 1), "~>")
+  node((2, 0), $n + 1$)
+  edge((2, 0), (2, 2), $O(log(n + 1))$, label-pos: 25%, bend: 30deg, "-straight")
+  edge((2, 0), (2, 1), "<-->")
+  node((1, 1), $S_n$)
+  edge((1, 1), (2, 1), $O(1)$, "->")
+  edge((1, 1), (1, 2), $O(1)$, label-side: left, "-straight")
+  node((2, 1), $S_(n + 1)$)
+  edge((2, 1), (2, 2), $O(1)$, "-straight")
+	node((1, 2), $L u b y(n)$)
+	node((2, 2), $L u b y(n + 1)$)
+})]
 
 #canvas({
   import draw: *
@@ -78,3 +84,33 @@ $)
       ([Expression #encircle($4$)], `Int(4)`),
     ))
 })
+
+```latex
+\begin{tikzcd}
+n \arrow[ddr, bend right, "O(\log(n))" description]
+% \arrow[dr, dotted, "{(x,y)}" description]
+& S_{1} \arrow[d, "O(1)^{n-1}"]
+&
+& n + 1
+% \arrow[dl, bend left, "O(1)"]
+\arrow[ddl, bend left, "O(\log(n))" description]
+\\
+& S_{n} \arrow[r, "O(1)"] \arrow[d, "O(1)"]
+& S_{n + 1} \arrow[d, "O(1)"]
+&
+\\
+& Luby(n)
+& Luby(n+1)
+&
+\end{tikzcd}
+```
+
+```latex
+\begin{equation}
+  Luby_1(k \ge 1) =
+  \begin{cases}
+    2^{i-1}, & \text{if } k = 2^i - 1 \text{ for some } i \geq 1, \\
+    Luby_1\left(k - 2^{i-1} + 1\right), & \text{if } 2^{i-1} \leq k < 2^i - 1
+  \end{cases}
+\end{equation}
+```
