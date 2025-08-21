@@ -3,18 +3,18 @@
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
 #set par(justify: true)
-#set text(font: (
+#set text(
+  font: (
   (name: "New Computer Modern", covers: "latin-in-cjk"),
-  "Hiragino Mincho Pro"
-))
-#show raw: set text(font: "Monaspace Neon")
+  "Hiragino Mincho Pro"),
+  size: 12pt)
+#show raw: set text(font: "Monaspace Neon", size: 16pt)
 #set heading(numbering: "1.")
 #show: simple-theme.with(aspect-ratio: "16-9")
 #show raw: it => {
   if it.block [ #block(width: 98%, inset: 8pt, radius: 2pt, fill: luma(245), it) ] else [ #it ]
 }
-#show math.equation: set text(font: "Euler Math")
-
+#show math.equation: set text(font: "Euler Math", size: 20pt)
 // Luby implementation
 #let allone(n) = {
   if n < 2 { n == 1 }
@@ -30,47 +30,47 @@
 
 #let title = [An Online Algorithm for Luby Sequence]
 
-#align(center, text(17pt)[*#title*])
+#align(center, text(32pt)[*#title*])
 
 #grid(columns: (1fr),align(center)[`shnarazk` and gen. AIs])
 #grid(columns: (1fr),align(center)[2025-0X-XX])
 
 = Luby sequence
 
-The Luby sequence is a sequence of natural numbers defined recursively.
-It is used in randomized algorithms and has applications in computer science.
-However, outside of Boolean-satisfiability solvers, its applications
-appear to be rare. It starts like this:
+//The Luby sequence is a sequence of natural numbers defined recursively.
+//It is used in randomized algorithms and has applications in computer science.
+//However, outside of Boolean-satisfiability solvers, its applications appear to be rare. It starts like this:
 
 $ #range(1, 32).map(Luby).map(str).join(", ") , dots.h.c $
 
-== Definition
+// == Definition
 
-In the paper `Luby1993`, the sequence is defined as a recursive function:
+// In the paper `Luby1993`, the sequence is defined as a recursive function:
 
-#set math.equation(numbering: "(1)")
+// #set math.equation(numbering: "(1)")
 $
   L u b y_1(k >= 1) = cases(
     2^(i-1) & " if" k = 2^i - 1 " for "exists i >= 1,
     L u b y_1(k - 2^(i-1) + 1) & " if " 2^(i-1) <= k < 2^i - 1
   )
-$<def_1>
-#set math.equation(numbering: none)
+$// <def_1>
+// #set math.equation(numbering: none)
+
+// == Definition 2
 
 // By introducing `Nat.size` operator which returns the length of bit vector representing a natural number `Nat`, we can eliminate $i$ and rewrite the definition as
-#set math.equation(numbering: "(1)")
+//#set math.equation(numbering: "(1)")
 $
   L u b y_1(k >= 1) = cases(
     2^(k".size" - 1) & " if" k = 2^(k".size") - 1,
     L u b y_1(k - (2^(k".size"-1) - 1)). & " otherwise"
   )
-$<def_2>
-#set math.equation(numbering: none)
+$ // <def_2>
+// #set math.equation(numbering: none)
 
-== On number triangle
+== interpretation of the natural number triangle
 // We can illustrate its recursive property as transitions on a triangle of natural numbers greater than zero.
 
-#figure(caption: [An interpretation of the natural number triangle], gap: 16pt)[
 #canvas({
   import draw: *
   let encircle(i) = {
@@ -95,9 +95,9 @@ $<def_2>
         ([ $13 arrow_(- 7) 6$ ],
           ([ $11 arrow_(- 7) 4$ ]),
           ([ $12 arrow_(- 7) 5$ ]), ), ), ),)
-})]
+})
 
-Here are some examples.
+// Here are some examples.
 
 $
   L u b y_1(14) & arrow L u b y_1(7) = 4 \
@@ -105,16 +105,15 @@ $
   L u b y_1(9) & arrow L u b y_1(2) arrow L u b y_1(1) = 1
 $
 
-- At the top of a tree or *_envelope_* which contains the target number as a node, the recursion stops.
-- Otherwise, the right tree is folded to the left tree. By a simple calculation, we find that any number is placed to the top of a tree or in the right subtree.
-- The worst recursion depth of $L u b y (N)$ would be $O(log(N))$.
+// - At the top of a tree or *_envelope_* which contains the target number as a node, the recursion stops.
+// - Otherwise, the right tree is folded to the left tree. By a simple calculation, we find that any number is placed to the top of a tree or in the right subtree.
+//- The worst recursion depth of $L u b y (N)$ would be $O(log(N))$.
 
 == Another interpretation using a binary tree
 
-Or you can map the function to a traversal on a binary graph.
-The function has a strong relation to an operation on the binary representation of a natural number.
+// Or you can map the function to a traversal on a binary graph.
+// The function has a strong relation to an operation on the binary representation of a natural number.
 
-#figure(caption: [A binary tree representing $"Nat" > 0$], gap: 16pt)[
 #canvas({
   import draw: *
   let encircle(i) = {
@@ -146,11 +145,11 @@ The function has a strong relation to an operation on the binary representation 
         ( [ 11[01] ],
           ([$6 arrow_(-3) 3$]),
           ([#encircle($7$)]), ), ) ))
-})]
+})
 
-= An efficient implementation
+= An online algorithm
 
-Now we introduce a segmentation on the Luby sequence.
+Segmentation on the Luby sequence
 
 == Segments
 
@@ -167,9 +166,10 @@ $
 }
 $
 
-As you see, the Luby value is equal to two raised to the power of the local index in a segment. So we can define the Luby sequence in another form.
+// As you see, the Luby value is equal to two raised to the power of the local index in a segment. So we can define the Luby sequence in another form.
 
-#figure(caption: [Local index and segment index on the natural number triangle], gap: 16pt)[
+== indices on the natural number triangle
+
 #canvas({
   import draw: *
 
@@ -190,22 +190,24 @@ As you see, the Luby value is equal to two raised to the power of the local inde
         ( text(fill: blue, [$(8, 1)$]),
           (text(fill: red, [$(7, 0) \#11$])),
           (text(fill: blue, [$(8, 0) \#12$])), ), )) )
-})]
+})
 
-== Redefine the Luby sequence as a linear recursive function
+== Redefine as a linear recursive function
 
-+ At the start of a segment, the Luby value is one
-+ Otherwise, the Luby value is twice the previous value
+// + At the start of a segment, the Luby value is one
+// + Otherwise, the Luby value is twice the previous value
 
-So we have the following equation.
+// So we have the following equation.
 
-#set math.equation(numbering: "(1)")
+// #set math.equation(numbering: "(1)")
 $
   L u b y_1(k >= 1) = cases(
     1\, & " if" k "is the beginning of a segment",
     2 times L u b y_1(k - 1)\, & " otherwise" )
 $<def_2>
-#set math.equation(numbering: none)
+// #set math.equation(numbering: none)
+
+// == Definition 3
 
 And segments start at the following $k$:
 
@@ -215,12 +217,10 @@ $
 $
 where $a_i$ is 0 or 1.
 
-This means any $2^i - 1 > 0$ is not the beginning of a segment.
+// This means any $2^i - 1 > 0$ is not the beginning of a segment.
 
 == Luby state
 
-#figure(caption: [The definition of Luby State])[
-  #align(left)[
 ```lean
 structure State where
   segIx : Nat  -- 単調増加部分数列(segment)の何番目か(1-based)
@@ -231,9 +231,10 @@ def State.next (s : State) : State := ...
 /-- O(1) -/
 def State.luby (s : State) : Nat := 2 ^ s.locIx
 ```
-]]<def_S>
 
-#figure(caption: [Generating the Luby state], gap: 16pt)[
+== Goal
+
+#align(center)[
 #diagram(cell-size: 12mm, {
   node((1, 0), $n$)
   edge((1, 0), (1, 2),  $O(log(n))$, label-pos: 25%, bend: -30deg, "-straight", stroke: red)
@@ -254,13 +255,13 @@ def State.luby (s : State) : Nat := 2 ^ s.locIx
 
 = Equivalence of $L u b y$ and Luby state
 
-#figure(caption: "Main goal")[
+== goal
 #align(left)[
 ```lean
 -- the main goal
 theorem State_is_luby : ∀ n ≥ 1, (↑ n : State).luby = Luby n := by
     sorry
 ```
-]]<t1>
+]
 
-#bibliography("bib.yml")
+// #bibliography("bib.yml")
