@@ -8,7 +8,7 @@ import Mathlib.Data.Matrix.Basic
 /- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Matrix/ConjTranspose.lean
 - 随伴行列
  -/
-import Mathlib.Data.Matrix.ConjTranspose
+-- import Mathlib.Data.Matrix.ConjTranspose
 
 /- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/Basis.lean
 - ベクトルと行列の関係など

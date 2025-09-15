@@ -92,30 +92,20 @@ lemma range_add_one_eq_sup_self : Finset.range (n + 1) = Finset.range n ⊔ {n} 
   refine Finset.ext_iff.mpr ?_
   intro k
   constructor
-  {
-    intro kn1
+  · intro kn1
     by_cases kn : k ∈ range n
-    { rw [sup_eq_union] ; exact mem_union_left {n} kn }
-    {
-      simp [range] at kn
+    · rw [sup_eq_union] ; exact mem_union_left {n} kn
+    · simp [range] at kn
       simp [range] at kn1
       rcases kn1 with a|b
-      { simp ; right ; exact a }
-      { contrapose! b ; exact kn }
-    }
-  }
-  {
-    intro H
+      · simp ; left ; exact a
+      · contrapose! b ; exact kn
+  · intro H
+    refine mem_range.mpr ?_
     simp at H
-    simp
     rcases H with A | B
-    {
-       exact Nat.lt_add_right 1 A
-    }
-    {
-      rw [B] ; exact lt_add_one n
-    }
-  }
+    · simp [A]
+    · exact Nat.lt_add_right 1 B
 
 lemma range_sup_eq_add (f : Nat → Rat) :
     ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
@@ -192,7 +182,7 @@ lemma L_is_Leibniz₂ : L (2 * n + 1) = leibniz₂R n := by
           := by rw [L_rec (2 * (n0 + 1))] ; norm_num
         _ = L (2 * (n0 + 1)) + 4 * (-1 : Rat) ^ (2 * (n0 + 1) + 1) / (4 * n0 + 7) := by group
         _ = L (2 * (n0 + 1)) + 4 * (((-1 : Rat) ^ (2 * (n0 + 1)) * ((-1 : Rat) ^ 1))) / (4 * n0 + 7)
-          := by rw [@npow_add]
+          := by rw [@pow_add]
         _ = L (2 * (n0 + 1)) + 4 * (1 * (-1 : Rat) ^ 1) / (4 * n0 + 7)
           := by
             have e : Even (2 * (n0 + 1)) := by exact even_two_mul (n0 + 1)
