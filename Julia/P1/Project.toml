@@ -1,0 +1,10 @@
+name = "P1"
+uuid = "fb1517e4-c226-4f95-971e-c5f9e6b90331"
+authors = ["Narazaki, Shuji <shujinarazaki@protonmail.com>"]
+version = "0.1.0"
+
+[deps]
+ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
+
+[compat]
+ParserCombinator = "2.2.1"

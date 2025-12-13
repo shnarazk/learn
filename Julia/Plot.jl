@@ -1,0 +1,42 @@
+#!/usr/bin/env julia
+
+using Plots
+
+"""
+Simple example: plot sin(x) over [0, 2π] and save to `sine.png` next to this script.
+
+Run with:
+    julia Plot.jl
+"""
+function main()
+    xs = range(0, 2π; length = 400)
+    ys = sin.(xs)
+
+    p = plot(
+        xs,
+        ys;
+        label = "sin(x)",
+        xlabel = "x (radians)",
+        ylabel = "y",
+        title = "Sine Wave",
+        legend = :topright,
+        linecolor = :blue,
+        linewidth = 3,
+        grid = :on,
+    )
+
+    scatter!(
+        p,
+        [π / 2, 3π / 2],
+        sin.([π / 2, 3π / 2]);
+        label = "peaks/troughs",
+        marker = :circle,
+        markersize = 5,
+    )
+
+    savepath = joinpath(@__DIR__, "sine.png")
+    savefig(p, savepath)
+    println("Saved plot to ", savepath)
+end
+
+main()
