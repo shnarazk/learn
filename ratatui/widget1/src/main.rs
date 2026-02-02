@@ -7,7 +7,8 @@ use {
         prelude::*,
         style::Color,
         symbols::border,
-        widgets::{block::*, *},
+        widgets::*,
+        // widgets::{block::*, *},
     },
     std::time::{Duration, Instant},
 };
@@ -122,7 +123,7 @@ impl App {
 }
 
 impl App {
-    fn bar_chart(&self) -> BarChart {
+    fn bar_chart(&self) -> BarChart<'_> {
         let b = vec![
             ("data0", 2),
             ("data1", 4),
@@ -188,7 +189,7 @@ impl Widget for &App {
     where
         Self: Sized,
     {
-        let _title = Title::from(" Counter App Tutorial ".bold());
+        // let _title = Title::from(" Counter App Tutorial ".bold());
         let instructions = Line::from(vec![
             " Decrement ".into(),
             "<Left>".blue().bold(),
