@@ -4,11 +4,11 @@ open Nat Finset Real
 -- the most efficient vaviant
 def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
   match n with
-  | zero => sum + 8 / 3
+  | zero    => sum + 8 / 3
   | succ n' => leibniz₁ n' (k - 4) (sum + (8 / ((k + 1) * (k + 3))))
 
 def leibniz₂ : Nat → Float
-  | zero => 8 / 3
+  | zero    => 8 / 3
   | succ n' =>
       let k := (succ n').toFloat * 4
       leibniz₂ n' + 8 / ((k + 1) * (k + 3))
@@ -41,30 +41,15 @@ def leibniz₂R : Nat → Rat
       let k : Rat := (succ n') * 4
       leibniz₂R n' + 8 / ((k + 1) * (k + 3))
 
--- s#eval (leibniz₂R 3).toFloat
+-- #eval (leibniz₂R 3).toFloat
 
 lemma leibniz₁R_sum (n : Nat) :
     ∀ sum : Rat, leibniz₁R n (4 * n) sum = leibniz₁R n (4 * n) 0 + sum := by
   induction' n with n0 ih
   { intro sum ; simp [leibniz₁R] ; exact Rat.add_comm sum (8 / 3) }
-  {
-    intro sum
-    simp [leibniz₁R]
-    calc
-      leibniz₁R n0 (4 * (↑n0 + 1) - 4) (sum + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) = leibniz₁R n0 (4 * ↑n0 + 4 * 1 - 4) (sum + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) := by rw [Rat.mul_add]
-      _ = leibniz₁R n0 (4 * ↑n0 + 4 - 4) (sum + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) := by rw [Rat.mul_one]
-      _ = leibniz₁R n0 (4 * ↑n0) (sum + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) := by simp
-      _ = leibniz₁R n0 (4 * ↑n0) 0 + (sum + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) := by rw [ih]
-      _ = leibniz₁R n0 (4 * ↑n0) 0 + sum + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3)) := by rw [Rat.add_assoc]
-      _ = leibniz₁R n0 (4 * ↑n0) 0 + 8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3)) + sum := by rw [add_right_comm]
-      _ = leibniz₁R n0 (4 * ↑n0) (8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) + sum := by rw [←ih]
-      _ = leibniz₁R n0 (4 * ↑n0 + 0) (8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) + sum := by rw [Rat.add_zero]
-      _ = leibniz₁R n0 (4 * ↑n0 + 4 - 4) (8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) + sum := by simp
-       _ = leibniz₁R n0 (4 * (↑n0 + 1) - 4) (8 / ((4 * (↑n0 + 1) + 1) * (4 * (↑n0 + 1) + 3))) + sum := by rw [@_root_.mul_add_one]
-  }
+  { intro sum ; simp [leibniz₁R] ; grind }
 
-lemma they_are_identical (n : Nat) :
-    leibniz₁R n (4 * n) 0 = leibniz₂R n := by
+lemma they_are_identical (n : Nat) : leibniz₁R n (4 * n) 0 = leibniz₂R n := by
   induction' n with n0 ih
   { dsimp [leibniz₁R, leibniz₂R] ; norm_num }
   {
@@ -81,12 +66,11 @@ lemma they_are_identical (n : Nat) :
   }
 
 #check Fin 10
-#eval ∑ x ∈ Finset.Iic 1, x
+#guard ∑ x ∈ Finset.Iic 1, x == 1
 
 variable (n : Nat)
 
-lemma sum_def (f : Nat → Rat) : ∑ i ∈ {n}, f i = f n := by
-  exact sum_singleton f n
+lemma sum_def (f : Nat → Rat) : ∑ i ∈ {n}, f i = f n := by exact sum_singleton f n
 
 lemma range_add_one_eq_sup_self : Finset.range (n + 1) = Finset.range n ⊔ {n} := by
   refine Finset.ext_iff.mpr ?_
@@ -108,13 +92,8 @@ lemma range_add_one_eq_sup_self : Finset.range (n + 1) = Finset.range n ⊔ {n} 
     · exact Nat.lt_add_right 1 B
 
 lemma range_sup_eq_add (f : Nat → Rat) :
-    ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
-  calc
-    ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n ∪ {n}, f i
-      := by rfl
-    _ = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
-      have : Disjoint (range n) {n} := by simp
-      exact sum_union this
+   ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
+  grind
 
 /-
 https://github.com/leanprover-community/mathlib4/blob/6a2ce9480a312b180ac91c687d6686c6479c398b/Mathlib/Data/Real/Pi/Leibniz.lean#L17
@@ -161,10 +140,7 @@ lemma l₂_rec : leibniz₂R (n + 1) = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 *
     _ = leibniz₂R n + 4 * ((4 * (n + 1) + 3) - (4 * (n + 1) + 1))/ ((4 * (n + 1) + 1) * (4 * (n + 1) + 3)) := by group
     _ = leibniz₂R n + 4 * ((4 * (n + 1) + 3) / ((4 * (n + 1) + 1) * (4 * (n + 1) + 3)) - (4 * (n + 1) + 1) / ((4 * (n + 1) + 1) * (4 * (n + 1) + 3))) := by group
     _ = leibniz₂R n + 4 * (1 / ((4 * (n + 1) + 1) * 1) - 1 / (1 * (4 * (n + 1) + 3))) :=
-      by
-        rw [div_mul_cancel_left₀ (non0 1 rfl), Rat.mul_comm (4 * (↑n + 1) + 1) _, div_mul_cancel_left₀ (non0 3 rfl)]
-        rw [inv_eq_one_div]
-        group
+      by grind
     _ = leibniz₂R n + 4 * (1 / (4 * (n + 1) + 1) - 1 / (4 * (n + 1) + 3)) := by group
     _ = leibniz₂R n + 4 * 1 / (4 * (n + 1) + 1) - 4 * 1 / (4 * (n + 1) + 3) := by group
     _ = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 * 1 / (4 * n + 7) := by group
@@ -214,8 +190,7 @@ lemma L_is_Leibniz₂ : L (2 * n + 1) = leibniz₂R n := by
         _ = L (2 * n0 + 1) + c1 - (4 * 1 / (4 * n0 + 7)) := by exact rfl
         _ = L (2 * n0 + 1) + c1 - (- c2) := by rw [C2']
         _ = L (2 * n0 + 1) + c1 + c2 := by exact sub_neg_eq_add (L (2 * n0 + 1) + c1) c2
-        _ = leibniz₂R n0 + c1 + c2 := by
-          exact congrFun (congrArg HAdd.hAdd (congrFun (congrArg HAdd.hAdd ih) c1)) c2
+        _ = leibniz₂R n0 + c1 + c2 := by grind
     simp only [L', l₂']
     rw [ih]
   }
