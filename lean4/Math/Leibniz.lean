@@ -69,7 +69,7 @@ lemma they_are_identical (n : Nat) :
   { dsimp [leibniz₁R, leibniz₂R] ; norm_num }
   {
     dsimp [leibniz₁R, leibniz₂R]
-    have eq1 : ↑(n0 + 1) = ↑n0 + (1 : Rat) := by exact Mathlib.Tactic.Ring.inv_add rfl rfl
+    have eq1 : ↑(n0 + 1) = ↑n0 + (1 : Rat) := by exact cast_add_one n0
     calc
       leibniz₁R n0 (4 * ↑(n0 + 1) - 4) (0 + 8 / ((4 * ↑(n0 + 1) + 1) * (4 * ↑(n0 + 1) + 3))) = leibniz₁R n0 (4 * (↑n0 + 1) - 4) (0 + 8 / ((4 * ↑(n0 + 1) + 1) * (4 * ↑(n0 + 1) + 3))) := by rw [eq1]
       _ = leibniz₁R n0 (4 * ↑n0) (0 + 8 / ((4 * ↑(n0 + 1) + 1) * (4 * ↑(n0 + 1) + 3))) := by simp [Rat.mul_add]
@@ -128,7 +128,7 @@ def L : Rat := 4 * ∑ i ∈ Finset.range (n + 1), ((-1 : Rat) ^ i / (2 * i + 1 
 -- #eval L 1
 
 lemma nat_to_rad : (↑(n + 1) : Rat) = ((↑n + ↑1) : Rat) := by
-  exact Mathlib.Tactic.Ring.inv_add rfl rfl
+  exact cast_add_one n
 
 lemma L_rec : L (n + 1) = L n + 4 * (-1 : Rat) ^ (n + 1) / (2 * n + 3) := by
   calc
