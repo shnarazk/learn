@@ -1,4 +1,7 @@
-import Mathlib.Tactic
+module
+
+public import Mathlib.Tactic
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-
 - Field(体): 加法と乗法を持ち、以下を満たすもの
@@ -41,12 +44,15 @@ noncomputable example : Module ℝ (Fin n → ℝ) := inferInstance
 
 section sec_1_1
 
+/-- 結合法則 -/
 example (a b c : Fin n → ℝ) : (a + b) + c = a + (b + c) := by
   exact add_assoc a b c
 
+/-- 交換法則 -/
 example (a b : Fin n → ℝ) : a + b = b + a := by
   exact add_comm a b
 
+/-- ゼロ元 -/
 example (a : Fin n → ℝ) : a + 0 = a := by
   exact add_zero a
 
@@ -54,12 +60,15 @@ end sec_1_1
 
 section sec_1_2
 
+/-- 右からの分配法則 -/
 example (c : ℝ) (a b : Fin n → ℝ) : c • (a + b) = c • a + c • b := by
   exact smul_add c a b
 
+/-- 左からの分配法則 -/
 example (c d : ℝ) (a : Fin n → ℝ) : (c + d) • a = c • a + d • a := by
   exact add_smul c d a
 
+/-- 結合法則 -/
 example (c d : ℝ) (a : Fin n → ℝ) : (c * d) • a = c • (d • a) := by
   exact mul_smul c d a
 
