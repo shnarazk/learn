@@ -17,7 +17,7 @@ open Verso.Doc.Elab
 /-- コメント化(非表示) directive -/
 @[directive]
 public meta def comment : DirectiveExpanderOf Unit
-  | (), _ => do `(Verso.Doc.Block.concat #[])
+  | (), _ => do `(Verso.Doc.Block.empty)
 
 end LocalExtension
 
