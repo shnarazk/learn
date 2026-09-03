@@ -1,3 +1,5 @@
-import «old».Basic
-import «old».Methods
-import «old».NumberGame
+module
+
+public import «old».Basic
+public import «old».Methods
+public import «old».NumberGame

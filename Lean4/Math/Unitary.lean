@@ -1,9 +1,11 @@
-import Mathlib.Tactic
+module
+
+public import Mathlib.Tactic
 /-
 https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Matrix/Basic.lean
  - 基本属性、転置など
 -/
-import Mathlib.Data.Matrix.Basic
+public import Mathlib.Data.Matrix.Basic
 
 /- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Matrix/ConjTranspose.lean
 - 随伴行列
@@ -13,26 +15,26 @@ import Mathlib.Data.Matrix.Basic
 /- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/Basis.lean
 - ベクトルと行列の関係など
 -/
-import Mathlib.LinearAlgebra.Matrix.Basis
+public import Mathlib.LinearAlgebra.Matrix.Basis
 
 /- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean
 - 逆行列A⁻¹の定義
 -/
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /- https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/LinearAlgebra/Matrix/Determinant/Basic.lean
 - 行列式の定義
 -/
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 -- 存在していない
 -- import Mathlib.LinearAlgebra.Matrix.Unitary
 
 /- ユニタリ群の定義 -/
-import Mathlib.LinearAlgebra.UnitaryGroup
+public import Mathlib.LinearAlgebra.UnitaryGroup
 
 /- Real as Cauchy sequence -/
-import Mathlib.Data.Real.Basic
+public import Mathlib.Data.Real.Basic
 
 -- open Nat Finset Real
 -- open Matrix

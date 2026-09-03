@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Nat.Defs
-import Mathlib.Tactic
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Nat.Defs
+public import Mathlib.Tactic
 open BigOperators
 open Nat
 

@@ -1,1 +1,3 @@
-import Program.Hash
+module
+
+public import Program.Hash
