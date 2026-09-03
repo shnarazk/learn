@@ -3,7 +3,10 @@ module
 public import Mathlib.Tactic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
-/-
+variable {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V]
+
+/-!
+線形代数の基礎
 - Field(体): 加法と乗法を持ち、以下を満たすもの
     - 加法についての閉包, 単位元、逆元
     - 乗法における単位減、逆元
@@ -16,11 +19,10 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
     - K • V → V が以下を満たす: Rに関する分配法則、Vに関する分配法則と結合法則, Rの単位元は(•)の単位元
     ※ 環に乗法単位元、乗法逆元、乗法交換法則を加えたものが体
 -/
-variable {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V]
-
 
 -- 齋藤正彦、線形代数入門、東京大学出版会が手元にあるので、合わせてみたい　--
-/-
+
+/-!
 - AddZeroClass V:
 - DistribSMul K V:
 -/
@@ -37,7 +39,7 @@ section RnAsLS1
 
 variable {n : ℕ}
 
--- ℝⁿ が線型空間であることを証明するのは簡単 --
+/-- ℝⁿ が線型空間であることを証明するのは簡単 -/
 noncomputable example : Field ℝ := inferInstance
 noncomputable example : AddCommGroup (Fin n → ℝ) := inferInstance
 noncomputable example : Module ℝ (Fin n → ℝ) := inferInstance

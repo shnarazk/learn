@@ -1,11 +1,13 @@
-import Mathlib.Tactic
-import Mathlib.Data.Nat.Defs
+module
+
+public import Mathlib.Tactic
+public import Mathlib.Data.Nat.Basic
 
 namespace withFin
 
 variable {size : Nat} [nonZeroSize: NeZero size]
 
-def toDim2 (n : Nat) : Nat × Fin size := (n / size, Fin.ofNat' size (n % size))
+def toDim2 (n : Nat) : Nat × Fin size := (n / size, Fin.ofNat size (n % size))
 
 example : NeZero 4 := by exact Nat.instNeZeroSucc
 example : @toDim2 4 (by exact Nat.instNeZeroSucc) 10 = (2, 2) := by

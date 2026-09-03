@@ -1,0 +1,14 @@
+exclude =  ["Combinator", "GenerateJournal", "Journal", "Main", "Program", "old"]
+docstrings_as_text = true
+landing_page = "Math"
+
+[order_children]
+"Math" = [
+  "Math.LinearAlgebra",
+  "Math.Fib",
+  "Math.Leibniz",
+  "Math.Luby",
+  "Math.Unitary"]
+
+[modules."Math.LinearAlgebra"]
+title = "線形代数1"

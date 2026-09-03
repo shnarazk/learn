@@ -1,4 +1,4 @@
-name = "Leibniz"
+name = "LearnWithLean"
 defaultTargets = ["Math"]
 # defaultTargets = ["leibniz"]
 
@@ -6,7 +6,7 @@ defaultTargets = ["Math"]
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
-weak.verso.code.warnLineLength = 100
+# weak.verso.code.warnLineLength = 100
 
 [[require]]
 name = "mathlib"
@@ -26,13 +26,10 @@ name = "Combinator"
 name = "Math"
 
 [[lean_lib]]
-name = "Misc"
-
-[[lean_lib]]
 name = "Program"
 
-[[lean_lib]]
-name = "old"
+# [[lean_lib]]
+# name = "old"
 
 [[lean_exe]]
 name = "leibniz"

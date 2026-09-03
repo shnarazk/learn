@@ -1,3 +1,5 @@
+module
+
 structure Foo where
   -- mk ::
   val: Nat

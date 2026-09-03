@@ -1,9 +1,10 @@
 module
 
 public import Mathlib.Tactic
+
 open Nat Finset Real
 
--- the most efficient vaviant
+/-- the most efficient vaviant -/
 public def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
   match n with
   | zero    => sum + 8 / 3
@@ -26,7 +27,7 @@ public def leibnizIO (n : Nat) : IO Float := do return leibniz n
 
 #eval leibniz 1000
 
-/-
+/-!
 -- This is the FUN part only on Lean4
 -/
 namespace this_is_pi_approximation
@@ -97,7 +98,7 @@ lemma range_sup_eq_add (f : Nat → Rat) :
    ∑ i ∈ Finset.range n ⊔ {n}, f i = ∑ i ∈ Finset.range n, f i + ∑ i ∈ {n}, f i := by
   grind
 
-/-
+/-!
 https://github.com/leanprover-community/mathlib4/blob/6a2ce9480a312b180ac91c687d6686c6479c398b/Mathlib/Data/Real/Pi/Leibniz.lean#L17
 上記のリンク先で以下のLが円周率に収束することが示されているが定理には名前があっても
 数列に名前がついてないのでLと等しいことが言えない。見比べて同じと言うしかない。
@@ -149,9 +150,8 @@ lemma l₂_rec : leibniz₂R (n + 1) = leibniz₂R n + 4 * 1 / (4 * n + 5) - 4 *
 
 lemma L_is_Leibniz₂ : L (2 * n + 1) = leibniz₂R n := by
   induction' n with n0 ih
-  { simp [L, leibniz₂R] ; norm_num }
-  {
-    set c1 : Rat := 4 * 1  / (4 * n0 + 5) with ← C1
+  · simp [L, leibniz₂R] ; norm_num
+  · set c1 : Rat := 4 * 1  / (4 * n0 + 5) with ← C1
     set c2 : Rat := 4 * -1 / (4 * n0 + 7) with ← C2
     have L' : L (2 * (n0 + 1) + 1) = L (2 * n0 + 1) + c1 + c2 := by
       calc
@@ -195,4 +195,3 @@ lemma L_is_Leibniz₂ : L (2 * n + 1) = leibniz₂R n := by
         _ = leibniz₂R n0 + c1 + c2 := by grind
     simp only [L', l₂']
     rw [ih]
-  }

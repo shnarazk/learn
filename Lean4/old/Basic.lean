@@ -1,5 +1,7 @@
+module
+
 -- import Mathlib.Data.Nat.Basic
-import Lean
+public import Lean
 
 open Nat
 open USize

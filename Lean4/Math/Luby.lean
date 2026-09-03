@@ -5,7 +5,7 @@ public import Mathlib.Data.Nat.Basic
 
 namespace Luby
 
--- Checks if (k + 1) is one less than a power of two
+/-- Checks if (k + 1) is one less than a power of two -/
 public def isSpecial (k : Nat) : Bool :=
   let n := k + 1
   let m := n + 1
@@ -13,7 +13,7 @@ public def isSpecial (k : Nat) : Bool :=
 
 #eval isSpecial 0  -- true
 
--- Returns the largest power of 2 less than or equal to (k + 1)
+/-- Returns the largest power of 2 less than or equal to (k + 1) -/
 public partial def largestPowerOf2LE (k : Nat) : Nat :=
   let rec loop (i acc : Nat) :=
     if 2^i > k + 1 then acc else loop (i + 1) (2^i)
@@ -21,7 +21,7 @@ public partial def largestPowerOf2LE (k : Nat) : Nat :=
 
 #eval List.map largestPowerOf2LE (List.range 16)  --
 
--- Well-founded version of the Luby sequence
+/-- Well-founded version of the Luby sequence -/
 public partial def luby : Nat → Nat
   | 0 => 1
   | k =>
@@ -32,6 +32,6 @@ public partial def luby : Nat → Nat
 
 end Luby
 
--- 🧪 Test output
+/-! 🧪 Test output -/
 #eval List.map Luby.luby (List.range 16)
 -- Output: [1, 1, 2, 1, 1, 2, 4, 1, 1, 2, 1, 1, 2, 4, 8, 1]

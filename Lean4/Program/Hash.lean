@@ -1,7 +1,9 @@
-import Mathlib.Tactic
-import Std.Data.HashMap
-import Std.Data.HashMap.Lemmas
-import Std.Data.HashSet
+module
+
+public import Mathlib.Tactic
+public import Std.Data.HashMap
+public import Std.Data.HashMap.Lemmas
+public import Std.Data.HashSet
 
 open Nat Finset Real
 open Std

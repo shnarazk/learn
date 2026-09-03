@@ -1,4 +1,6 @@
-import Mathlib.Data.PNat.Basic
+module
+
+public import Mathlib.Data.PNat.Basic
 #eval "Hello, World!"
 #eval Lean.versionString
 
