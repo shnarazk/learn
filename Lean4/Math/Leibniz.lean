@@ -1,13 +1,15 @@
-import Mathlib.Tactic
+module
+
+public import Mathlib.Tactic
 open Nat Finset Real
 
 -- the most efficient vaviant
-def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
+public def leibniz₁ (n : Nat) (k: Float) (sum : Float) : Float :=
   match n with
   | zero    => sum + 8 / 3
   | succ n' => leibniz₁ n' (k - 4) (sum + (8 / ((k + 1) * (k + 3))))
 
-def leibniz₂ : Nat → Float
+public def leibniz₂ : Nat → Float
   | zero    => 8 / 3
   | succ n' =>
       let k := (succ n').toFloat * 4
@@ -16,11 +18,11 @@ def leibniz₂ : Nat → Float
 -- def leibniz₃ := (fun k => ∑ i ∈ range k, (-1 : ℝ) ^ i / (2 * i + 1))
 -- partial def leibniz₃ (k : Nat) : Real := ∑ i ∈ range k, (-1 : Real) ^ i.toReal / (2 * i.toReal + 1)
 
-def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4) 0
+public def leibniz (n : Nat) : Float := leibniz₁ n (n.toFloat * 4) 0
 -- def leibniz (n : Nat) : Float := leibniz₂ n 0.0
 -- def leibniz (n : Nat) : Float := leibniz₃ (2 * n) |>.toFloat
 
-def leibnizIO (n : Nat) : IO Float := do return leibniz n
+public def leibnizIO (n : Nat) : IO Float := do return leibniz n
 
 #eval leibniz 1000
 
