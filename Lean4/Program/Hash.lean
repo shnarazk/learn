@@ -1,11 +1,9 @@
 module
 
-public import Mathlib.Tactic
 public import Std.Data.HashMap
 public import Std.Data.HashMap.Lemmas
 public import Std.Data.HashSet
 
-open Nat Finset Real
 open Std
 
 namespace Hash
@@ -15,7 +13,7 @@ universe u v
 variable {α : Type u} {β : Type v} {_ : BEq α} {_ : Hashable α}
 variable {γ : Type v} [Inhabited γ]
 
-def base : HashMap ℕ ℕ := HashMap.ofList [(0, 10), (1, 20)]
+def base : HashMap Nat Nat := HashMap.ofList [(0, 10), (1, 20)]
 
 theorem base_hash_has_zero : 0 ∈ base := by
   rw [base]
@@ -58,30 +56,29 @@ theorem base_hash_is_bounded : ∀ k ∈ base, k < base.size := by
     simp [h]
     have : k ∈ base → k ≤ 1 := by
       have : ∀ k > 1, k ∉ base := by exact base_hash_has_only_them
-      contrapose
-      simp
-      exact fun a ↦ this k a
+      exact fun a ↦ (fun {a b} ↦ Nat.not_lt.mp) fun a ↦ this k a h
     rcases this h with h₁
     exact h₁
   rcases this h with h₀
   omega
 
-theorem nonempty_hash {h : HashMap ℕ β} : h.contains 0 → ¬h.isEmpty := by
+theorem nonempty_hash {h : HashMap Nat β} : h.contains 0 → ¬h.isEmpty := by
   rintro h₁
-  have : ∃ a : ℕ, a ∈ h := by
+  have : ∃ a : Nat, a ∈ h := by
     exact Exists.intro 0 h₁
   have : h.isEmpty = false := by
     exact HashMap.isEmpty_eq_false_iff_exists_mem.mpr this
   exact ne_true_of_eq_false this
 
-theorem nonempty_hash_size {h : HashMap ℕ β} : ¬h.isEmpty → NeZero h.size := by
-  have h₁ : h.isEmpty = (h.size == 0) := by exact rfl
-  have h₃ : ¬NeZero h.size ↔ h.size = 0 := by exact not_neZero
-  contrapose!
-  simp [h₃]
-  simp [h₁]
+theorem nonempty_hash_size {h : HashMap Nat β} : ¬h.isEmpty → NeZero h.size := by
+  have h₁ : h.isEmpty = (h.size == 0) := by
+    exact HashMap.isEmpty_eq_size_eq_zero
+  refine fun a ↦ ?_
+  refine zero_gt_eq_NeZero h.size ?_
+  simp [h₁] at a
+  exact Nat.ne_zero_iff_zero_lt.mp a
 
-theorem hash_with_zero_size {h : HashMap ℕ β} : h.contains 0 → NeZero h.size := by
+theorem hash_with_zero_size {h : HashMap Nat β} : h.contains 0 → NeZero h.size := by
   rintro h₁
   exact nonempty_hash_size (nonempty_hash h₁)
 
