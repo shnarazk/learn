@@ -1,8 +1,5 @@
 module
 
-public import Mathlib.Tactic
-public import Mathlib.Data.Nat.Basic
-
 namespace withFin
 
 variable {size : Nat} [nonZeroSize: NeZero size]
@@ -17,7 +14,7 @@ example : NeZero size := by exact nonZeroSize
 
 def fromDim2 (d : Nat × Fin size) : Nat := d.1 * size + d.2.val
 
-lemma from_to_eq_id (n : Nat) : @fromDim2 size (@toDim2 size nonZeroSize n) = n := by
+theorem from_to_eq_id (n : Nat) : @fromDim2 size (@toDim2 size nonZeroSize n) = n := by
   simp [toDim2, fromDim2]
   exact Nat.div_add_mod' n size
 
@@ -34,7 +31,7 @@ example : @toDim2 4 10 = (2, 2) := by
 
 def fromDim2 (d : Nat × Nat) : Nat := d.1 * size + d.2
 
-lemma from_to_eq_id (n : Nat) : @fromDim2 size (@toDim2 size n) = n := by
+theorem from_to_eq_id (n : Nat) : @fromDim2 size (@toDim2 size n) = n := by
   simp [toDim2, fromDim2]
   exact Nat.div_add_mod' n size
 
